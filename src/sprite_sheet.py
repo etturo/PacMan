@@ -55,22 +55,32 @@ class SpriteSheet:
 
     def _load_numbers(self) -> None:
         self.data[SpriteType.ZERO] = self._extract_and_scale(
-            NUMBER_ZERO_COORDINATES)
+            NUMBER_ZERO_COORDINATES
+        )
         self.data[SpriteType.ONE] = self._extract_and_scale(
-            NUMBER_ONE_COORDINATES)
+            NUMBER_ONE_COORDINATES
+        )
         self.data[SpriteType.TWO] = self._extract_and_scale(
-            NUMBER_TWO_COORDINATES)
+            NUMBER_TWO_COORDINATES
+        )
         self.data[SpriteType.THREE] = self._extract_and_scale(
-            NUMBER_THREE_COORDINATES)
+            NUMBER_THREE_COORDINATES
+        )
         self.data[SpriteType.FOUR] = self._extract_and_scale(
-            NUMBER_FOUR_COORDINATES)
+            NUMBER_FOUR_COORDINATES
+        )
         self.data[SpriteType.FIVE] = self._extract_and_scale(
-            NUMBER_FIVE_COORDINATES)
+            NUMBER_FIVE_COORDINATES
+        )
         self.data[SpriteType.SIX] = self._extract_and_scale(
-            NUMBER_SIX_COORDINATES)
+            NUMBER_SIX_COORDINATES
+        )
         self.data[SpriteType.SEVEN] = self._extract_and_scale(
-            NUMBER_SEVEN_COORDINATES)
+            NUMBER_SEVEN_COORDINATES
+        )
         self.data[SpriteType.EIGHT] = self._extract_and_scale(
-            NUMBER_EIGHT_COORDINATES)
+            NUMBER_EIGHT_COORDINATES
+        )
         self.data[SpriteType.NINE] = self._extract_and_scale(
-            NUMBER_NINE_COORDINATES)
+            NUMBER_NINE_COORDINATES
+        )
