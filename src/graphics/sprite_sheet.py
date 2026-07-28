@@ -219,16 +219,20 @@ class SpriteSheet:
         return self.__data[key]
 
     def _extract_and_scale(self,
-                           coordinates: SpriteCoord
+                           coordinates: SpriteCoord | SmallSpriteCoord
                            ) -> pygame.Surface:
-        width: int = Settings.SPRITE_WIDTH
-        length: int = Settings.SPRITE_LENGHT
+        width: float = Settings.SPRITE_WIDTH
+        length: float = Settings.SPRITE_LENGHT
 
         if isinstance(coordinates, SmallSpriteCoord):
             width = Settings.SMALL_SPRITE_WIDTH
             length = Settings.SMALL_SPRITE_LENGHT
 
-        rect = pygame.Rect(*coordinates, width, length)
+        rect = pygame.Rect(
+            coordinates.value[0],
+            coordinates.value[1],
+            width,
+            length)
         raw_surface = self.sheet.subsurface(rect)
 
         return pygame.transform.scale_by(raw_surface, Settings.DEFAULT_SCALE)
@@ -506,17 +510,34 @@ class SpriteSheet:
         self.__data[SpriteType.VERTICAL_WALL_RIGHT] = self._extract_and_scale(
             SmallSpriteCoord.VERTICAL_WALL_RIGHT_COORDINATES
         )
-        self.__data[SpriteType.VERITCAL_WALL] = pygame.Surface(
-            (Settings.SPRITE_LENGHT, Settings.SMALL_SPRITE_WIDTH)).blit(
+        self.__data[SpriteType.VERITCAL_WALL] = \
+            self._combine_sprites_2x2(
                 self.__data[SpriteType.VERTICAL_WALL_LEFT],
-                (0, 0)
-            ).blit(
+                self.__data[SpriteType.VERTICAL_WALL_RIGHT],
                 self.__data[SpriteType.VERTICAL_WALL_LEFT],
-                (0, 8)
-            ).blit(
-                self.__data[SpriteType.VERTICAL_WALL_RIGHT],
-                (8, 0)
-            ).blit(
-                self.__data[SpriteType.VERTICAL_WALL_RIGHT],
-                (8, 8)
-            )
+                self.__data[SpriteType.VERTICAL_WALL_RIGHT])
+
+    @staticmethod
+    def _combine_sprites_2x2(
+            top_left: pygame.Surface,
+            top_right: pygame.Surface,
+            bottom_left: pygame.Surface,
+            bottom_right: pygame.Surface) -> pygame.Surface:
+
+        single_width = top_left.get_width()
+        single_height = top_left.get_height()
+
+        total_width = single_width * 2
+        total_height = single_height * 2
+
+        combined_surface = pygame.Surface(
+            (total_width, total_height),
+            pygame.SRCALPHA
+        )
+
+        combined_surface.blit(top_left, (0, 0))
+        combined_surface.blit(top_right, (single_width, 0))
+        combined_surface.blit(bottom_left, (0, single_height))
+        combined_surface.blit(bottom_right, (single_width, single_height))
+
+        return combined_surface

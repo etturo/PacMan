@@ -1,6 +1,6 @@
-from typing import List, Tuple
+from mazegenerator.mazegenerator import Iterator  # type: ignore
 
-from src.world.cell import Direction, Cell, ReadonlyCell
+from src.world.cell import Direction, Cell
 
 
 class Maze:
@@ -14,12 +14,12 @@ class Maze:
 
     def __init__(self, size: tuple[int, int], seed: int):
         """Initialize the structural maze object with rows and columns."""
-        self.__map: List[List[Cell]] = []
+        self.__map: list[list[Cell]] = []
         self.__width: int = size[0]
         self.__height: int = size[1]
 
         for y in range(self.__height):
-            row: List[Cell] = list()
+            row: list[Cell] = list()
             for x in range(self.__width):
                 row.append(Cell(walls=0x0,
                                 invicible_walls=self.__getBorder(x, y),))
@@ -35,34 +35,15 @@ class Maze:
 
         return output + '\n'
 
-    def setSpecificCell(self, x, y, walls) -> None:
+    def setSpecificCell(self, x: int,
+                        y: int,
+                        walls: int) -> None:
         self.__map[y][x].setCell(walls)
 
-    def __getitem__(self, pos: Tuple[int, int]) -> ReadonlyCell:
+    def __getitem__(self, pos: tuple[int, int]) -> Cell:
         """Read single node positional attributes safely."""
         x, y = pos
-        return ReadonlyCell(self.__map[y][x])
+        return self.__map[y][x]
 
-    def addWall(self, x: int, y: int, wall: Direction) -> None:
-        """Add a wall in a specific direction for the cell and its neighbor."""
-        nx, ny = x + wall.vector[0], y + wall.vector[1]
-        if (x >= 0 and x < self.__width and y >= 0 and y < self.__height and
-                nx >= 0 and nx < self.__width and ny >= 0 and ny < self.__height):
-            self.__map[y][x] += wall
-            self.__map[ny][nx] += wall.opposite
-
-    def removeWall(self, x: int, y: int, wall: Direction) -> None:
-        """Remove a wall in a direction for the cell and its neighbor."""
-        nx, ny = x + wall.vector[0], y + wall.vector[1]
-        if (x >= 0 and x < self.__width and y >= 0 and y < self.__height and
-                nx >= 0 and nx < self.__width and ny >= 0 and ny < self.__height):
-            self.__map[y][x] -= wall
-            self.__map[ny][nx] -= wall.opposite
-
-    def setInvincibleWall(self, x: int, y: int, wall: Direction) -> None:
-        """Set a wall as invincible for the given cell and its neighbor."""
-        nx, ny = x + wall.vector[0], y + wall.vector[1]
-        if (x >= 0 and x < self.__width and y >= 0 and y < self.__height and
-                nx >= 0 and nx < self.__width and ny >= 0 and ny < self.__height):
-            self.__map[y][x].SetInvincible(wall)
-            self.__map[ny][nx].SetInvincible(wall.opposite)
+    def __iter__(self) -> Iterator:
+        return iter(self.__map)

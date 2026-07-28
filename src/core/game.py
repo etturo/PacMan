@@ -2,9 +2,8 @@ from enum import Enum, auto
 
 import pygame
 
-from src.graphics.sprite_sheet import SpriteType, SpriteSheet
 from src.world.maze_wrapper import MazeWrapper
-from src.world.maze import Maze
+# from src.world.maze import Maze
 from src.graphics.renderer import Renderer
 
 
@@ -33,7 +32,7 @@ class Game:
     __renderer = Renderer()
 
     @classmethod
-    def _init(cls):
+    def _init(cls) -> None:
         cls.__clock = pygame.time.Clock()
 
     @classmethod
@@ -53,8 +52,6 @@ class Game:
                 cls.__clock.tick(60)
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
-
-        red_sprite_sheet = SpriteSheet("data/assets/sprites/red-sprite-sheet.png")
 
         print(cls.__mazegen.maze)
 

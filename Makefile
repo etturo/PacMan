@@ -31,6 +31,7 @@ lint:
 lint-strict:
 	$(BIN)/flake8 $(SRC)
 	$(BIN)/mypy $(SRC) --strict
+	$(BIN)/ruff check $(SRC)
 
 c:
 	clear

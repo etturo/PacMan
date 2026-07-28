@@ -1,4 +1,5 @@
-from mazegenerator import MazeGenerator
+# TODO find a solution for unimported module
+from mazegenerator import MazeGenerator  # type: ignore
 from src.world.maze import Maze
 
 
@@ -44,8 +45,8 @@ class MazeWrapper:
     def maze(self) -> Maze:
         return self.__maze
 
-    def __load_maze(self) -> Maze:
-        self.__maze  = Maze(self._size, self._seed)
+    def __load_maze(self) -> None:
+        self.__maze = Maze(self._size, self._seed)
 
         for y, row in enumerate(self.__maze_list):
             for x, cell in enumerate(row):
