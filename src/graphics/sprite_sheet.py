@@ -4,9 +4,6 @@ import pygame
 
 from src.utils.settings import Settings
 
-SPRITE_LENGHT = 8
-SPRITE_WIDTH = 8
-
 
 class SpriteCoord(tuple[int, int], Enum):
     PACMAN_DEATH_ANIMATION_1_COORDINATES = (1, 134)
@@ -100,6 +97,8 @@ class SmallSpriteCoord(tuple[int, int], Enum):
     SUPER_PACGUMS_COORDINATES = (136, 28)
 
     FULL_WALL_COORDINATES = (154, 10)
+    DOWN_LEFT_WALL_COORDINATES = (145, 28)
+    VERTICAL_WALL_COORDINATES = (172, 10)
 
 
 class SpriteType(Enum):
@@ -191,8 +190,6 @@ class SpriteType(Enum):
     # PACGUMS
     PACGUMS = "pacgums"
     SUPER_PACGUMS = "super_pacgums"
-    # MAZE WALLS
-    FULL_WALL = "full_wall"
 
 
 class SpriteSheet:
@@ -217,12 +214,12 @@ class SpriteSheet:
     def _extract_and_scale(self,
                            coordinates: SpriteCoord
                            ) -> pygame.Surface:
-        width: int = SPRITE_WIDTH
-        length: int = SPRITE_LENGHT
+        width: int = Settings.SPRITE_WIDTH
+        length: int = Settings.SPRITE_LENGHT
 
         if isinstance(coordinates, SpriteCoord):
-            width = SPRITE_WIDTH * 2
-            length = SPRITE_LENGHT * 2
+            width = Settings.SPRITE_WIDTH * 2
+            length = Settings.SPRITE_LENGHT * 2
 
         rect = pygame.Rect(*coordinates, width, length)
         raw_surface = self.sheet.subsurface(rect)
@@ -496,6 +493,4 @@ class SpriteSheet:
         )
 
     def _load_maze(self) -> None:
-        self.data[SpriteType.FULL_WALL] = self._extract_and_scale(
-            SmallSpriteCoord.FULL_WALL_COORDINATES
-        )
+        ...

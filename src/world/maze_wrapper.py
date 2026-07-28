@@ -1,23 +1,19 @@
 from mazegenerator import MazeGenerator
-from enum import IntEnum
-from typing import Tuple
 from src.world.maze import Maze
-from src.world.cell import Cell
-
 
 
 class MazeWrapper:
     def __init__(self) -> None:
-        self._generator: MazeGenerator
-        self._maze_list: list[list[int]] = list()
-        self._maze: Maze
+        self.__generator: MazeGenerator
+        self.__maze_list: list[list[int]] = list()
+        self.__maze: Maze
 
     def generate(self, size: tuple[int, int], seed: int) -> None:
         self._size: tuple[int, int] = size
         self._seed: int = seed
 
         try:
-            self._generator = MazeGenerator(
+            self.__generator = MazeGenerator(
                 size=size,
                 perfect=False,
                 entry_cell=(0, 0),
@@ -25,11 +21,11 @@ class MazeWrapper:
                 seed=seed
             )
 
-            self._generator.generate()
+            self.__generator.generate()
 
-            self._maze_list = self._generator.maze
+            self.__maze_list = self.__generator.maze
 
-            self._load_maze()
+            self.__load_maze()
 
         except Exception as e:
             print(e)
@@ -37,7 +33,7 @@ class MazeWrapper:
     def __str__(self) -> str:
         output: str = '\n'
 
-        for row in self._maze:
+        for row in self.__maze:
             for cell in row:
                 output += f"{cell:X} "
             output += '\n'
@@ -46,11 +42,11 @@ class MazeWrapper:
 
     @property
     def maze(self) -> Maze:
-        return self._maze
+        return self.__maze
 
-    def _load_maze(self) -> Maze:
-        self._maze  = Maze(self._size, self._seed)
+    def __load_maze(self) -> Maze:
+        self.__maze  = Maze(self._size, self._seed)
 
-        for y, row in enumerate(self._maze_list):
+        for y, row in enumerate(self.__maze_list):
             for x, cell in enumerate(row):
-                self._maze.setSpecificCell(x, y, cell)
+                self.__maze.setSpecificCell(x, y, cell)

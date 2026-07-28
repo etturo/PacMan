@@ -1,0 +1,1 @@
+"""PacMan package root."""
