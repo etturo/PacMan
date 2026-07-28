@@ -1,12 +1,19 @@
 import pygame
 
-from src.sprite_sheet import SpriteSheet, SpriteType
+from src.world.maze_wrapper import MazeWrapper
+from src.graphics.sprite_sheet import SpriteSheet, SpriteType
 
 pygame.init()
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption('PacMan')
 
 red_sprite_sheet = SpriteSheet("data/assets/sprites/red-sprite-sheet.png")
+
+mazegen = MazeWrapper()
+
+mazegen.generate((10, 10), 4)
+
+print(mazegen.maze)
 
 running = True
 while running:

@@ -99,6 +99,8 @@ class SmallSpriteCoord(tuple[int, int], Enum):
     PACGUMS_COORDINATES = (136, 19)
     SUPER_PACGUMS_COORDINATES = (136, 28)
 
+    FULL_WALL_COORDINATES = (154, 10)
+
 
 class SpriteType(Enum):
     # NUMBERS
@@ -189,6 +191,8 @@ class SpriteType(Enum):
     # PACGUMS
     PACGUMS = "pacgums"
     SUPER_PACGUMS = "super_pacgums"
+    # MAZE WALLS
+    FULL_WALL = "full_wall"
 
 
 class SpriteSheet:
@@ -492,4 +496,6 @@ class SpriteSheet:
         )
 
     def _load_maze(self) -> None:
-        ...
+        self.data[SpriteType.FULL_WALL] = self._extract_and_scale(
+            SmallSpriteCoord.FULL_WALL_COORDINATES
+        )
