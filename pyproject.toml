@@ -7,5 +7,9 @@ requires-python = ">=3.12"
 dependencies = [
     "pygame",
     "flake8",
-    "mypy"
+    "mypy",
+    "mazegenerator",
 ]
+
+[tool.uv.sources]
+mazegenerator = { path = "mazegenerator-2.1.0-py3-none-any.whl" }
