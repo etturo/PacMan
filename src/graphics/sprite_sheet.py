@@ -2,7 +2,7 @@ from enum import Enum
 
 import pygame
 
-from src.settings import Settings
+from src.utils.settings import Settings
 
 SPRITE_LENGHT = 8
 SPRITE_WIDTH = 8
