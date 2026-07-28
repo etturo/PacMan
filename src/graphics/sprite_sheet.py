@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 import pygame
 
@@ -96,109 +96,115 @@ class SmallSpriteCoord(tuple[int, int], Enum):
     PACGUMS_COORDINATES = (136, 19)
     SUPER_PACGUMS_COORDINATES = (136, 28)
 
-    FULL_WALL_COORDINATES = (154, 10)
-    DOWN_LEFT_WALL_COORDINATES = (145, 28)
-    VERTICAL_WALL_COORDINATES = (172, 10)
+    VERTICAL_WALL_LEFT_COORDINATES = (190, 10)
+    VERTICAL_WALL_RIGHT_COORDINATES = (172, 10)
 
 
 class SpriteType(Enum):
     # NUMBERS
-    ZERO = "zero"
-    ONE = "one"
-    TWO = "two"
-    THREE = "three"
-    FOUR = "four"
-    FIVE = "five"
-    SIX = "six"
-    SEVEN = "seven"
-    EIGHT = "eight"
-    NINE = "nine"
+    ZERO = auto()
+    ONE = auto()
+    TWO = auto()
+    THREE = auto()
+    FOUR = auto()
+    FIVE = auto()
+    SIX = auto()
+    SEVEN = auto()
+    EIGHT = auto()
+    NINE = auto()
     # LETTERS
-    L_A = "a"
-    L_B = "b"
-    L_C = "c"
-    L_D = "d"
-    L_E = "e"
-    L_F = "f"
-    L_G = "g"
-    L_H = "h"
-    L_I = "i"
-    L_J = "j"
-    L_K = "k"
-    L_L = "l"
-    L_M = "m"
-    L_N = "n"
-    L_O = "o"
-    L_P = "p"
-    L_Q = "q"
-    L_R = "r"
-    L_S = "s"
-    L_T = "t"
-    L_U = "u"
-    L_V = "v"
-    L_W = "w"
-    L_X = "x"
-    L_Y = "y"
-    L_Z = "z"
+    L_A = auto()
+    L_B = auto()
+    L_C = auto()
+    L_D = auto()
+    L_E = auto()
+    L_F = auto()
+    L_G = auto()
+    L_H = auto()
+    L_I = auto()
+    L_J = auto()
+    L_K = auto()
+    L_L = auto()
+    L_M = auto()
+    L_N = auto()
+    L_O = auto()
+    L_P = auto()
+    L_Q = auto()
+    L_R = auto()
+    L_S = auto()
+    L_T = auto()
+    L_U = auto()
+    L_V = auto()
+    L_W = auto()
+    L_X = auto()
+    L_Y = auto()
+    L_Z = auto()
     # PACMAN DEATH ANIMATION
-    PACMAN_DEATH_ANIMATION_1 = "pacman_death_frame_1"
-    PACMAN_DEATH_ANIMATION_2 = "pacman_death_frame_2"
-    PACMAN_DEATH_ANIMATION_3 = "pacman_death_frame_3"
-    PACMAN_DEATH_ANIMATION_4 = "pacman_death_frame_4"
-    PACMAN_DEATH_ANIMATION_5 = "pacman_death_frame_5"
-    PACMAN_DEATH_ANIMATION_6 = "pacman_death_frame_6"
-    PACMAN_DEATH_ANIMATION_7 = "pacman_death_frame_7"
-    PACMAN_DEATH_ANIMATION_8 = "pacman_death_frame_8"
-    PACMAN_DEATH_ANIMATION_9 = "pacman_death_frame_9"
-    PACMAN_DEATH_ANIMATION_10 = "pacman_death_frame_10"
-    PACMAN_DEATH_ANIMATION_11 = "pacman_death_frame_11"
-    PACMAN_DEATH_ANIMATION_12 = "pacman_death_frame_12"
+    PACMAN_DEATH_ANIMATION_1 = auto()
+    PACMAN_DEATH_ANIMATION_2 = auto()
+    PACMAN_DEATH_ANIMATION_3 = auto()
+    PACMAN_DEATH_ANIMATION_4 = auto()
+    PACMAN_DEATH_ANIMATION_5 = auto()
+    PACMAN_DEATH_ANIMATION_6 = auto()
+    PACMAN_DEATH_ANIMATION_7 = auto()
+    PACMAN_DEATH_ANIMATION_8 = auto()
+    PACMAN_DEATH_ANIMATION_9 = auto()
+    PACMAN_DEATH_ANIMATION_10 = auto()
+    PACMAN_DEATH_ANIMATION_11 = auto()
+    PACMAN_DEATH_ANIMATION_12 = auto()
     # PACMAN WALKING ANIMATION
-    PACMAN_VERTICAL_STEP_1 = "pacman_vertical_step_1"
-    PACMAN_VERTICAL_STEP_2 = "pacman_vertical_step_2"
-    PACMAN_HORIZONTAL_STEP_1 = "pacman_horizontal_step_1"
-    PACMAN_HORIZONTAL_STEP_2 = "pacman_horizontal_step_2"
+    PACMAN_VERTICAL_STEP_1 = auto()
+    PACMAN_VERTICAL_STEP_2 = auto()
+    PACMAN_HORIZONTAL_STEP_1 = auto()
+    PACMAN_HORIZONTAL_STEP_2 = auto()
     # PACMAN SPECIAL
-    FULL_PACMAN = "full_pacman"
-    BLOWN_PACMAN = "blown_pacman"
+    FULL_PACMAN = auto()
+    BLOWN_PACMAN = auto()
     # GHOST WALKING ANIMATION
-    GHOST_RIGHT_1 = "ghost_right_1"
-    GHOST_RIGHT_2 = "ghost_right_2"
-    GHOST_LEFT_1 = "ghost_left_1"
-    GHOST_LEFT_2 = "ghost_left_2"
-    GHOST_UP_1 = "ghost_up_1"
-    GHOST_up_2 = "ghost_up_2"
-    GHOST_DOWN_1 = "ghost_down_1"
-    GHOST_DOWN_2 = "ghost_down_2"
+    GHOST_RIGHT_1 = auto()
+    GHOST_RIGHT_2 = auto()
+    GHOST_LEFT_1 = auto()
+    GHOST_LEFT_2 = auto()
+    GHOST_UP_1 = auto()
+    GHOST_up_2 = auto()
+    GHOST_DOWN_1 = auto()
+    GHOST_DOWN_2 = auto()
     # FRIGHTENED GHOST ANIMATION
-    FRIGHTENED_GHOST_1 = "frightened_ghost_1"
-    FRIGHTENED_GHOST_2 = "frightened_ghost_2"
+    FRIGHTENED_GHOST_1 = auto()
+    FRIGHTENED_GHOST_2 = auto()
     # USER INTERFACE
-    TWO_H_POINTS = "two_h_points"
-    FOUR_H_POINTS = "four_h_points"
-    EIGHT_H_POINTS = "eight_h_points"
-    SIXTEEN_H_POINTS = "sixteen_h_points"
+    TWO_H_POINTS = auto()
+    FOUR_H_POINTS = auto()
+    EIGHT_H_POINTS = auto()
+    SIXTEEN_H_POINTS = auto()
     # FRUITS
-    CHERRIES = "cherries"
-    STRAWBERRY = "strawberry"
-    PEACH = "peach"
-    APPLE = "apple"
-    GRAPE = "grape"
-    GALAXIAN = "galaxian"
-    BELL = "bell"
-    KEY = "key"
+    CHERRIES = auto()
+    STRAWBERRY = auto()
+    PEACH = auto()
+    APPLE = auto()
+    GRAPE = auto()
+    GALAXIAN = auto()
+    BELL = auto()
+    KEY = auto()
     # PACGUMS
-    PACGUMS = "pacgums"
-    SUPER_PACGUMS = "super_pacgums"
+    PACGUMS = auto()
+    SUPER_PACGUMS = auto()
+    # MAZE WALLS
+    # TODO
+    VERTICAL_WALL_LEFT = auto()
+    VERTICAL_WALL_RIGHT = auto()
+    HORIZONTAL_WALL_UP = auto()
+    HORIZONTAL_WALL_DOWN = auto()
+    VERITCAL_WALL = auto()
 
 
 class SpriteSheet:
     def __init__(self, filename: str,
-                 color_key: tuple[int, int, int] = (255, 0, 255)
+                 color_key: tuple[int, int, int] = (0, 0, 0)
                  ) -> None:
         self.sheet = pygame.image.load(filename).convert_alpha()
         self.sheet.set_colorkey(color_key)
-        self.data: dict[SpriteType, pygame.Surface] = {}
+        self.__data: dict[SpriteType, pygame.Surface] = {}
 
         self._load_numbers()
         self._load_letters()
@@ -207,9 +213,10 @@ class SpriteSheet:
         self._load_interface()
         self._load_fruits()
         self._load_objects()
+        self._load_maze()
 
     def __getitem__(self, key: SpriteType) -> pygame.Surface:
-        return self.data[key]
+        return self.__data[key]
 
     def _extract_and_scale(self,
                            coordinates: SpriteCoord
@@ -217,9 +224,9 @@ class SpriteSheet:
         width: int = Settings.SPRITE_WIDTH
         length: int = Settings.SPRITE_LENGHT
 
-        if isinstance(coordinates, SpriteCoord):
-            width = Settings.SPRITE_WIDTH * 2
-            length = Settings.SPRITE_LENGHT * 2
+        if isinstance(coordinates, SmallSpriteCoord):
+            width = Settings.SMALL_SPRITE_WIDTH
+            length = Settings.SMALL_SPRITE_LENGHT
 
         rect = pygame.Rect(*coordinates, width, length)
         raw_surface = self.sheet.subsurface(rect)
@@ -227,270 +234,289 @@ class SpriteSheet:
         return pygame.transform.scale_by(raw_surface, Settings.DEFAULT_SCALE)
 
     def _load_numbers(self) -> None:
-        self.data[SpriteType.ZERO] = self._extract_and_scale(
+        self.__data[SpriteType.ZERO] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_ZERO_COORDINATES
         )
-        self.data[SpriteType.ONE] = self._extract_and_scale(
+        self.__data[SpriteType.ONE] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_ONE_COORDINATES
         )
-        self.data[SpriteType.TWO] = self._extract_and_scale(
+        self.__data[SpriteType.TWO] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_TWO_COORDINATES
         )
-        self.data[SpriteType.THREE] = self._extract_and_scale(
+        self.__data[SpriteType.THREE] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_THREE_COORDINATES
         )
-        self.data[SpriteType.FOUR] = self._extract_and_scale(
+        self.__data[SpriteType.FOUR] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_FOUR_COORDINATES
         )
-        self.data[SpriteType.FIVE] = self._extract_and_scale(
+        self.__data[SpriteType.FIVE] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_FIVE_COORDINATES
         )
-        self.data[SpriteType.SIX] = self._extract_and_scale(
+        self.__data[SpriteType.SIX] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_SIX_COORDINATES
         )
-        self.data[SpriteType.SEVEN] = self._extract_and_scale(
+        self.__data[SpriteType.SEVEN] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_SEVEN_COORDINATES
         )
-        self.data[SpriteType.EIGHT] = self._extract_and_scale(
+        self.__data[SpriteType.EIGHT] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_EIGHT_COORDINATES
         )
-        self.data[SpriteType.NINE] = self._extract_and_scale(
+        self.__data[SpriteType.NINE] = self._extract_and_scale(
             SmallSpriteCoord.NUMBER_NINE_COORDINATES
         )
 
     def _load_letters(self) -> None:
-        self.data[SpriteType.L_A] = self._extract_and_scale(
+        self.__data[SpriteType.L_A] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_A_COORDINATES
         )
-        self.data[SpriteType.L_B] = self._extract_and_scale(
+        self.__data[SpriteType.L_B] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_B_COORDINATES
         )
-        self.data[SpriteType.L_C] = self._extract_and_scale(
+        self.__data[SpriteType.L_C] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_C_COORDINATES
         )
-        self.data[SpriteType.L_D] = self._extract_and_scale(
+        self.__data[SpriteType.L_D] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_D_COORDINATES
         )
-        self.data[SpriteType.L_E] = self._extract_and_scale(
+        self.__data[SpriteType.L_E] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_E_COORDINATES
         )
-        self.data[SpriteType.L_F] = self._extract_and_scale(
+        self.__data[SpriteType.L_F] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_F_COORDINATES
         )
-        self.data[SpriteType.L_G] = self._extract_and_scale(
+        self.__data[SpriteType.L_G] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_G_COORDINATES
         )
-        self.data[SpriteType.L_H] = self._extract_and_scale(
+        self.__data[SpriteType.L_H] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_H_COORDINATES
         )
-        self.data[SpriteType.L_I] = self._extract_and_scale(
+        self.__data[SpriteType.L_I] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_I_COORDINATES
         )
-        self.data[SpriteType.L_J] = self._extract_and_scale(
+        self.__data[SpriteType.L_J] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_J_COORDINATES
         )
-        self.data[SpriteType.L_K] = self._extract_and_scale(
+        self.__data[SpriteType.L_K] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_K_COORDINATES
         )
-        self.data[SpriteType.L_L] = self._extract_and_scale(
+        self.__data[SpriteType.L_L] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_L_COORDINATES
         )
-        self.data[SpriteType.L_M] = self._extract_and_scale(
+        self.__data[SpriteType.L_M] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_M_COORDINATES
         )
-        self.data[SpriteType.L_N] = self._extract_and_scale(
+        self.__data[SpriteType.L_N] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_N_COORDINATES
         )
-        self.data[SpriteType.L_O] = self._extract_and_scale(
+        self.__data[SpriteType.L_O] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_O_COORDINATES
         )
-        self.data[SpriteType.L_P] = self._extract_and_scale(
+        self.__data[SpriteType.L_P] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_P_COORDINATES
         )
-        self.data[SpriteType.L_Q] = self._extract_and_scale(
+        self.__data[SpriteType.L_Q] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_Q_COORDINATES
         )
-        self.data[SpriteType.L_R] = self._extract_and_scale(
+        self.__data[SpriteType.L_R] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_R_COORDINATES
         )
-        self.data[SpriteType.L_S] = self._extract_and_scale(
+        self.__data[SpriteType.L_S] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_S_COORDINATES
         )
-        self.data[SpriteType.L_T] = self._extract_and_scale(
+        self.__data[SpriteType.L_T] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_T_COORDINATES
         )
-        self.data[SpriteType.L_U] = self._extract_and_scale(
+        self.__data[SpriteType.L_U] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_U_COORDINATES
         )
-        self.data[SpriteType.L_V] = self._extract_and_scale(
+        self.__data[SpriteType.L_V] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_V_COORDINATES
         )
-        self.data[SpriteType.L_W] = self._extract_and_scale(
+        self.__data[SpriteType.L_W] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_W_COORDINATES
         )
-        self.data[SpriteType.L_X] = self._extract_and_scale(
+        self.__data[SpriteType.L_X] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_X_COORDINATES
         )
-        self.data[SpriteType.L_Y] = self._extract_and_scale(
+        self.__data[SpriteType.L_Y] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_Y_COORDINATES
         )
-        self.data[SpriteType.L_Z] = self._extract_and_scale(
+        self.__data[SpriteType.L_Z] = self._extract_and_scale(
             SmallSpriteCoord.LETTER_Z_COORDINATES
         )
 
     def _load_pacman(self) -> None:
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_1] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_1] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_1_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_2] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_2] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_2_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_3] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_3] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_3_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_4] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_4] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_4_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_5] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_5] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_5_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_6] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_6] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_6_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_7] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_7] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_7_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_8] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_8] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_8_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_9] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_9] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_9_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_10] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_10] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_10_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_11] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_11] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_11_COORDINATES
         )
-        self.data[SpriteType.PACMAN_DEATH_ANIMATION_12] = \
+        self.__data[SpriteType.PACMAN_DEATH_ANIMATION_12] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_DEATH_ANIMATION_12_COORDINATES
         )
-        self.data[SpriteType.PACMAN_VERTICAL_STEP_1] = \
+        self.__data[SpriteType.PACMAN_VERTICAL_STEP_1] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_VERTICAL_STEP_1_COORDINATES
         )
-        self.data[SpriteType.PACMAN_VERTICAL_STEP_2] = \
+        self.__data[SpriteType.PACMAN_VERTICAL_STEP_2] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_VERTICAL_STEP_2_COORDINATES
         )
-        self.data[SpriteType.PACMAN_HORIZONTAL_STEP_1] = \
+        self.__data[SpriteType.PACMAN_HORIZONTAL_STEP_1] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_HORIZONTAL_STEP_1_COORDINATES
         )
-        self.data[SpriteType.PACMAN_HORIZONTAL_STEP_2] = \
+        self.__data[SpriteType.PACMAN_HORIZONTAL_STEP_2] = \
             self._extract_and_scale(
                 SpriteCoord.PACMAN_HORIZONTAL_STEP_2_COORDINATES
         )
-        self.data[SpriteType.FULL_PACMAN] = \
+        self.__data[SpriteType.FULL_PACMAN] = \
             self._extract_and_scale(
                 SpriteCoord.FULL_PACMAN_COORDINATES
             )
-        self.data[SpriteType.BLOWN_PACMAN] = \
+        self.__data[SpriteType.BLOWN_PACMAN] = \
             self._extract_and_scale(
                 SpriteCoord.BLOWN_PACMAN_COORDINATES
             )
 
     def _load_ghost(self) -> None:
-        self.data[SpriteType.GHOST_RIGHT_1] = self._extract_and_scale(
+        self.__data[SpriteType.GHOST_RIGHT_1] = self._extract_and_scale(
             SpriteCoord.GHOST_RIGHT_1_COORDINATES
         )
-        self.data[SpriteType.GHOST_RIGHT_2] = self._extract_and_scale(
+        self.__data[SpriteType.GHOST_RIGHT_2] = self._extract_and_scale(
             SpriteCoord.GHOST_RIGHT_2_COORDINATES
         )
-        self.data[SpriteType.GHOST_LEFT_1] = self._extract_and_scale(
+        self.__data[SpriteType.GHOST_LEFT_1] = self._extract_and_scale(
             SpriteCoord.GHOST_LEFT_1_COORDINATES
         )
-        self.data[SpriteType.GHOST_LEFT_2] = self._extract_and_scale(
+        self.__data[SpriteType.GHOST_LEFT_2] = self._extract_and_scale(
             SpriteCoord.GHOST_LEFT_2_COORDINATES
         )
-        self.data[SpriteType.GHOST_UP_1] = self._extract_and_scale(
+        self.__data[SpriteType.GHOST_UP_1] = self._extract_and_scale(
             SpriteCoord.GHOST_UP_1_COORDINATES
         )
-        self.data[SpriteType.GHOST_up_2] = self._extract_and_scale(
+        self.__data[SpriteType.GHOST_up_2] = self._extract_and_scale(
             SpriteCoord.GHOST_UP_2_COORDINATES
         )
-        self.data[SpriteType.GHOST_DOWN_1] = self._extract_and_scale(
+        self.__data[SpriteType.GHOST_DOWN_1] = self._extract_and_scale(
             SpriteCoord.GHOST_DOWN_1_COORDINATES
         )
-        self.data[SpriteType.GHOST_DOWN_2] = self._extract_and_scale(
+        self.__data[SpriteType.GHOST_DOWN_2] = self._extract_and_scale(
             SpriteCoord.GHOST_DOWN_2_COORDINATES
         )
-        self.data[SpriteType.FRIGHTENED_GHOST_1] = self._extract_and_scale(
+        self.__data[SpriteType.FRIGHTENED_GHOST_1] = self._extract_and_scale(
             SpriteCoord.FRIGHTENED_GHOST_1_COORDINATES
         )
-        self.data[SpriteType.FRIGHTENED_GHOST_2] = self._extract_and_scale(
+        self.__data[SpriteType.FRIGHTENED_GHOST_2] = self._extract_and_scale(
             SpriteCoord.FRIGHTENED_GHOST_2_COORDINATES
         )
 
     def _load_interface(self) -> None:
-        self.data[SpriteType.TWO_H_POINTS] = self._extract_and_scale(
+        self.__data[SpriteType.TWO_H_POINTS] = self._extract_and_scale(
             SpriteCoord.TWO_H_POINTS_COORDINATES
         )
-        self.data[SpriteType.FOUR_H_POINTS] = self._extract_and_scale(
+        self.__data[SpriteType.FOUR_H_POINTS] = self._extract_and_scale(
             SpriteCoord.FOUR_H_POINTS_COORDINATES
         )
-        self.data[SpriteType.EIGHT_H_POINTS] = self._extract_and_scale(
+        self.__data[SpriteType.EIGHT_H_POINTS] = self._extract_and_scale(
             SpriteCoord.EIGHT_H_POINTS_COORDINATES
         )
-        self.data[SpriteType.SIXTEEN_H_POINTS] = self._extract_and_scale(
+        self.__data[SpriteType.SIXTEEN_H_POINTS] = self._extract_and_scale(
             SpriteCoord.SIXTEEN_H_POINTS_COORDINATES
         )
 
     def _load_fruits(self) -> None:
-        self.data[SpriteType.CHERRIES] = self._extract_and_scale(
+        self.__data[SpriteType.CHERRIES] = self._extract_and_scale(
             SpriteCoord.CHERRIES_COORDINATES
         )
-        self.data[SpriteType.STRAWBERRY] = self._extract_and_scale(
+        self.__data[SpriteType.STRAWBERRY] = self._extract_and_scale(
             SpriteCoord.STRAWBERRY_COORDINATES
         )
-        self.data[SpriteType.PEACH] = self._extract_and_scale(
+        self.__data[SpriteType.PEACH] = self._extract_and_scale(
             SpriteCoord.PEACH_COORDINATES
         )
-        self.data[SpriteType.APPLE] = self._extract_and_scale(
+        self.__data[SpriteType.APPLE] = self._extract_and_scale(
             SpriteCoord.APPLE_COORDINATES
         )
-        self.data[SpriteType.GRAPE] = self._extract_and_scale(
+        self.__data[SpriteType.GRAPE] = self._extract_and_scale(
             SpriteCoord.GRAPE_COORDINATES
         )
-        self.data[SpriteType.GALAXIAN] = self._extract_and_scale(
+        self.__data[SpriteType.GALAXIAN] = self._extract_and_scale(
             SpriteCoord.GALAXIAN_COORDINATES
         )
-        self.data[SpriteType.BELL] = self._extract_and_scale(
+        self.__data[SpriteType.BELL] = self._extract_and_scale(
             SpriteCoord.BELL_COORDINATES
         )
-        self.data[SpriteType.KEY] = self._extract_and_scale(
+        self.__data[SpriteType.KEY] = self._extract_and_scale(
             SpriteCoord.KEY_COORDINATES
         )
 
     def _load_objects(self) -> None:
-        self.data[SpriteType.PACGUMS] = self._extract_and_scale(
+        self.__data[SpriteType.PACGUMS] = self._extract_and_scale(
             SmallSpriteCoord.PACGUMS_COORDINATES
         )
-        self.data[SpriteType.SUPER_PACGUMS] = self._extract_and_scale(
+        self.__data[SpriteType.SUPER_PACGUMS] = self._extract_and_scale(
             SmallSpriteCoord.SUPER_PACGUMS_COORDINATES
         )
 
     def _load_maze(self) -> None:
-        ...
+        self.__data[SpriteType.VERTICAL_WALL_LEFT] = self._extract_and_scale(
+            SmallSpriteCoord.VERTICAL_WALL_LEFT_COORDINATES
+        )
+        self.__data[SpriteType.VERTICAL_WALL_RIGHT] = self._extract_and_scale(
+            SmallSpriteCoord.VERTICAL_WALL_RIGHT_COORDINATES
+        )
+        self.__data[SpriteType.VERITCAL_WALL] = pygame.Surface(
+            (Settings.SPRITE_LENGHT, Settings.SMALL_SPRITE_WIDTH)).blit(
+                self.__data[SpriteType.VERTICAL_WALL_LEFT],
+                (0, 0)
+            ).blit(
+                self.__data[SpriteType.VERTICAL_WALL_LEFT],
+                (0, 8)
+            ).blit(
+                self.__data[SpriteType.VERTICAL_WALL_RIGHT],
+                (8, 0)
+            ).blit(
+                self.__data[SpriteType.VERTICAL_WALL_RIGHT],
+                (8, 8)
+            )

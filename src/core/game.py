@@ -5,6 +5,7 @@ import pygame
 from src.graphics.sprite_sheet import SpriteType, SpriteSheet
 from src.world.maze_wrapper import MazeWrapper
 from src.world.maze import Maze
+from src.graphics.renderer import Renderer
 
 
 class Game:
@@ -28,16 +29,20 @@ class Game:
     __screen: pygame.Surface
     __clock: pygame.time.Clock
 
+    # RENDER UTILS
+    __renderer = Renderer()
+
     @classmethod
     def _init(cls):
-        pygame.init()
-        cls.__screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-        pygame.display.set_caption('PacMan')
         cls.__clock = pygame.time.Clock()
 
     @classmethod
     def run(cls) -> None:
         cls._init()
+
+        cls.__mazegen = MazeWrapper()
+
+        cls.__maze = cls.__mazegen.generate((10, 10), 4)
 
         try:
             while cls.__is_running:
@@ -49,16 +54,11 @@ class Game:
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
 
+        red_sprite_sheet = SpriteSheet("data/assets/sprites/red-sprite-sheet.png")
 
-        # red_sprite_sheet = SpriteSheet("data/assets/sprites/red-sprite-sheet.png")
+        print(cls.__mazegen.maze)
 
-        # cls.__mazegen = MazeWrapper()
-
-        # cls.__maze = mazegen.generate((10, 10), 4)
-
-        # print(mazegen.maze)
-
-        # pygame.quit()
+        pygame.quit()
 
     @classmethod
     def _catch_events(cls) -> None:
@@ -75,14 +75,4 @@ class Game:
 
     @classmethod
     def _render_graphics(cls) -> None:
-        red_sprite_sheet = SpriteSheet("data/assets/sprites/red-sprite-sheet.png")
-
-        cls.__screen.fill((0, 0, 0))
-
-        cls.__screen.blit(red_sprite_sheet[SpriteType.TWO_H_POINTS], (100, 300))
-        cls.__screen.blit(red_sprite_sheet[SpriteType.KEY], (200, 300))
-        cls.__screen.blit(red_sprite_sheet[SpriteType.PACGUMS], (300, 300))
-        cls.__screen.blit(red_sprite_sheet[SpriteType.GHOST_RIGHT_1], (400, 300))
-        cls.__screen.blit(red_sprite_sheet[SpriteType.GHOST_UP_1], (500, 300))
-
-        pygame.display.flip()
+        cls.__renderer.render(cls.__maze)
