@@ -2,9 +2,9 @@ from enum import Enum, auto
 
 import pygame
 
-from src.world.maze_wrapper import MazeWrapper
-# from src.world.maze import Maze
+from src.world.maze import Maze
 from src.graphics.renderer import Renderer
+from src.world.maze_wrapper import MazeWrapper
 
 
 class Game:
@@ -31,6 +31,10 @@ class Game:
     # RENDER UTILS
     __renderer = Renderer()
 
+    # WORLD ATTRIBUTES
+    __maze: Maze
+    __mazegen: MazeWrapper
+
     @classmethod
     def _init(cls) -> None:
         cls.__clock = pygame.time.Clock()
@@ -41,7 +45,8 @@ class Game:
 
         cls.__mazegen = MazeWrapper()
 
-        cls.__maze = cls.__mazegen.generate((10, 10), 4)
+        cls.__mazegen.generate((10, 10), 4)
+        cls.__maze = cls.__mazegen.maze
 
         try:
             while cls.__is_running:
@@ -53,7 +58,7 @@ class Game:
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
 
-        print(cls.__mazegen.maze)
+        print(cls.__maze)
 
         pygame.quit()
 
