@@ -21,7 +21,7 @@ class Renderer:
         self.__screen.fill((50, 50, 50))
 
         self.__screen.blit(
-            self.__sheet.composites["vertical_wall"],
+            self.__sheet[SpriteType.UP_RIGHT_WALL],
             (100, 300)
             )
 

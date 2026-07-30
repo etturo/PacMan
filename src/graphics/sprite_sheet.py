@@ -5,42 +5,24 @@ import pygame
 from src.utils.settings import Settings
 
 
-class SpriteCoord(str, Enum):
-    ONE = "1"
-    TWO = "2"
-    THREE = "3"
-    FOUR = "4"
-    FIVE = "5"
-    SIX = "6"
-    SEVEN = "7"
-    EIGHT = "8"
-    NINE = "9"
-    A = "A"
-    B = "B"
-    C = "C"
-    D = "D"
-    E = "E"
-    F = "F"
-    G = "G"
-    H = "H"
-    I = "I"
-    J = "J"
-    K = "K"
-    L = "L"
-    M = "M"
-    N = "N"
-    O = "O"
-    P = "P"
-    Q = "Q"
-    R = "R"
-    S = "S"
-    T = "T"
-    U = "U"
-    V = "V"
-
-
 class SpriteType(Enum):
+    EMPTY_WALL = auto()
+    UP_WALL = auto()
+    RIGHT_WALL = auto()
+    UP_RIGHT_WALL = auto()
+    DOWN_WALL = auto()
     VERTICAL_WALL = auto()
+    DOWN_RIGHT_WALL = auto()
+    VERTICAL_RIGHT_WALL = auto()
+    LEFT_WALL = auto()
+    UP_LEFT_WALL = auto()
+    HORIZONTAL_WALL = auto()
+    HORIZONTAL_UP_WALL = auto()
+    DOWN_LEFT_WALL = auto()
+    VERTICAL_LEFT_WALL = auto()
+    HORIZONTAL_DOWN_WALL = auto()
+    CROSS_WALL = auto()
+    FULL_WALL = auto()
 
 
 class SpriteSheet:
@@ -58,40 +40,41 @@ class SpriteSheet:
             color_key: tuple[int, int, int] = (0, 0, 0),
         ) -> None:
 
-        self.sheet = pygame.image.load(filename).convert_alpha()
-        self.sheet.set_colorkey(color_key)
+        self.__sheet = pygame.image.load(filename).convert_alpha()
+        self.__sheet.set_colorkey(color_key)
 
-        self.sheets: dict[int, dict[int, dict[SpriteCoord, pygame.Surface]]] = {
+        self.__data: dict[SpriteType, pygame.Surface] = {}
+
+        self.__sheets: dict[int, dict[int, dict[int, pygame.Surface]]] = {
             sprite_size: self._load_grid(section_start, section_end, sprite_size)
             for sprite_size, (section_start, section_end) in self._GRID_LAYOUTS.items()
         }
 
-        
+        self._load_maze()
 
     def __getitem__(
             self,
-            coordinates: tuple[int, int, SpriteCoord | str],
+            sprite: SpriteType,
         ) -> pygame.Surface:
 
-        sprite_size, row, column = coordinates
-        return self.sheets[sprite_size][row][self._normalize_column(column)]
+        return self.__data[sprite]
 
-    def sprite(
+    def _sprite(
             self,
             sprite_size: int,
             row: int,
-            column: SpriteCoord | str,
+            column: int,
         ) -> pygame.Surface:
-        return self.sheets[sprite_size][row][self._normalize_column(column)]
+        return self.__sheets[sprite_size][row][column]
 
     def _load_grid(
             self,
             top_left: tuple[int, int],
             bottom_right: tuple[int, int],
             sprite_size: int,
-        ) -> dict[int, dict[SpriteCoord, pygame.Surface]]:
+        ) -> dict[int, dict[int, pygame.Surface]]:
 
-        rows: dict[int, dict[SpriteCoord, pygame.Surface]] = {}
+        rows: dict[int, dict[int, pygame.Surface]] = {}
         row_number = 1
 
         for y in range(
@@ -99,8 +82,8 @@ class SpriteSheet:
             bottom_right[1] - sprite_size + 1,
             sprite_size + 1,
         ):
-            columns: dict[SpriteCoord, pygame.Surface] = {}
-            column_index = 0
+            columns: dict[int, pygame.Surface] = {}
+            column_index = 1
 
             for x in range(
                 top_left[0] + 1,
@@ -108,9 +91,7 @@ class SpriteSheet:
                 sprite_size + 1,
             ):
                 rect = pygame.Rect(x, y, sprite_size, sprite_size)
-                columns[self._column_from_index(column_index)] = self._scale_surface(
-                    self.sheet.subsurface(rect)
-                )
+                columns[column_index] = self._scale_surface(self.__sheet.subsurface(rect))
                 column_index += 1
 
             if columns:
@@ -120,19 +101,32 @@ class SpriteSheet:
         return rows
 
     @staticmethod
-    def _column_from_index(index: int) -> SpriteCoord:
-        return SpriteCoord(chr(ord("A") + index))
-
-    @staticmethod
-    def _normalize_column(column: SpriteCoord | str) -> SpriteCoord:
-        if isinstance(column, SpriteCoord):
-            return column
-
-        return SpriteCoord(column.upper())
-
-    @staticmethod
     def _scale_surface(surface: pygame.Surface) -> pygame.Surface:
         return pygame.transform.scale_by(surface, Settings.DEFAULT_SCALE)
+
+    def _load_maze(self) -> None:
+        self.__data[SpriteType.EMPTY_WALL] = self._sprite(16, 6, 5)
+        self.__data[SpriteType.VERTICAL_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 2, 17),
+            self._sprite(8, 2, 19),
+            self._sprite(8, 2, 17),
+            self._sprite(8, 2, 19)
+        )
+        self.__data[SpriteType.RIGHT_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 1, 17),
+            self._sprite(8, 1, 18),
+            self._sprite(8, 3, 17),
+            self._sprite(8, 3, 18)
+        )
+        self.__data[SpriteType.UP_RIGHT_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 2, 17),
+            self._sprite(8, 5, 19),
+            self._sprite(8, 3, 17),
+            self._sprite(8, 3, 18)
+        )
+        self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2()
+        self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2()
+        self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2()
 
     @staticmethod
     def _combine_sprites_2x2(

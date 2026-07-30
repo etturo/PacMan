@@ -1,6 +1,5 @@
-from .sprite_sheet import SpriteCoord, SpriteSheet
+from .sprite_sheet import SpriteSheet
 
 __all__ = [
-    "SpriteCoord",
     "SpriteSheet",
 ]
