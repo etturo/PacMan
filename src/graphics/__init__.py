@@ -1,11 +1,6 @@
-from .sprite_sheet import (SpriteCoord,
-                           SmallSpriteCoord,
-                           SpriteSheet,
-                           SpriteType)
+from .sprite_sheet import SpriteColumn, SpriteSheet
 
 __all__ = [
-    "SpriteCoord",
-    "SmallSpriteCoord",
+    "SpriteColumn",
     "SpriteSheet",
-    "SpriteType",
 ]

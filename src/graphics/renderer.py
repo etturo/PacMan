@@ -1,7 +1,7 @@
 import pygame
 
+from src.graphics.sprite_sheet import SpriteColumn, SpriteSheet
 from src.world.maze import Maze
-from src.graphics.sprite_sheet import SpriteSheet, SpriteType
 
 
 class Renderer:
@@ -20,15 +20,7 @@ class Renderer:
     def _render_maze(self, maze: Maze) -> None:
         self.__screen.fill((50, 50, 50))
 
-        self.__screen.blit(
-            self.__sheet[SpriteType.VERITCAL_WALL], (100, 300))
-        # self.__screen.blit(
-        # self.__sheet[SpriteType.TWO], (116, 300))
-        # self.__screen.blit(
-        # self.__sheet[SpriteType.THREE], (100, 316))
-        # self.__screen.blit(
-        # self.__sheet[SpriteType.VERTICAL_WALL_RIGHT], (116, 316))
-        self.__screen.blit(
-            self.__sheet[SpriteType.PACMAN_VERTICAL_STEP_1], (132, 300))
+        self.__screen.blit(self.__sheet.composites["vertical_wall"], (100, 300))
+        self.__screen.blit(self.__sheet.sheets[16][5][SpriteColumn.H], (132, 300))
 
         pygame.display.flip()
