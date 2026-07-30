@@ -1,11 +1,20 @@
-from enum import Enum
+from enum import Enum, auto
 
 import pygame
 
 from src.utils.settings import Settings
 
 
-class SpriteColumn(str, Enum):
+class SpriteCoord(str, Enum):
+    ONE = "1"
+    TWO = "2"
+    THREE = "3"
+    FOUR = "4"
+    FIVE = "5"
+    SIX = "6"
+    SEVEN = "7"
+    EIGHT = "8"
+    NINE = "9"
     A = "A"
     B = "B"
     C = "C"
@@ -28,10 +37,10 @@ class SpriteColumn(str, Enum):
     T = "T"
     U = "U"
     V = "V"
-    W = "W"
-    X = "X"
-    Y = "Y"
-    Z = "Z"
+
+
+class SpriteType(Enum):
+    VERTICAL_WALL = auto()
 
 
 class SpriteSheet:
@@ -44,47 +53,45 @@ class SpriteSheet:
     }
 
     def __init__(
-        self,
-        filename: str,
-        color_key: tuple[int, int, int] = (0, 0, 0),
-    ) -> None:
+            self,
+            filename: str,
+            color_key: tuple[int, int, int] = (0, 0, 0),
+        ) -> None:
+
         self.sheet = pygame.image.load(filename).convert_alpha()
         self.sheet.set_colorkey(color_key)
-        self.sheets: dict[int, dict[int, dict[SpriteColumn, pygame.Surface]]] = {
+
+        self.sheets: dict[int, dict[int, dict[SpriteCoord, pygame.Surface]]] = {
             sprite_size: self._load_grid(section_start, section_end, sprite_size)
             for sprite_size, (section_start, section_end) in self._GRID_LAYOUTS.items()
         }
-        self.composites: dict[str, pygame.Surface] = {
-            "vertical_wall": self._combine_sprites_2x2(
-                self.sheets[8][2][SpriteColumn.U],
-                self.sheets[8][2][SpriteColumn.T],
-                self.sheets[8][2][SpriteColumn.U],
-                self.sheets[8][2][SpriteColumn.T],
-            )
-        }
+
+        
 
     def __getitem__(
-        self,
-        coordinates: tuple[int, int, SpriteColumn | str],
-    ) -> pygame.Surface:
+            self,
+            coordinates: tuple[int, int, SpriteCoord | str],
+        ) -> pygame.Surface:
+
         sprite_size, row, column = coordinates
         return self.sheets[sprite_size][row][self._normalize_column(column)]
 
     def sprite(
-        self,
-        sprite_size: int,
-        row: int,
-        column: SpriteColumn | str,
-    ) -> pygame.Surface:
+            self,
+            sprite_size: int,
+            row: int,
+            column: SpriteCoord | str,
+        ) -> pygame.Surface:
         return self.sheets[sprite_size][row][self._normalize_column(column)]
 
     def _load_grid(
-        self,
-        top_left: tuple[int, int],
-        bottom_right: tuple[int, int],
-        sprite_size: int,
-    ) -> dict[int, dict[SpriteColumn, pygame.Surface]]:
-        rows: dict[int, dict[SpriteColumn, pygame.Surface]] = {}
+            self,
+            top_left: tuple[int, int],
+            bottom_right: tuple[int, int],
+            sprite_size: int,
+        ) -> dict[int, dict[SpriteCoord, pygame.Surface]]:
+
+        rows: dict[int, dict[SpriteCoord, pygame.Surface]] = {}
         row_number = 1
 
         for y in range(
@@ -92,7 +99,7 @@ class SpriteSheet:
             bottom_right[1] - sprite_size + 1,
             sprite_size + 1,
         ):
-            columns: dict[SpriteColumn, pygame.Surface] = {}
+            columns: dict[SpriteCoord, pygame.Surface] = {}
             column_index = 0
 
             for x in range(
@@ -113,15 +120,15 @@ class SpriteSheet:
         return rows
 
     @staticmethod
-    def _column_from_index(index: int) -> SpriteColumn:
-        return SpriteColumn(chr(ord("A") + index))
+    def _column_from_index(index: int) -> SpriteCoord:
+        return SpriteCoord(chr(ord("A") + index))
 
     @staticmethod
-    def _normalize_column(column: SpriteColumn | str) -> SpriteColumn:
-        if isinstance(column, SpriteColumn):
+    def _normalize_column(column: SpriteCoord | str) -> SpriteCoord:
+        if isinstance(column, SpriteCoord):
             return column
 
-        return SpriteColumn(column.upper())
+        return SpriteCoord(column.upper())
 
     @staticmethod
     def _scale_surface(surface: pygame.Surface) -> pygame.Surface:
@@ -129,11 +136,12 @@ class SpriteSheet:
 
     @staticmethod
     def _combine_sprites_2x2(
-        top_left: pygame.Surface,
-        top_right: pygame.Surface,
-        bottom_left: pygame.Surface,
-        bottom_right: pygame.Surface,
-    ) -> pygame.Surface:
+            top_left: pygame.Surface,
+            top_right: pygame.Surface,
+            bottom_left: pygame.Surface,
+            bottom_right: pygame.Surface,
+        ) -> pygame.Surface:
+
         single_width = top_left.get_width()
         single_height = top_left.get_height()
 
