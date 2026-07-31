@@ -25,6 +25,10 @@ class Maze:
                                 invicible_walls=self.__getBorder(x, y),))
             self.__map.append(row)
 
+    def getSize(self) -> tuple[int, int]:
+        """Returns a tuple containing the width and the height of the maze"""
+        return (self.__width, self.__height)
+
     def __str__(self) -> str:
         output: str = '\n'
 

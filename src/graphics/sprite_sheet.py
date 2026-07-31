@@ -6,7 +6,6 @@ from src.utils.settings import Settings
 
 
 class SpriteType(Enum):
-    EMPTY_WALL = auto()
     UP_WALL = auto()
     RIGHT_WALL = auto()
     UP_RIGHT_WALL = auto()
@@ -22,7 +21,6 @@ class SpriteType(Enum):
     VERTICAL_LEFT_WALL = auto()
     HORIZONTAL_DOWN_WALL = auto()
     CROSS_WALL = auto()
-    FULL_WALL = auto()
 
 
 class SpriteSheet:
@@ -91,7 +89,9 @@ class SpriteSheet:
                 sprite_size + 1,
             ):
                 rect = pygame.Rect(x, y, sprite_size, sprite_size)
-                columns[column_index] = self._scale_surface(self.__sheet.subsurface(rect))
+                columns[column_index] = self._scale_surface(
+                    self.__sheet.subsurface(rect)
+                )
                 column_index += 1
 
             if columns:
@@ -105,13 +105,6 @@ class SpriteSheet:
         return pygame.transform.scale_by(surface, Settings.DEFAULT_SCALE)
 
     def _load_maze(self) -> None:
-        self.__data[SpriteType.EMPTY_WALL] = self._sprite(16, 6, 5)
-        self.__data[SpriteType.VERTICAL_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 2, 17),
-            self._sprite(8, 2, 19),
-            self._sprite(8, 2, 17),
-            self._sprite(8, 2, 19)
-        )
         self.__data[SpriteType.RIGHT_WALL] = self._combine_sprites_2x2(
             self._sprite(8, 1, 17),
             self._sprite(8, 1, 18),
@@ -124,9 +117,78 @@ class SpriteSheet:
             self._sprite(8, 3, 17),
             self._sprite(8, 3, 18)
         )
-        self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2()
-        self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2()
-        self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2()
+        self.__data[SpriteType.DOWN_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 1, 17),
+            self._sprite(8, 1, 19),
+            self._sprite(8, 2, 17),
+            self._sprite(8, 2, 19)
+        )
+        self.__data[SpriteType.VERTICAL_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 2, 17),
+            self._sprite(8, 2, 19),
+            self._sprite(8, 2, 17),
+            self._sprite(8, 2, 19)
+        )
+        self.__data[SpriteType.DOWN_RIGHT_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 1, 17),
+            self._sprite(8, 1, 18),
+            self._sprite(8, 2, 17),
+            self._sprite(8, 6, 19)
+        )
+        self.__data[SpriteType.VERTICAL_RIGHT_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 2, 17),
+            self._sprite(8, 5, 19),
+            self._sprite(8, 2, 17),
+            self._sprite(8, 6, 19)
+        )
+        self.__data[SpriteType.LEFT_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 1, 18),
+            self._sprite(8, 1, 19),
+            self._sprite(8, 3, 18),
+            self._sprite(8, 3, 19)
+        )
+        self.__data[SpriteType.UP_LEFT_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 5, 18),
+            self._sprite(8, 2, 19),
+            self._sprite(8, 3, 18),
+            self._sprite(8, 3, 19)
+        )
+        self.__data[SpriteType.HORIZONTAL_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 1, 18),
+            self._sprite(8, 1, 18),
+            self._sprite(8, 3, 18),
+            self._sprite(8, 3, 18)
+        )
+        self.__data[SpriteType.HORIZONTAL_UP_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 5, 18),
+            self._sprite(8, 5, 19),
+            self._sprite(8, 3, 18),
+            self._sprite(8, 3, 18)
+        )
+        self.__data[SpriteType.DOWN_LEFT_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 1, 18),
+            self._sprite(8, 1, 19),
+            self._sprite(8, 6, 18),
+            self._sprite(8, 2, 19)
+        )
+        self.__data[SpriteType.VERTICAL_LEFT_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 5, 18),
+            self._sprite(8, 2, 19),
+            self._sprite(8, 6, 18),
+            self._sprite(8, 2, 19)
+        )
+        self.__data[SpriteType.HORIZONTAL_DOWN_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 1, 18),
+            self._sprite(8, 1, 18),
+            self._sprite(8, 6, 18),
+            self._sprite(8, 6, 19)
+        )
+        self.__data[SpriteType.CROSS_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 5, 18),
+            self._sprite(8, 5, 19),
+            self._sprite(8, 6, 18),
+            self._sprite(8, 6, 19)
+        )
 
     @staticmethod
     def _combine_sprites_2x2(
