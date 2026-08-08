@@ -2,7 +2,6 @@ from mazegenerator.mazegenerator import Iterator  # type: ignore
 
 from src.world.cell import Direction, Cell
 
-
 class Maze:
     """Represent the logical structure, dimensions, and grid of a maze."""
 
@@ -44,10 +43,21 @@ class Maze:
                         walls: int) -> None:
         self.__map[y][x].setCell(walls)
 
-    def __getitem__(self, pos: tuple[int, int]) -> Cell:
+    def __getitem__(self, x: int, y: int) -> Cell:
         """Read single node positional attributes safely."""
-        x, y = pos
         return self.__map[y][x]
 
     def __iter__(self) -> Iterator:
         return iter(self.__map)
+
+    def getNeighbour(self, x: int, y: int) -> dict[Direction, int]:
+        result: dict[Direction, Cell] = {}
+
+        if not self.__map[x][y - 1]:
+            result[Direction.NORTH] =
+        result[Direction.NORTH] = self.__map[x][y - 1]
+        result[Direction.SOUTH] = self.__map[x][y + 1]
+        result[Direction.WEST] = self.__map[x - 1][y]
+        result[Direction.EAST] = self.__map[x + 1][y]
+
+        return result

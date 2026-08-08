@@ -1,6 +1,7 @@
 import pygame
 
 from src.graphics.sprite_sheet import SpriteSheet, SpriteType
+from src.world.cell import Cell
 from src.world.maze import Maze
 
 
@@ -77,12 +78,9 @@ class Renderer:
         offset_x = (screen_width - (self.__cell_size * grid_columns)) / 2
         offset_y = (screen_height - (self.__cell_size * grid_rows)) / 2
 
-        for row_index, row in enumerate(maze):
-            for column_index, cell in enumerate(row):
-                center_x = offset_x + ((column_index * 2) + 1.5) * self.__cell_size
-                center_y = offset_y + ((row_index * 2) + 1.5) * self.__cell_size
-                centered_rect = self.__sheet[SpriteType.VERTICAL_WALL]
-                sprite_rect = centered_rect.get_rect(
-                    center=(int(center_x), int(center_y))
-                )
-                self.__screen.blit(centered_rect, sprite_rect)
+        for y in range(grid_columns):
+            for x in range(grid_rows):
+                rx: int = x * 2 + 1
+                ry: int = y * 2 + 1
+
+                maze.getNeighbour(x, y)

@@ -1,6 +1,7 @@
 from enum import Enum, auto
 
 import pygame
+from pygame.surface import Surface
 
 from src.utils.settings import Settings
 
@@ -189,6 +190,9 @@ class SpriteSheet:
             self._sprite(8, 6, 18),
             self._sprite(8, 6, 19)
         )
+
+    def getMazeWalls(self) -> dict[SpriteType, Surface]:
+        return self.__data
 
     @staticmethod
     def _combine_sprites_2x2(
