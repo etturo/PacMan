@@ -48,6 +48,8 @@ class Game:
         cls.__mazegen.generate((10, 10), 4)
         cls.__maze = cls.__mazegen.maze
 
+        print(cls.__maze)
+
         try:
             while cls.__is_running:
                 cls._catch_events()
@@ -57,8 +59,6 @@ class Game:
                 cls.__clock.tick(60)
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
-
-        print(cls.__maze)
 
         pygame.quit()
 
