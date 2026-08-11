@@ -7,6 +7,7 @@ from src.utils.settings import Settings
 
 
 class SpriteType(Enum):
+    EMPTY_WALL = auto()
     UP_WALL = auto()
     RIGHT_WALL = auto()
     UP_RIGHT_WALL = auto()
@@ -22,6 +23,7 @@ class SpriteType(Enum):
     VERTICAL_LEFT_WALL = auto()
     HORIZONTAL_DOWN_WALL = auto()
     CROSS_WALL = auto()
+    FULL_WALL = auto()
 
 
 class SpriteSheet:
@@ -55,8 +57,12 @@ class SpriteSheet:
             self,
             sprite: SpriteType,
         ) -> pygame.Surface:
+        try:
+            return_value = self.__data[sprite]
+        except KeyError:
+            return_value =self.__data[SpriteType.EMPTY_WALL]
 
-        return self.__data[sprite]
+        return return_value
 
     def _sprite(
             self,
@@ -106,6 +112,12 @@ class SpriteSheet:
         return pygame.transform.scale_by(surface, Settings.DEFAULT_SCALE)
 
     def _load_maze(self) -> None:
+        self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 8, 3),
+            self._sprite(8, 8, 3),
+            self._sprite(8, 8, 3),
+            self._sprite(8, 8, 3)
+        )
         self.__data[SpriteType.RIGHT_WALL] = self._combine_sprites_2x2(
             self._sprite(8, 1, 17),
             self._sprite(8, 1, 18),
@@ -189,6 +201,12 @@ class SpriteSheet:
             self._sprite(8, 5, 19),
             self._sprite(8, 6, 18),
             self._sprite(8, 6, 19)
+        )
+        self.__data[SpriteType.FULL_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 4, 17),
+            self._sprite(8, 4, 20),
+            self._sprite(8, 7, 17),
+            self._sprite(8, 7, 20)
         )
 
     def getMazeWalls(self) -> dict[SpriteType, Surface]:

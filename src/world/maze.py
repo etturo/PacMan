@@ -50,14 +50,24 @@ class Maze:
     def __iter__(self) -> Iterator:
         return iter(self.__map)
 
-    def getNeighbour(self, x: int, y: int) -> dict[Direction, int]:
+    def getNeighbour(self, x: int, y: int) -> dict[Direction, Cell]:
+        """Return neighbouring cells for the cell at (x, y).
+
+        Uses row-major storage `self.__map[y][x]`. Only include neighbours
+        that are inside the maze bounds.
+        """
         result: dict[Direction, Cell] = {}
 
-        if not self.__map[x][y - 1]:
-            result[Direction.NORTH] =
-        result[Direction.NORTH] = self.__map[x][y - 1]
-        result[Direction.SOUTH] = self.__map[x][y + 1]
-        result[Direction.WEST] = self.__map[x - 1][y]
-        result[Direction.EAST] = self.__map[x + 1][y]
+        if y > 0:
+            result[Direction.NORTH] = self.__map[y - 1][x]
+
+        if y < self.__height - 1:
+            result[Direction.SOUTH] = self.__map[y + 1][x]
+
+        if x > 0:
+            result[Direction.WEST] = self.__map[y][x - 1]
+
+        if x < self.__width - 1:
+            result[Direction.EAST] = self.__map[y][x + 1]
 
         return result

@@ -1,6 +1,7 @@
 # TODO find a solution for unimported module
 from mazegenerator import MazeGenerator  # type: ignore
 from src.world.maze import Maze
+from src.graphics.sprite_sheet import SpriteType
 
 
 class MazeWrapper:

@@ -3,6 +3,7 @@ import pygame
 from src.graphics.sprite_sheet import SpriteSheet, SpriteType
 from src.world.cell import Cell
 from src.world.maze import Maze
+from src.world.maze_wrapper import WALL_MAPPING
 
 
 class Renderer:
@@ -20,7 +21,7 @@ class Renderer:
         self.__screen.fill((50, 50, 50))
 
         self._render_grid(maze)
-        self._render_maze(maze)
+        # self._render_maze(maze)
 
         pygame.display.flip()
 
@@ -70,17 +71,77 @@ class Renderer:
                 self.__screen.blit(text, text_rect)
 
     def _render_maze(self, maze: Maze) -> None:
+        WALL_MAPPING: dict[int, SpriteType] = {
+            0: SpriteType.EMPTY_WALL,
+            1: SpriteType.UP_WALL,
+            2: SpriteType.RIGHT_WALL,
+            3: SpriteType.UP_RIGHT_WALL,
+            4: SpriteType.DOWN_WALL,
+            5: SpriteType.VERTICAL_WALL,
+            6: SpriteType.DOWN_RIGHT_WALL,
+            7: SpriteType.VERTICAL_RIGHT_WALL,
+            8: SpriteType.LEFT_WALL,
+            9: SpriteType.UP_LEFT_WALL,
+            10: SpriteType.HORIZONTAL_WALL,
+            11: SpriteType.HORIZONTAL_UP_WALL,
+            12: SpriteType.DOWN_LEFT_WALL,
+            13: SpriteType.VERTICAL_LEFT_WALL,
+            14: SpriteType.HORIZONTAL_DOWN_WALL,
+            15: SpriteType.FULL_WALL
+        }
+
+        def get_neighbour(walls: list[list[bool]], x: int, y: int) -> int:
+            result: int = 0
+
+            if not walls[y][x]:
+                return 0
+
+            result |= 1 if self.__check_wall(x, y-1) else 0
+            result |= 2 if self.__check_wall(x+1, y) else 0
+            result |= 4 if self.__check_wall(x, y+1) else 0
+            result |= 8 if self.__check_wall(x-1, y) else 0
+
+            return result
+
+        def check_wall(walls: list[int, int], x: int, y: int) -> bool:
+            return (x >= 0 and x < w and
+                y >= 0 and y < h and
+                walls[y][x])
+
         screen_width, screen_height = pygame.display.get_window_size()
-        grid_columns, grid_rows = maze.getSize()
-        grid_columns = grid_columns * 2 + 1
-        grid_rows = grid_rows * 2 + 1
+        maze_columns, maze_rows = maze.getSize()
+        v_maze_height = maze_columns * 2 + 1
+        v_maze_width = maze_rows * 2 + 1
+
+        walls: list[list[bool]] = \
+            [[False] * v_maze_width for _ in range(v_maze_height)]
 
         offset_x = (screen_width - (self.__cell_size * grid_columns)) / 2
         offset_y = (screen_height - (self.__cell_size * grid_rows)) / 2
 
-        for y in range(grid_columns):
-            for x in range(grid_rows):
+        for y in range(maze_rows):
+            for x in range(maze_columns):
                 rx: int = x * 2 + 1
                 ry: int = y * 2 + 1
 
-                maze.getNeighbour(x, y)
+                cell = maze[x, y]
+
+                n = cell.hasWall(Direction.NORTH)
+                w = cell.hasWall(Direction.WEST)
+                e = cell.hasWall(Direction.EAST)
+                s = cell.hasWall(Direction.SOUTH)
+
+                walls[ry-1][rx] |= n
+                walls[ry][rx-1] |= w
+                walls[ry][rx+1] |= e
+                walls[ry+1][rx] |= s
+
+                walls[ry-1][rx-1] |= n or w
+                walls[ry-1][rx+1] |= n or e
+                walls[ry+1][rx-1] |= s or w
+                walls[ry+1][rx+1] |= s or e
+
+
+        for y in range(v_maze_height):
+            for x in range(v_maze_width):
+                pixel_x = self.offset_x + (x * self.)
