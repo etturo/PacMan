@@ -4,6 +4,7 @@ PYTHON = $(BIN)/python3
 SRC = src
 VENV = .venv
 BIN = $(VENV)/bin
+CONFIG_FILE = "config.json"
 
 all: install run
 
@@ -11,10 +12,10 @@ install:
 	uv sync
 
 run:
-	$(PYTHON) -m $(SRC)
+	$(PYTHON) -m $(SRC) $(CONFIG_FILE)
 
 debug:
-	$(PYTHON) -m pdb -m $(SRC)
+	$(PYTHON) -m pdb -m $(SRC) $(CONFIG_FILE)
 
 clean:
 	rm -rf .venv

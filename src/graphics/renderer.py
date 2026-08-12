@@ -178,7 +178,10 @@ class Renderer:
             'data/assets/sprites/orange-sprite-sheet.png'
         )
 
-    def render(self, maze: Maze) -> None:
+    def render(
+            self,
+            maze: Maze
+            ) -> None:
         # Render BG
         self.__screen.fill((50, 50, 50))
 
@@ -188,10 +191,13 @@ class Renderer:
         pygame.display.flip()
 
     def _render_maze(self, maze: Maze) -> None:
+        # Calculation to make the tiles of the maze proportional to the size
+        # of the screen
         cell_size = min(
             self.__screen_width // maze.getSize()[0],
             self.__screen_height // maze.getSize()[1]
         ) // 2 - 1
+
         self.__maze_renderer.render(
             self.__screen,
             self.__sheet,
