@@ -39,7 +39,7 @@ class SpriteSheet:
             self,
             filename: str,
             color_key: tuple[int, int, int] = (0, 0, 0),
-        ) -> None:
+            ) -> None:
 
         self.__sheet = pygame.image.load(filename).convert_alpha()
         self.__sheet.set_colorkey(color_key)
@@ -47,8 +47,15 @@ class SpriteSheet:
         self.__data: dict[SpriteType, pygame.Surface] = {}
 
         self.__sheets: dict[int, dict[int, dict[int, pygame.Surface]]] = {
-            sprite_size: self._load_grid(section_start, section_end, sprite_size)
-            for sprite_size, (section_start, section_end) in self._GRID_LAYOUTS.items()
+            sprite_size: self._load_grid(
+                section_start,
+                section_end,
+                sprite_size
+                )
+            for sprite_size, (
+                section_start,
+                section_end
+                ) in self._GRID_LAYOUTS.items()
         }
 
         self._load_maze()
@@ -56,11 +63,11 @@ class SpriteSheet:
     def __getitem__(
             self,
             sprite: SpriteType,
-        ) -> pygame.Surface:
+            ) -> pygame.Surface:
         try:
             return_value = self.__data[sprite]
         except KeyError:
-            return_value =self.__data[SpriteType.EMPTY_WALL]
+            return_value = self.__data[SpriteType.EMPTY_WALL]
 
         return return_value
 
@@ -69,7 +76,7 @@ class SpriteSheet:
             sprite_size: int,
             row: int,
             column: int,
-        ) -> pygame.Surface:
+            ) -> pygame.Surface:
         return self.__sheets[sprite_size][row][column]
 
     def _load_grid(
@@ -77,7 +84,7 @@ class SpriteSheet:
             top_left: tuple[int, int],
             bottom_right: tuple[int, int],
             sprite_size: int,
-        ) -> dict[int, dict[int, pygame.Surface]]:
+            ) -> dict[int, dict[int, pygame.Surface]]:
 
         rows: dict[int, dict[int, pygame.Surface]] = {}
         row_number = 1
@@ -154,11 +161,12 @@ class SpriteSheet:
             self._sprite(8, 2, 17),
             self._sprite(8, 6, 19)
         )
-        self.__data[SpriteType.VERTICAL_RIGHT_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 2, 17),
-            self._sprite(8, 5, 19),
-            self._sprite(8, 2, 17),
-            self._sprite(8, 6, 19)
+        self.__data[SpriteType.VERTICAL_RIGHT_WALL] = \
+            self._combine_sprites_2x2(
+                self._sprite(8, 2, 17),
+                self._sprite(8, 5, 19),
+                self._sprite(8, 2, 17),
+                self._sprite(8, 6, 19)
         )
         self.__data[SpriteType.LEFT_WALL] = self._combine_sprites_2x2(
             self._sprite(8, 1, 18),
@@ -196,11 +204,12 @@ class SpriteSheet:
             self._sprite(8, 6, 18),
             self._sprite(8, 2, 19)
         )
-        self.__data[SpriteType.HORIZONTAL_DOWN_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 1, 18),
-            self._sprite(8, 1, 18),
-            self._sprite(8, 6, 18),
-            self._sprite(8, 6, 19)
+        self.__data[SpriteType.HORIZONTAL_DOWN_WALL] = \
+            self._combine_sprites_2x2(
+                self._sprite(8, 1, 18),
+                self._sprite(8, 1, 18),
+                self._sprite(8, 6, 18),
+                self._sprite(8, 6, 19)
         )
         self.__data[SpriteType.CROSS_WALL] = self._combine_sprites_2x2(
             self._sprite(8, 5, 18),
@@ -224,7 +233,7 @@ class SpriteSheet:
             top_right: pygame.Surface,
             bottom_left: pygame.Surface,
             bottom_right: pygame.Surface,
-        ) -> pygame.Surface:
+            ) -> pygame.Surface:
 
         single_width = top_left.get_width()
         single_height = top_left.get_height()

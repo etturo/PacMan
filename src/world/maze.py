@@ -2,6 +2,7 @@ from mazegenerator.mazegenerator import Iterator  # type: ignore
 
 from src.world.cell import Direction, Cell
 
+
 class Maze:
     """Represent the logical structure, dimensions, and grid of a maze."""
 

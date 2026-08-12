@@ -1,10 +1,25 @@
 import pygame
 
 from src.graphics.sprite_sheet import SpriteSheet, SpriteType
-from src.world.cell import Cell, Direction
+from src.world.cell import Direction
 from src.world.maze import Maze
 
+
 class MazeRender:
+    __screen: pygame.Surface
+    __sheet: SpriteSheet
+    __screen_width: int
+    __screen_height: int
+    __maze: Maze
+    __maze_columns: int
+    __maze_rows: int
+    __cell_size: int
+    __offset_x: float
+    __offset_y: float
+    __v_maze_width: int
+    __v_maze_height: int
+    __walls: list[list[bool]]
+
     __WALL_MAPPING: dict[int, SpriteType] = {
             0: SpriteType.EMPTY_WALL,
             1: SpriteType.UP_WALL,
@@ -32,13 +47,13 @@ class MazeRender:
                cell_size: int,
                screen_width: int,
                screen_height: int
-               ):
+               ) -> None:
         cls.__screen = screen
         cls.__sheet = sheet
         cls.__screen_width = screen_width
         cls.__screen_height = screen_height
 
-        cls.__maze: Maze = maze
+        cls.__maze = maze
         cls.__maze_columns = maze.getSize()[0]
         cls.__maze_rows = maze.getSize()[1]
 
@@ -49,7 +64,6 @@ class MazeRender:
             (cls.__screen_width - (cls.__cell_size * cls.__v_maze_width)) / 2
         cls.__offset_y = \
             (cls.__screen_height - (cls.__cell_size * cls.__v_maze_height)) / 2
-
 
     @classmethod
     def _check_wall(cls, x: int, y: int) -> bool:
@@ -76,7 +90,7 @@ class MazeRender:
         cls.__v_maze_height = cls.__maze_rows * 2 + 1
         cls.__v_maze_width = cls.__maze_columns * 2 + 1
 
-        cls.__walls: list[list[bool]] = \
+        cls.__walls = \
             [[False] * cls.__v_maze_width for _ in range(cls.__v_maze_height)]
 
         for y in range(cls.__maze_rows):
@@ -108,7 +122,8 @@ class MazeRender:
                maze: Maze,
                cell_size: int,
                screen_width: int,
-               screen_height: int):
+               screen_height: int
+               ) -> None:
 
         cls.__init(screen, sheet, maze, cell_size, screen_width, screen_height)
 
@@ -120,13 +135,15 @@ class MazeRender:
                 wall_map = cls._get_neighbour(x, y)
 
                 if wall_map > 0:
-                    sprite_type = cls.__WALL_MAPPING.get(wall_map)
+                    sprite_type = cls.__WALL_MAPPING.get(
+                        wall_map,
+                        SpriteType.EMPTY_WALL)
                     sprite = cls.__sheet[sprite_type]
 
                     scaled_sprite = pygame.transform.scale(
                         sprite,
                         (cls.__cell_size,
-                        cls.__cell_size)
+                         cls.__cell_size)
                     )
                     rect = scaled_sprite.get_rect(
                         center=(cell_center_x, cell_center_y)
@@ -170,7 +187,7 @@ class Renderer:
         # Update the screen
         pygame.display.flip()
 
-    def _render_maze(self, maze: Maze):
+    def _render_maze(self, maze: Maze) -> None:
         cell_size = min(
             self.__screen_width // maze.getSize()[0],
             self.__screen_height // maze.getSize()[1]

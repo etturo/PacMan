@@ -9,6 +9,7 @@ dependencies = [
     "flake8",
     "mypy",
     "mazegenerator",
+    "pydantic>=2.13.4",
 ]
 
 [tool.uv.sources]
