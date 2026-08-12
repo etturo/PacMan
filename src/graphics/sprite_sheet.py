@@ -118,6 +118,12 @@ class SpriteSheet:
             self._sprite(8, 8, 3),
             self._sprite(8, 8, 3)
         )
+        self.__data[SpriteType.UP_WALL] = self._combine_sprites_2x2(
+            self._sprite(8, 2, 17),
+            self._sprite(8, 2, 19),
+            self._sprite(8, 3, 17),
+            self._sprite(8, 3, 19)
+        )
         self.__data[SpriteType.RIGHT_WALL] = self._combine_sprites_2x2(
             self._sprite(8, 1, 17),
             self._sprite(8, 1, 18),

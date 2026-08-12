@@ -43,9 +43,9 @@ class Maze:
                         walls: int) -> None:
         self.__map[y][x].setCell(walls)
 
-    def __getitem__(self, x: int, y: int) -> Cell:
+    def __getitem__(self, pos: tuple[int, int]) -> Cell:
         """Read single node positional attributes safely."""
-        return self.__map[y][x]
+        return self.__map[pos[1]][pos[0]]
 
     def __iter__(self) -> Iterator:
         return iter(self.__map)

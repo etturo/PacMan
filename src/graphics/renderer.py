@@ -1,16 +1,19 @@
 import pygame
 
 from src.graphics.sprite_sheet import SpriteSheet, SpriteType
-from src.world.cell import Cell
+from src.world.cell import Cell, Direction
 from src.world.maze import Maze
-from src.world.maze_wrapper import WALL_MAPPING
 
 
 class Renderer:
     def __init__(self) -> None:
         pygame.init()
         self.__screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+
         pygame.display.set_caption('PacMan')
+
+        self.__screen_width = self.__screen.get_width()
+        self.__screen_height = self.__screen.get_height()
 
         self.__sheet = SpriteSheet(
             'data/assets/sprites/orange-sprite-sheet.png'
@@ -21,22 +24,21 @@ class Renderer:
         self.__screen.fill((50, 50, 50))
 
         self._render_grid(maze)
-        # self._render_maze(maze)
+        self._render_maze(maze)
 
         pygame.display.flip()
 
     def _render_grid(self, maze: Maze) -> None:
-        screen_width, screen_height = pygame.display.get_window_size()
         grid_columns, grid_rows = maze.getSize()
         grid_columns = grid_columns * 2 + 1
         grid_rows = grid_rows * 2 + 1
 
         self.__cell_size = min(
-            screen_width / grid_columns,
-            screen_height / grid_rows,
+            self.__screen_width // grid_columns,
+            self.__screen_height // grid_rows,
         ) - 1
-        offset_x = (screen_width - (self.__cell_size * grid_columns)) / 2
-        offset_y = (screen_height - (self.__cell_size * grid_rows)) / 2
+        offset_x = (self.__screen_width - (self.__cell_size * grid_columns)) / 2
+        offset_y = (self.__screen_height - (self.__cell_size * grid_rows)) / 2
 
         grid_color = (245, 245, 245)
 
@@ -90,34 +92,33 @@ class Renderer:
             15: SpriteType.FULL_WALL
         }
 
+        def check_wall(walls: list[list[bool]], x: int, y: int) -> bool:
+            h = len(walls)
+            w = len(walls[0]) if h > 0 else 0
+            return 0 <= x < w and 0 <= y < h and walls[y][x]
+
         def get_neighbour(walls: list[list[bool]], x: int, y: int) -> int:
             result: int = 0
 
             if not walls[y][x]:
                 return 0
 
-            result |= 1 if self.__check_wall(x, y-1) else 0
-            result |= 2 if self.__check_wall(x+1, y) else 0
-            result |= 4 if self.__check_wall(x, y+1) else 0
-            result |= 8 if self.__check_wall(x-1, y) else 0
+            result |= 1 if check_wall(walls, x, y-1) else 0
+            result |= 2 if check_wall(walls, x+1, y) else 0
+            result |= 4 if check_wall(walls, x, y+1) else 0
+            result |= 8 if check_wall(walls, x-1, y) else 0
 
             return result
 
-        def check_wall(walls: list[int, int], x: int, y: int) -> bool:
-            return (x >= 0 and x < w and
-                y >= 0 and y < h and
-                walls[y][x])
-
-        screen_width, screen_height = pygame.display.get_window_size()
         maze_columns, maze_rows = maze.getSize()
-        v_maze_height = maze_columns * 2 + 1
-        v_maze_width = maze_rows * 2 + 1
+        v_maze_height = maze_rows * 2 + 1
+        v_maze_width = maze_columns * 2 + 1
 
         walls: list[list[bool]] = \
             [[False] * v_maze_width for _ in range(v_maze_height)]
 
-        offset_x = (screen_width - (self.__cell_size * grid_columns)) / 2
-        offset_y = (screen_height - (self.__cell_size * grid_rows)) / 2
+        offset_x = (self.__screen_width - (self.__cell_size * v_maze_width)) / 2
+        offset_y = (self.__screen_height - (self.__cell_size * v_maze_height)) / 2
 
         for y in range(maze_rows):
             for x in range(maze_columns):
@@ -144,4 +145,15 @@ class Renderer:
 
         for y in range(v_maze_height):
             for x in range(v_maze_width):
-                pixel_x = self.offset_x + (x * self.)
+                cell_center_x = offset_x + (x + 0.5) * self.__cell_size
+                cell_center_y = offset_y + (y + 0.5) * self.__cell_size
+
+                wall_map = get_neighbour(walls, x, y)
+                self.__screen.blit(self.__sheet[SpriteType.UP_WALL], (0, 0))
+
+                if wall_map > 0:
+                    sprite_type = WALL_MAPPING.get(wall_map)
+                    sprite = self.__sheet[sprite_type]
+                    scaled_sprite = pygame.transform.scale(sprite, (self.__cell_size, self.__cell_size))
+                    rect = scaled_sprite.get_rect(center=(cell_center_x, cell_center_y))
+                    self.__screen.blit(scaled_sprite, rect)
