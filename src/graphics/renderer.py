@@ -171,11 +171,15 @@ class Renderer:
         pygame.display.flip()
 
     def _render_maze(self, maze: Maze):
+        cell_size = min(
+            self.__screen_width // maze.getSize()[0],
+            self.__screen_height // maze.getSize()[1]
+        ) // 2 - 1
         self.__maze_renderer.render(
             self.__screen,
             self.__sheet,
             maze,
-            25,
+            cell_size,
             self.__screen_width,
             self.__screen_height
             )

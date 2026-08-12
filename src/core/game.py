@@ -45,7 +45,7 @@ class Game:
 
         cls.__mazegen = MazeWrapper()
 
-        cls.__mazegen.generate((20, 20), 0)
+        cls.__mazegen.generate((15, 15), 0)
         cls.__maze = cls.__mazegen.maze
 
         print(cls.__maze)
