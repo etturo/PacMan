@@ -21,7 +21,7 @@ class MazeRender:
             12: SpriteType.DOWN_LEFT_WALL,
             13: SpriteType.VERTICAL_LEFT_WALL,
             14: SpriteType.HORIZONTAL_DOWN_WALL,
-            15: SpriteType.FULL_WALL
+            15: SpriteType.CROSS_WALL
         }
 
     @classmethod
@@ -148,10 +148,6 @@ class Renderer:
         # RENDER UTILS
         self.__screen_width = self.__screen.get_width()
         self.__screen_height = self.__screen.get_height()
-        self.__cell_size = min(
-            self.__screen_width / max(12, self.__screen_width // 32),
-            self.__screen_height /  max(12, self.__screen_height // 32)
-        )
 
         # The maze renderer is an interface that render the maze,
         # the steps to make it work are first init, so it can initialize
@@ -179,7 +175,7 @@ class Renderer:
             self.__screen,
             self.__sheet,
             maze,
-            self.__cell_size,
+            25,
             self.__screen_width,
             self.__screen_height
             )
