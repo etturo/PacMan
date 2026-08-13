@@ -174,6 +174,9 @@ class Renderer:
         # The sprite sheet represent a sheet with a color palette associeted,
         # we can load different sheets with different palette but the usage is
         # equivalent
+        self.__walls_sheet = SpriteSheet(
+            'data/assets/sprites/blue-sprite-sheet.png'
+        )
         self.__sheet = SpriteSheet(
             'data/assets/sprites/orange-sprite-sheet.png'
         )
@@ -183,7 +186,7 @@ class Renderer:
             maze: Maze
             ) -> None:
         # Render BG
-        self.__screen.fill((50, 50, 50))
+        self.__screen.fill((0, 0, 0))
 
         self._render_maze(maze)
 
@@ -200,7 +203,7 @@ class Renderer:
 
         self.__maze_renderer.render(
             self.__screen,
-            self.__sheet,
+            self.__walls_sheet,
             maze,
             cell_size,
             self.__screen_width,
