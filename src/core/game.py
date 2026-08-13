@@ -8,7 +8,7 @@ from src.world.maze_wrapper import MazeWrapper
 
 from src.graphics.renderer import Renderer
 
-from src.utils.models import BaseSettings
+from src.utils.models import BaseSettings, ParsingError
 from src.utils.parser import SettingParser
 
 
@@ -97,7 +97,10 @@ class Game:
         args = arg_parser.parse_args()
 
         parser = SettingParser()
-        cls.__game_settings = parser.parse(args.config_file)
+        try:
+            cls.__game_settings = parser.parse(args.config_file)
+        except ParsingError as exc:
+            raise SystemExit(str(exc)) from exc
 
     @classmethod
     def _generate_new_level(cls) -> None:

@@ -1,9 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, model_validator
 
 
-class ParsingError(BaseException):
-    def __init__(self) -> None:
-        ...
+class ParsingError(ValueError):
+    ...
 
 
 class LevelConfig(BaseModel):
@@ -12,12 +11,20 @@ class LevelConfig(BaseModel):
 
 
 class BaseSettings(BaseModel):
-    highscore_filename: str = "config.json"
-    levels: list[LevelConfig] = []
-    lives: int = 3
-    pacgums: int = 42
-    points_per_pacgums: int = 10
-    points_per_super_pacgums: int = 50
-    points_per_ghost: int = 200
-    seed: int = 42
-    level_max_time: int = 90
+    highscore_filename: str = Field(default="config.json")
+    levels: list[LevelConfig]
+    lives: int = Field(default=3, gt=0, le=99)
+    pacgums: int = Field(default=42, ge=0)
+    points_per_pacgums: int = Field(default=10, gt=0)
+    points_per_super_pacgums: int = Field(default=50, gt=0)
+    points_per_ghost: int = Field(default=200, gt=0)
+    seed: int = Field(default=42, ge=0)
+    level_max_time: int = Field(default=90, gt=0)
+
+    @model_validator(mode="after")
+    def validate_scores(self):
+        if self.points_per_super_pacgums <= self.points_per_pacgums:
+            raise ValueError(
+                "points_per_super_pacgums must be greater than points_per_pacgums"
+            )
+        return self
