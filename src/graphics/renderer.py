@@ -209,3 +209,6 @@ class Renderer:
             self.__screen_width,
             self.__screen_height
             )
+
+    def _render_main_menu(self) -> None:
+        pass

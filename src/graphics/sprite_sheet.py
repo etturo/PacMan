@@ -4,9 +4,11 @@ import pygame
 from pygame.surface import Surface
 
 from src.utils.settings import Settings
+from src.utils.sprite_font import SpriteFont
 
 
 class SpriteType(Enum):
+    # WALL SPRITES
     EMPTY_WALL = auto()
     UP_WALL = auto()
     RIGHT_WALL = auto()
@@ -24,6 +26,53 @@ class SpriteType(Enum):
     HORIZONTAL_DOWN_WALL = auto()
     CROSS_WALL = auto()
     FULL_WALL = auto()
+
+    # FONT SPRITES
+    L_A = auto()
+    L_B = auto()
+    L_C = auto()
+    L_D = auto()
+    L_E = auto()
+    L_F = auto()
+    L_G = auto()
+    L_H = auto()
+    L_I = auto()
+    L_J = auto()
+    L_K = auto()
+    L_L = auto()
+    L_M = auto()
+    L_N = auto()
+    L_O = auto()
+    L_P = auto()
+    L_Q = auto()
+    L_R = auto()
+    L_S = auto()
+    L_T = auto()
+    L_U = auto()
+    L_V = auto()
+    L_W = auto()
+    L_X = auto()
+    L_Y = auto()
+    L_Z = auto()
+
+    # NUMERIC SPRITES
+    NUM_0 = auto()
+    NUM_1 = auto()
+    NUM_2 = auto()
+    NUM_3 = auto()
+    NUM_4 = auto()
+    NUM_5 = auto()
+    NUM_6 = auto()
+    NUM_7 = auto()
+    NUM_8 = auto()
+    NUM_9 = auto()
+
+    # SPECIAL CHARACTER SPRITE
+    CH_ESCL = auto()
+    CH_LINE = auto()
+    CH_CPRIGHT = auto()
+    CH_POINT = auto()
+    # TODO add the namco letters to compose manco and finish to add the coordinates in the sprite_font.py file the special character sprites
 
 
 class SpriteSheet:
@@ -46,7 +95,7 @@ class SpriteSheet:
 
         self.__data: dict[SpriteType, pygame.Surface] = {}
 
-        self.__sheets: dict[int, dict[int, dict[int, pygame.Surface]]] = {
+        self.__sprite_table: dict[int, dict[int, dict[int, pygame.Surface]]] = {
             sprite_size: self._load_grid(
                 section_start,
                 section_end,
@@ -59,6 +108,7 @@ class SpriteSheet:
         }
 
         self._load_maze()
+        self._load_font()
 
     def __getitem__(
             self,
@@ -77,7 +127,7 @@ class SpriteSheet:
             row: int,
             column: int,
             ) -> pygame.Surface:
-        return self.__sheets[sprite_size][row][column]
+        return self.__sprite_table[sprite_size][row][column]
 
     def _load_grid(
             self,
@@ -249,3 +299,6 @@ class SpriteSheet:
         combined_surface.blit(bottom_right, (single_width, single_height))
 
         return combined_surface
+
+    def _load_font(self) -> None:
+        font = SpriteFont(self.__sheet, self._GRID_LAYOUTS)
