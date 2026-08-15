@@ -74,7 +74,6 @@ class SpriteType(Enum):
     CH_CPRIGHT = auto()
     CH_DOT = auto()
     CH_QUOTE = auto()
-    # TODO finish to add the coordinates in the sprite_font.py file the special character sprites
 
 
 class SpriteSheet:
