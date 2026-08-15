@@ -52,7 +52,6 @@ class Game:
 
         cls.__mazegen = MazeWrapper()
 
-
     @classmethod
     def run(cls) -> None:
         cls._init()
@@ -116,4 +115,3 @@ class Game:
 
     # @classmethod
     # def _handle_main_menu(cls) -> None:
-

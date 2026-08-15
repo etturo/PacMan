@@ -1,6 +1,7 @@
 import pygame
 
 from src.graphics.sprite_sheet import SpriteSheet, SpriteType
+from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.world.cell import Direction
 from src.world.maze import Maze
 
@@ -10,6 +11,7 @@ class MazeRender:
     __sheet: SpriteSheet
     __screen_width: int
     __screen_height: int
+    __font: SpriteFont
     __maze: Maze
     __maze_columns: int
     __maze_rows: int
@@ -211,4 +213,4 @@ class Renderer:
             )
 
     def _render_main_menu(self) -> None:
-        pass
+        ...

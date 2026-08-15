@@ -68,11 +68,13 @@ class SpriteType(Enum):
     NUM_9 = auto()
 
     # SPECIAL CHARACTER SPRITE
+    CH_SLASH = auto()
     CH_ESCL = auto()
     CH_LINE = auto()
     CH_CPRIGHT = auto()
-    CH_POINT = auto()
-    # TODO add the namco letters to compose manco and finish to add the coordinates in the sprite_font.py file the special character sprites
+    CH_DOT = auto()
+    CH_QUOTE = auto()
+    # TODO finish to add the coordinates in the sprite_font.py file the special character sprites
 
 
 class SpriteSheet:
