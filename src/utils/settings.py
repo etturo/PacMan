@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class Settings(float, Enum):
@@ -7,3 +7,11 @@ class Settings(float, Enum):
     SMALL_SPRITE_WIDTH = 8
     SPRITE_LENGHT = 16
     SPRITE_WIDTH = 16
+
+
+class GameMode(Enum):
+    MAIN_MENU = auto()
+    SETTINGS_MENU = auto()
+    PLAYING = auto()
+    PAUSED = auto()
+    GAME_OVER = auto()

@@ -6,6 +6,8 @@ from src.graphics.graphical_utils.sprite_font import SpriteFont
 
 from src.world.maze import Maze
 
+from src.utils.settings import GameMode
+
 
 class Renderer:
     def __init__(self) -> None:
@@ -35,13 +37,14 @@ class Renderer:
 
     def render(
             self,
-            maze: Maze
+            maze: Maze,
+            actual_game_mode: GameMode
             ) -> None:
         # Render BG
         self.__screen.fill((0, 0, 0))
 
-        self._render_maze(maze)
-        self._render_main_menu()
+        if actual_game_mode == GameMode.MAIN_MENU: self._render_main_menu()
+        if actual_game_mode == GameMode.PLAYING: self._render_maze()
 
         # Update the screen
         pygame.display.flip()

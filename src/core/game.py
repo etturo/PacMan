@@ -10,15 +10,10 @@ from src.graphics.renderer import Renderer
 
 from src.utils.models import BaseSettings, ParsingError
 from src.utils.parser import SettingParser
+from src.utils.settings import GameMode
 
 
 class Game:
-    class Mode(Enum):
-        MAIN_MENU = auto()
-        SETTINGS_MENU = auto()
-        PAUSED = auto()
-        GAME_OVER = auto()
-
     # GAME SETTINGS
     __is_running = True
     __fps = 60
@@ -47,6 +42,7 @@ class Game:
 
         cls.__clock = pygame.time.Clock()
         cls.__game_settings: BaseSettings
+        cls.__game_mode: GameMode = GameMode.MAIN_MENU
 
         cls.__renderer = Renderer()
 
@@ -84,7 +80,10 @@ class Game:
 
     @classmethod
     def _render_graphics(cls) -> None:
-        cls.__renderer.render(cls.__maze)
+        cls.__renderer.render(
+            cls.__maze,
+            cls.__game_mode
+            )
 
     @classmethod
     def _load_config_file(cls) -> None:
