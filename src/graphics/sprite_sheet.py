@@ -4,7 +4,6 @@ import pygame
 from pygame.surface import Surface
 
 from src.utils.settings import Settings
-from src.utils.sprite_font import SpriteFont
 
 
 class SpriteType(Enum):
@@ -74,6 +73,7 @@ class SpriteType(Enum):
     CH_CPRIGHT = auto()
     CH_DOT = auto()
     CH_QUOTE = auto()
+    CH_SPACE = auto()
 
 
 class SpriteSheet:
@@ -302,4 +302,7 @@ class SpriteSheet:
         return combined_surface
 
     def _load_font(self) -> None:
-        font = SpriteFont(self.__sheet, self._GRID_LAYOUTS)
+        # Font rendering is handled by `SpriteFont` when needed (e.g. in
+        # `Renderer`). Avoid importing or instantiating `SpriteFont` here to
+        # prevent circular imports.
+        return None

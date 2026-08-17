@@ -2,6 +2,8 @@ import pygame
 
 from src.graphics.maze_render import MazeRender
 from src.graphics.sprite_sheet import SpriteSheet
+from src.graphics.graphical_utils.sprite_font import SpriteFont
+
 from src.world.maze import Maze
 
 
@@ -39,6 +41,7 @@ class Renderer:
         self.__screen.fill((0, 0, 0))
 
         self._render_maze(maze)
+        self._render_main_menu()
 
         # Update the screen
         pygame.display.flip()
@@ -61,4 +64,6 @@ class Renderer:
             )
 
     def _render_main_menu(self) -> None:
-        ...
+        text = SpriteFont(self.__sheet)
+
+        text.render(self.__screen, 0, 0, "CIAO, sono ettore\nPACMAN")
