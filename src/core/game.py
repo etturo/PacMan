@@ -12,6 +12,8 @@ from src.utils.models import BaseSettings, ParsingError
 from src.utils.parser import SettingParser
 from src.utils.settings import GameMode
 
+from src.sounds.sound_effects import SoundEffects
+
 
 class Game:
     # GAME SETTINGS
@@ -32,6 +34,9 @@ class Game:
     # RENDER UTILS
     __renderer: Renderer
 
+    # SOUNDS UILS
+    __has_intro_played = False
+
     # WORLD ATTRIBUTES
     __maze: Maze
     __mazegen: MazeWrapper
@@ -42,9 +47,10 @@ class Game:
 
         cls.__clock = pygame.time.Clock()
         cls.__game_settings: BaseSettings
-        cls.__game_mode: GameMode = GameMode.MAIN_MENU
+        cls.__game_mode: GameMode = GameMode.STARTING
 
         cls.__renderer = Renderer()
+        cls.__sounds = SoundEffects()
 
         cls.__mazegen = MazeWrapper()
 
@@ -80,10 +86,17 @@ class Game:
 
     @classmethod
     def _render_graphics(cls) -> None:
+        if cls.__game_mode == GameMode.STARTING and not cls.__has_intro_played:
+            cls.__sounds.intro_music.play()
+            cls.__has_intro_played = True
         cls.__renderer.render(
             cls.__maze,
             cls.__game_mode
             )
+
+    @classmethod
+    def getGameMode(self) -> GameMode:
+        return self.__game_mode
 
     @classmethod
     def _load_config_file(cls) -> None:

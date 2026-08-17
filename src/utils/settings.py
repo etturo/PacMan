@@ -10,6 +10,7 @@ class Settings(float, Enum):
 
 
 class GameMode(Enum):
+    STARTING = auto()
     MAIN_MENU = auto()
     SETTINGS_MENU = auto()
     PLAYING = auto()

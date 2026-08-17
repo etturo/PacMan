@@ -4,14 +4,15 @@ from src.graphics.sprite_sheet import SpriteType, SpriteSheet
 
 
 class SpriteFont:
-    def __init__(self, sheet: SpriteSheet) -> None:
+    def __init__(self, sheet: SpriteSheet, size: int = 16) -> None:
         # note: the default size of the font is 8 because is the pixel
         #       size of the characters sprites, so if scaling is applied
         #       the value that is passed should be that value
 
-        self.__size = 8
+        self.__size = size
         self.__sheet = sheet
         self.__characters: dict[SpriteType, pygame.Surface] = {}
+        self.__original_char: dict[SpriteType, pygame.Surface]
 
         # Init of all the character in the sprite sheet
         # ALPHABET (first row)
@@ -65,7 +66,7 @@ class SpriteFont:
         self.__characters[SpriteType.CH_ESCL] = self.__sheet._sprite(8, 3, 13)
         self.__characters[SpriteType.CH_SPACE] = self.__sheet._sprite(8, 8, 11)
 
-        self.__CHAR_MAPPING: dict[str, SpriteType] = {
+        self.CHAR_MAPPING: dict[str, SpriteType] = {
             'A': SpriteType.L_A,
             'B': SpriteType.L_B,
             'C': SpriteType.L_C,
@@ -111,6 +112,9 @@ class SpriteFont:
             " ": SpriteType.CH_SPACE,
         }
 
+        self.__original_char = self.__characters.copy()
+        self.setSize(size)
+
     def render(self,
                screen: pygame.Surface,
                pos_x: int,
@@ -124,20 +128,34 @@ class SpriteFont:
         text = text.upper()
 
         for char in text:
-            if char in self.__CHAR_MAPPING:
-                sprite_type = self.__CHAR_MAPPING[char]
+            if char in self.CHAR_MAPPING:
+                sprite_type = self.CHAR_MAPPING[char]
                 sprite = self.__characters[sprite_type]
 
                 # Check if the text is going out of the surface
-                if current_x + self.__size >= screen.get_width():
+                if current_x + sprite.get_width() >= screen.get_width():
                     current_x = initial_x
-                    current_y += self.__size * 2
+                    current_y += self.__size
 
                 screen.blit(sprite, (current_x, current_y))
-                current_x += self.__size * 2
+                current_x += self.__size
+
             if char == "\n":
                 current_x = initial_x
-                current_y += self.__size * 2
+                current_y += self.__size
+
+    def getSize(self) -> int:
+        return self.__size
 
     def setSize(self, new_size: int) -> None:
+        if new_size <= 0:
+            new_size = 8
         self.__size = new_size
+
+        size = (new_size, new_size)
+
+        for sprite_type in self.CHAR_MAPPING.values():
+            self.__characters[sprite_type] = pygame.transform.scale(
+                self.__original_char[sprite_type],
+                size
+            )
