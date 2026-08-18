@@ -125,6 +125,3 @@ class Game:
             cls.__game_settings.seed
         )
         cls.__maze = cls.__mazegen.maze
-
-    # @classmethod
-    # def _handle_main_menu(cls) -> None:

@@ -73,7 +73,7 @@ class Renderer:
         cell_size = min(
             self.__screen_width // maze.getSize()[0],
             self.__screen_height // maze.getSize()[1]
-        ) // 2 - 1
+        ) // 2 - 3
 
         self.__maze_renderer.render(
             self.__screen,
