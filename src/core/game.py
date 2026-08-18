@@ -48,7 +48,7 @@ class Game:
         cls._load_config_file()
 
         cls.__clock = pygame.time.Clock()
-        cls.__game_mode = GameMode.PLAYING
+        cls.__game_mode = GameMode.MAIN_MENU
 
         cls.__renderer = Renderer()
         cls.__sounds = SoundEffects()

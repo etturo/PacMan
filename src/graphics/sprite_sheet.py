@@ -75,6 +75,16 @@ class SpriteType(Enum):
     CH_QUOTE = auto()
     CH_SPACE = auto()
 
+    # UI SPRITES
+    ## CORNERS
+    TOP_LEFT = DOWN_LEFT_WALL
+    TOP_RIGHT = DOWN_RIGHT_WALL
+    BOTTOM_LEFT = UP_LEFT_WALL
+    BOTTOM_RIGHT = UP_RIGHT_WALL
+    ## EDGES
+    HORIZONTAL_EDGE = HORIZONTAL_WALL
+    VERTICAL_EDGE = VERTICAL_WALL
+
 
 class SpriteSheet:
     """Load the atlas as three indexed grids of equally sized sprites."""

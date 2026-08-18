@@ -4,6 +4,7 @@ import random
 from src.graphics.maze_render import MazeRender
 from src.graphics.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_font import SpriteFont
+from src.graphics.ui.button import Button
 
 from src.world.maze import Maze
 
@@ -85,7 +86,14 @@ class Renderer:
             )
 
     def _render_main_menu(self) -> None:
-        text = SpriteFont(self.__sheet)
+        text = SpriteFont(self.__text_sheet)
+
+        def caqqa() -> None:
+            print(caqqa)
+
+        button = Button(100, 100, "PUZZOLO", self.__sheet, caqqa)
+
+        button.render(self.__screen)
 
         text.render(self.__screen, 0, 0, "CIAO, sono ettore\nPACMAN")
 
@@ -163,7 +171,7 @@ class Renderer:
 
             self._starting_buffer = "\n".join(lines)
 
-        if space_probability < 1.27:
+        if space_probability < 1.26:
             self.__start_text.render(self.__screen,
                                      0, 0,
                                      self._starting_buffer)
