@@ -41,13 +41,13 @@ class MazeRender:
 
     @classmethod
     def _init(cls,
-               screen: pygame.Surface,
-               sheet: SpriteSheet,
-               maze: Maze,
-               cell_size: int,
-               screen_width: int,
-               screen_height: int
-               ) -> None:
+              screen: pygame.Surface,
+              sheet: SpriteSheet,
+              maze: Maze,
+              cell_size: int,
+              screen_width: int,
+              screen_height: int
+              ) -> None:
         cls.__screen = screen
         cls.__sheet = sheet
         cls.__screen_width = screen_width
@@ -92,7 +92,8 @@ class MazeRender:
         cls.__v_maze_height = cls.__maze_rows * 2 + 1
         cls.__v_maze_width = cls.__maze_columns * 2 + 1
 
-        cls.__walls = [[False] * cls.__v_maze_width for _ in range(cls.__v_maze_height)]
+        cls.__walls = \
+            [[False] * cls.__v_maze_width for _ in range(cls.__v_maze_height)]
 
         for y in range(cls.__maze_rows):
             for x in range(cls.__maze_columns):

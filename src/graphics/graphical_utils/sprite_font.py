@@ -62,7 +62,7 @@ class SpriteFont:
         self.__characters[SpriteType.CH_LINE] = self.__sheet._sprite(8, 2, 12)
         self.__characters[SpriteType.CH_DOT] = self.__sheet._sprite(8, 2, 13)
         self.__characters[SpriteType.CH_QUOTE] = self.__sheet._sprite(8, 3, 11)
-        self.__characters[SpriteType.CH_CPRIGHT] = self.__sheet._sprite(8, 3, 12)
+        self.__characters[SpriteType.CH_CPR] = self.__sheet._sprite(8, 3, 12)
         self.__characters[SpriteType.CH_ESCL] = self.__sheet._sprite(8, 3, 13)
         self.__characters[SpriteType.CH_SPACE] = self.__sheet._sprite(8, 8, 11)
 
@@ -106,7 +106,7 @@ class SpriteFont:
             '/': SpriteType.CH_SLASH,
             '!': SpriteType.CH_ESCL,
             '-': SpriteType.CH_LINE,
-            '©': SpriteType.CH_CPRIGHT,
+            '©': SpriteType.CH_CPR,
             '.': SpriteType.CH_DOT,
             "\"": SpriteType.CH_QUOTE,
             " ": SpriteType.CH_SPACE,
@@ -120,7 +120,7 @@ class SpriteFont:
                pos_x: int,
                pos_y: int,
                text: str
-               ) -> pygame.Surface:
+               ) -> None:
 
         initial_x = pos_x
         current_x = pos_x

@@ -1,10 +1,8 @@
 import pygame
 import random
 
-from typing import Generator
-
 from src.graphics.maze_render import MazeRender
-from src.graphics.sprite_sheet import SpriteSheet, SpriteType
+from src.graphics.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_font import SpriteFont
 
 from src.world.maze import Maze
@@ -58,9 +56,12 @@ class Renderer:
         # Render BG
         self.__screen.fill((0, 0, 0))
 
-        if actual_game_mode == GameMode.STARTING: self._render_starting_screen()
-        if actual_game_mode == GameMode.MAIN_MENU: self._render_main_menu()
-        if actual_game_mode == GameMode.PLAYING: self._render_maze()
+        if actual_game_mode == GameMode.STARTING:
+            self._render_starting_screen()
+        if actual_game_mode == GameMode.MAIN_MENU:
+            self._render_main_menu()
+        if actual_game_mode == GameMode.PLAYING:
+            self._render_maze(maze)
 
         # Update the screen
         pygame.display.flip()
@@ -92,7 +93,8 @@ class Renderer:
         '''Logic of the starting screen:
         - Keep the random background linear and smooth
         - After a fixed delay, start overriding the letters with PACMAN
-        - During the reveal, characters become less likely while spaces become more likely
+        - During the reveal, characters become less likely while
+            spaces become more likely
         '''
         if not hasattr(self, "_starting_buffer"):
             self._starting_buffer = ""
@@ -100,7 +102,8 @@ class Renderer:
         glyph_size = max(8, self.__start_text.getSize())
         columns = max(10, self.__screen_width // glyph_size)
         rows = max(8, self.__screen_height // glyph_size)
-        chars = [char for char in self.__start_text.CHAR_MAPPING if char != " "]
+        chars = \
+            [char for char in self.__start_text.CHAR_MAPPING if char != " "]
         target_word = "PACMAN"
         center_row = rows // 2
         center_col = max(0, (columns // 2) - (len(target_word) // 2))
@@ -120,7 +123,9 @@ class Renderer:
                             row.append(random.choice(chars))
                     grid.append("".join(row))
                 self._starting_buffer = "\n".join(grid)
-            self.__start_text.render(self.__screen, 0, 0, self._starting_buffer)
+            self.__start_text.render(self.__screen,
+                                     0, 0,
+                                     self._starting_buffer)
             return
 
         reveal_progress = (self.__frame_count - reveal_start) / reveal_duration
@@ -128,7 +133,8 @@ class Renderer:
         space_probability = 1.0 - char_probability
 
         if self.__frame_count % 10 == 0:
-            lines = self._starting_buffer.splitlines() if self._starting_buffer else []
+            lines = (self._starting_buffer.splitlines()
+                     if self._starting_buffer else [])
             while len(lines) < rows:
                 lines.append("")
             lines = lines[:rows]
@@ -158,6 +164,10 @@ class Renderer:
             self._starting_buffer = "\n".join(lines)
 
         if space_probability < 1.27:
-            self.__start_text.render(self.__screen, 0, 0, self._starting_buffer)
+            self.__start_text.render(self.__screen,
+                                     0, 0,
+                                     self._starting_buffer)
         else:
-            self.__title_text.render(self.__screen, 0, 0, self._starting_buffer)
+            self.__title_text.render(self.__screen,
+                                     0, 0,
+                                     self._starting_buffer)

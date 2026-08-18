@@ -1,4 +1,3 @@
-from enum import Enum, auto
 from argparse import ArgumentParser
 
 import pygame
@@ -20,6 +19,8 @@ class Game:
     __is_running = True
     __fps = 60
     __actual_level: int = 0
+    __game_settings: BaseSettings
+    __game_mode: GameMode
 
     # SIMULATION UTILS
     __quit_buttons = [
@@ -35,6 +36,7 @@ class Game:
     __renderer: Renderer
 
     # SOUNDS UILS
+    __sounds: SoundEffects
     __has_intro_played = False
 
     # WORLD ATTRIBUTES
@@ -46,8 +48,7 @@ class Game:
         cls._load_config_file()
 
         cls.__clock = pygame.time.Clock()
-        cls.__game_settings: BaseSettings
-        cls.__game_mode: GameMode = GameMode.STARTING
+        cls.__game_mode = GameMode.PLAYING
 
         cls.__renderer = Renderer()
         cls.__sounds = SoundEffects()

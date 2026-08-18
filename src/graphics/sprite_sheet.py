@@ -70,7 +70,7 @@ class SpriteType(Enum):
     CH_SLASH = auto()
     CH_ESCL = auto()
     CH_LINE = auto()
-    CH_CPRIGHT = auto()
+    CH_CPR = auto()
     CH_DOT = auto()
     CH_QUOTE = auto()
     CH_SPACE = auto()
@@ -96,7 +96,14 @@ class SpriteSheet:
 
         self.__data: dict[SpriteType, pygame.Surface] = {}
 
-        self.__sprite_table: dict[int, dict[int, dict[int, pygame.Surface]]] = {
+        self.__sprite_table: (dict[int,
+                                   dict[int,
+                                        dict[int,
+                                             pygame.Surface
+                                             ]
+                                        ]
+                                   ]
+                              ) = {
             sprite_size: self._load_grid(
                 section_start,
                 section_end,
@@ -109,7 +116,6 @@ class SpriteSheet:
         }
 
         self._load_maze()
-        self._load_font()
 
     def __getitem__(
             self,
@@ -300,9 +306,3 @@ class SpriteSheet:
         combined_surface.blit(bottom_right, (single_width, single_height))
 
         return combined_surface
-
-    def _load_font(self) -> None:
-        # Font rendering is handled by `SpriteFont` when needed (e.g. in
-        # `Renderer`). Avoid importing or instantiating `SpriteFont` here to
-        # prevent circular imports.
-        return None

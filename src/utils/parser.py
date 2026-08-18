@@ -25,7 +25,8 @@ class SettingParser:
         try:
             raw_text: str = path.read_text(encoding="utf-8")
         except OSError as exc:
-            raise ParsingError(f"Could not read config file '{path}'.") from exc
+            raise ParsingError(
+                f"Could not read config file '{path}'.") from exc
 
         clean_text = self._clean_text(raw_text)
         try:
@@ -47,7 +48,8 @@ class SettingParser:
                 error_messages.append(f"Field '{location}': {message}")
 
             clean_error = "\n".join(error_messages)
-            raise ParsingError(f"Failed to load configuration:\n{clean_error}") from exc
+            raise ParsingError(
+                f"Failed to load configuration:\n{clean_error}") from exc
 
         self.__parsed_settings = results
         return results
