@@ -60,6 +60,7 @@ class MazeRender:
         cls._create_expanded_maze()
 
         cls.__cell_size = cell_size
+
         cls.__offset_x = (
             cls.__screen_width - (cls.__cell_size * cls.__v_maze_width)
         ) / 2

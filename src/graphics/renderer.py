@@ -49,6 +49,14 @@ class Renderer:
         )
         self.__title_text = SpriteFont(title_sheet, 100)
 
+        # ============ EXPERIMENTAL AREA ============
+
+        def caqqa() -> None:
+            print("caqqa")
+        self.button = Button(500, 500, "PACMNAN\nBUTTOn", self.__sheet, caqqa)
+
+        # ===========================================
+
     def render(
             self,
             maze: Maze,
@@ -74,7 +82,7 @@ class Renderer:
         cell_size = min(
             self.__screen_width // maze.getSize()[0],
             self.__screen_height // maze.getSize()[1]
-        ) // 2 - 3
+        ) // 2
 
         self.__maze_renderer.render(
             self.__screen,
@@ -88,12 +96,7 @@ class Renderer:
     def _render_main_menu(self) -> None:
         text = SpriteFont(self.__text_sheet)
 
-        def caqqa() -> None:
-            print(caqqa)
-
-        button = Button(100, 100, "PUZZOLO", self.__sheet, caqqa)
-
-        button.render(self.__screen)
+        self.button.render(self.__screen)
 
         text.render(self.__screen, 0, 0, "CIAO, sono ettore\nPACMAN")
 
@@ -171,7 +174,7 @@ class Renderer:
 
             self._starting_buffer = "\n".join(lines)
 
-        if space_probability < 1.26:
+        if space_probability < 1.15:
             self.__start_text.render(self.__screen,
                                      0, 0,
                                      self._starting_buffer)

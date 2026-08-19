@@ -13,15 +13,17 @@ class Button:
                  sprite_sheet: SpriteSheet,
                  on_click: Callable[[], None],
                  ) -> None:
+        self.__position: tuple[int, int] = (x, y)
         self.__sheet: SpriteSheet = sprite_sheet
-        self.__text = text
-        self.__on_click = on_click
-        self.__is_hovered = False
-        self.__font = SpriteFont(sprite_sheet)
+        self.__text: str = text
+        self.__on_click: Callable[[], None] = on_click
+        self.__is_hovered: bool = False
+        self.__font: SpriteFont = SpriteFont(sprite_sheet, 80)
         # Offset in pixel
         self.__offset = 5
         self.__sprite_size = self.__font.getSize()
         self.__surface: pygame.Surface
+        self.__is_surface_init: bool = False
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEMOTION:
@@ -31,37 +33,106 @@ class Button:
                 self.__on_click()
 
     def render(self, screen: pygame.Surface) -> None:
-        self._create_textbox()
+        if self.__is_surface_init == False:
+            self._create_textbox()
+            self.__is_surface_init = True
 
-        screen.blit(self.__surface)
+        screen.blit(self.__surface, self.__position)
 
     def _create_textbox(self) -> None:
-        x_padding: int = 10
-        y_padding: int = 10
-
-        box_lenght, box_height = self._calculate_text_size(
+        box_width, box_height = self._calculate_text_size(
             self.__text,
             self.__sprite_size,
             self.__offset,
             self.__font.CHAR_MAPPING
             )
 
-        border_width = max(1, box_lenght - self.__sprite_size)
-        border_height = max(1, box_height - self.__sprite_size * 2)
+        text_lines = self.__text.split("\n") or [""]
+        _, text_height = self._calculate_text_render_size(
+            self.__text,
+            self.__sprite_size,
+            self.__font.CHAR_MAPPING
+        )
+
+        inner_width = max(0, box_width - (self.__sprite_size * 2))
+        inner_height = max(0, box_height - (self.__sprite_size * 2))
+
+        y_padding: int = self.__sprite_size + max(0, (inner_height - text_height) // 2)
+
+        h_border_lenght = max(1, box_width - (self.__sprite_size * 2))
+        v_border_lenght = max(1, box_height - (self.__sprite_size * 2))
 
         horizontal_sprites = pygame.transform.scale(
             self.__sheet[SpriteType.HORIZONTAL_EDGE],
-            (border_width, self.__sprite_size * 2)
+            (h_border_lenght, self.__sprite_size)
         )
         vertical_sprites = pygame.transform.scale(
             self.__sheet[SpriteType.VERTICAL_EDGE],
-            (self.__sprite_size, border_height)
+            (self.__sprite_size, v_border_lenght)
+        )
+        top_left_sprite = pygame.transform.scale(
+            self.__sheet[SpriteType.TOP_LEFT],
+            (self.__sprite_size, self.__sprite_size)
+        )
+        top_right_sprite = pygame.transform.scale(
+            self.__sheet[SpriteType.TOP_RIGHT],
+            (self.__sprite_size, self.__sprite_size)
+        )
+        bottom_left_sprite = pygame.transform.scale(
+            self.__sheet[SpriteType.BOTTOM_LEFT],
+            (self.__sprite_size, self.__sprite_size)
+        )
+        bottom_right_sprite = pygame.transform.scale(
+            self.__sheet[SpriteType.BOTTOM_RIGHT],
+            (self.__sprite_size, self.__sprite_size)
         )
 
-        self.__surface = pygame.Surface((box_lenght, box_height))
-        self.__surface.blit(horizontal_sprites, (0, self.__sprite_size))
+        self.__surface = pygame.Surface((box_width, box_height))
 
-    #TODO FIX IT
+        # top horizontal border
+        self.__surface.blit(
+            horizontal_sprites,
+            (self.__sprite_size, 0))
+
+        # bottom horizontal border
+        self.__surface.blit(
+            horizontal_sprites,
+            (self.__sprite_size, box_height - self.__sprite_size))
+
+        # left vertical border
+        self.__surface.blit(
+            vertical_sprites,
+            (0, self.__sprite_size))
+
+        # right vertical blit
+        self.__surface.blit(
+            vertical_sprites,
+            (box_width - self.__sprite_size, self.__sprite_size))
+
+        self.__surface.blit(
+            top_left_sprite,
+            (0, 0))
+        self.__surface.blit(
+            top_right_sprite,
+            (box_width - self.__sprite_size, 0))
+        self.__surface.blit(
+            bottom_left_sprite,
+            (0, box_height - self.__sprite_size))
+        self.__surface.blit(
+            bottom_right_sprite,
+            (box_width - self.__sprite_size, box_height - self.__sprite_size))
+
+        # Center each line independently so multiline labels are truly centered.
+        for line_index, line in enumerate(text_lines):
+            line_width, _ = self._calculate_text_render_size(
+                line,
+                self.__sprite_size,
+                self.__font.CHAR_MAPPING
+            )
+            x_padding = self.__sprite_size + max(0, (inner_width - line_width) // 2)
+            line_y = y_padding + (line_index * self.__sprite_size)
+            self.__font.render(self.__surface, x_padding, line_y, line)
+
     @staticmethod
     def _calculate_text_size(text: str,
                              sprite_size: int,
@@ -87,3 +158,25 @@ class Button:
         box_height += sprite_size * 2
 
         return (box_width, box_height)
+
+    @staticmethod
+    def _calculate_text_render_size(text: str,
+                                    sprite_size: int,
+                                    CHAR_MAPPING: dict[str, SpriteType]
+                                    ) -> tuple[int, int]:
+        if not text:
+            return (0, 0)
+
+        text_lines = text.split("\n") or [""]
+        max_line_length = 0
+
+        for line in text_lines:
+            visible_chars = sum(
+                1 for char in line if char.upper() in CHAR_MAPPING
+            )
+            max_line_length = max(max_line_length, visible_chars)
+
+        text_width = max_line_length * sprite_size
+        text_height = len(text_lines) * sprite_size
+
+        return (text_width, text_height)
