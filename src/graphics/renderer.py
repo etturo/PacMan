@@ -35,7 +35,7 @@ class Renderer:
             'data/assets/sprites/blue-sprite-sheet.png'
         )
         self.__sheet = SpriteSheet(
-            'data/assets/sprites/orange-sprite-sheet.png'
+            'data/assets/sprites/b&w-sprite-sheet.png'
         )
         self.__text_sheet = SpriteSheet(
             'data/assets/sprites/white_text-sprite-sheet.png'
@@ -53,7 +53,7 @@ class Renderer:
 
         def caqqa() -> None:
             print("caqqa")
-        self.button = Button(500, 500, "PACMNAN\nBUTTOn", self.__sheet, caqqa)
+        self.button = Button(500, 500, "PACMAN BUTTON", self.__sheet, caqqa)
 
         # ===========================================
 

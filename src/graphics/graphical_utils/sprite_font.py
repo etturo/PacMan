@@ -132,10 +132,10 @@ class SpriteFont:
                 sprite_type = self.CHAR_MAPPING[char]
                 sprite = self.__characters[sprite_type]
 
-                # Check if the text is going out of the surface
-                if current_x + sprite.get_width() >= screen.get_width():
-                    current_x = initial_x
-                    current_y += self.__size
+                # # Check if the text is going out of the surface
+                # if current_x + sprite.get_width() >= screen.get_width():
+                #     current_x = initial_x
+                #     current_y += self.__size
 
                 screen.blit(sprite, (current_x, current_y))
                 current_x += self.__size

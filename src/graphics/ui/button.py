@@ -15,7 +15,7 @@ class Button:
                  ) -> None:
         self.__position: tuple[int, int] = (x, y)
         self.__sheet: SpriteSheet = sprite_sheet
-        self.__text: str = text
+        self.__text: str = text.upper()
         self.__on_click: Callable[[], None] = on_click
         self.__is_hovered: bool = False
         self.__font: SpriteFont = SpriteFont(sprite_sheet, 80)
@@ -142,7 +142,7 @@ class Button:
         if not text:
             return (sprite_size * 2, sprite_size * 2)
 
-        text_lines = text.split("\n") or [""]
+        text_lines = text.split("\n") or [text]
         max_line_length = 0
 
         for line in text_lines:
@@ -156,6 +156,8 @@ class Button:
 
         box_width += sprite_size * 2
         box_height += sprite_size * 2
+
+        print(visible_chars)
 
         return (box_width, box_height)
 
