@@ -32,12 +32,17 @@ class Button:
             if event.button == 1 and self.__is_hovered:
                 self.__on_click()
 
-    def render(self, screen: pygame.Surface) -> None:
+    def render(self, screen: pygame.Surface, centered: bool = True) -> None:
         if self.__is_surface_init == False:
             self._create_textbox()
             self.__is_surface_init = True
 
-        screen.blit(self.__surface, self.__position)
+        position = self.__position
+
+        if centered == True:
+            ...
+
+        screen.blit(self.__surface, position)
 
     def _create_textbox(self) -> None:
         box_width, box_height = self._calculate_text_size(

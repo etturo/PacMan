@@ -5,6 +5,7 @@ from src.graphics.maze_render import MazeRender
 from src.graphics.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.graphics.ui.button import Button
+from src.graphics.menu import Menu
 
 from src.world.maze import Maze
 
@@ -49,13 +50,7 @@ class Renderer:
         )
         self.__title_text = SpriteFont(title_sheet, 100)
 
-        # ============ EXPERIMENTAL AREA ============
-
-        def caqqa() -> None:
-            print("caqqa")
-        self.button = Button(500, 500, "PACMAN BUTTON", self.__sheet, caqqa)
-
-        # ===========================================
+        self.__menu: Menu = Menu()
 
     def render(
             self,
@@ -78,11 +73,11 @@ class Renderer:
 
     def _render_maze(self, maze: Maze) -> None:
         # Calculation to make the tiles of the maze proportional to the size
-        # of the screen
+        # of the screen. The -1 is to not cut out of the screen the maze
         cell_size = min(
             self.__screen_width // maze.getSize()[0],
             self.__screen_height // maze.getSize()[1]
-        ) // 2
+        ) // 2 - 1
 
         self.__maze_renderer.render(
             self.__screen,
@@ -94,11 +89,7 @@ class Renderer:
             )
 
     def _render_main_menu(self) -> None:
-        text = SpriteFont(self.__text_sheet)
-
-        self.button.render(self.__screen)
-
-        text.render(self.__screen, 0, 0, "CIAO, sono ettore\nPACMAN")
+        self.__menu.render(self.__screen)
 
     def _render_starting_screen(self) -> None:
         '''Logic of the starting screen:

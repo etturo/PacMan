@@ -20,7 +20,7 @@ class MazeRender:
     __v_maze_height: int
     __walls: list[list[bool]]
 
-    __WALL_MAPPING: dict[int, SpriteType] = {
+    WALL_MAPPING: dict[int, SpriteType] = {
         0: SpriteType.EMPTY_WALL,
         1: SpriteType.UP_WALL,
         2: SpriteType.RIGHT_WALL,
@@ -145,7 +145,7 @@ class MazeRender:
                 wall_map = cls._get_neighbour(x, y)
 
                 if wall_map > 0:
-                    sprite_type = cls.__WALL_MAPPING.get(
+                    sprite_type = cls.WALL_MAPPING.get(
                         wall_map,
                         SpriteType.EMPTY_WALL,
                     )

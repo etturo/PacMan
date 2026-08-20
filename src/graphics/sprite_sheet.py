@@ -98,11 +98,9 @@ class SpriteSheet:
     def __init__(
             self,
             filename: str,
-            color_key: tuple[int, int, int] = (0, 0, 0),
             ) -> None:
 
         self.__sheet = pygame.image.load(filename).convert_alpha()
-        self.__sheet.set_colorkey(color_key)
 
         self.__data: dict[SpriteType, pygame.Surface] = {}
 
