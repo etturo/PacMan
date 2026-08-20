@@ -10,6 +10,7 @@ from src.graphics.renderer import Renderer
 from src.utils.models import BaseSettings, ParsingError
 from src.utils.parser import SettingParser
 from src.utils.settings import GameMode
+from src.utils.sprite_library import SpriteLibrary
 
 from src.sounds.sound_effects import SoundEffects
 

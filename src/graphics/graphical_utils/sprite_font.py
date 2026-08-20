@@ -1,6 +1,6 @@
 import pygame
 
-from src.graphics.sprite_sheet import SpriteType, SpriteSheet
+from src.utils.sprite_sheet import SpriteType, SpriteSheet
 
 
 class SpriteFont:

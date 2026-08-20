@@ -1,8 +1,10 @@
 import pygame
 
 from src.graphics.ui.button import Button
-from src.graphics.sprite_sheet import SpriteSheet
-from src.graphics.graphical_utils.text_wrapper import TextWrapper
+from src.graphics.ui.text_wrapper import TextWrapper
+
+from src.utils.sprite_sheet import SpriteSheet
+from src.utils.sprite_library import SpriteLibrary
 
 
 class Menu:
@@ -13,14 +15,14 @@ class Menu:
         screen_x, screen_y = pygame.display.get_window_size()
 
         # List of sprite sheets
-        azure_sheet = SpriteSheet("data/assets/sprites/azure-sprite-sheet.png")
+        
 
         # List of buttons
         # List of text boxes
         title_txt = TextWrapper(
             "pacman",
             (screen_x / 2, screen_y / 2),
-            azure_sheet,
+            SpriteLibrary['azure'],
             100
         )
 

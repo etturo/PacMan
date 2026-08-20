@@ -2,7 +2,7 @@ import pygame
 
 from typing import Callable
 
-from src.graphics.sprite_sheet import SpriteSheet, SpriteType
+from src.utils.sprite_sheet import SpriteSheet, SpriteType
 from src.graphics.graphical_utils.sprite_font import SpriteFont
 
 class Button:

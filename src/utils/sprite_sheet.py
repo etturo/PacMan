@@ -100,7 +100,7 @@ class SpriteSheet:
             filename: str,
             ) -> None:
 
-        self.__sheet = pygame.image.load(filename).convert_alpha()
+        self.__sheet = pygame.image.load(filename)
 
         self.__data: dict[SpriteType, pygame.Surface] = {}
 

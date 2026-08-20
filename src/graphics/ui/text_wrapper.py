@@ -1,7 +1,7 @@
 import pygame
 
 from src.graphics.graphical_utils.sprite_font import SpriteFont
-from src.graphics.sprite_sheet import SpriteSheet
+from src.utils.sprite_sheet import SpriteSheet
 
 class TextWrapper:
     def __init__(

@@ -2,13 +2,14 @@ import pygame
 import random
 
 from src.graphics.maze_render import MazeRender
-from src.graphics.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.graphics.ui.button import Button
 from src.graphics.menu import Menu
 
 from src.world.maze import Maze
 
+from src.utils.sprite_library import SpriteLibrary
+from src.utils.sprite_sheet import SpriteSheet
 from src.utils.settings import GameMode
 
 
@@ -29,26 +30,13 @@ class Renderer:
         # every attribute that it need, and then the render method itself
         self.__maze_renderer: MazeRender = MazeRender()
 
-        # The sprite sheet represent a sheet with a color palette associeted,
-        # we can load different sheets with different palette but the usage is
-        # equivalent
-        self.__walls_sheet = SpriteSheet(
-            'data/assets/sprites/blue-sprite-sheet.png'
-        )
-        self.__sheet = SpriteSheet(
-            'data/assets/sprites/b&w-sprite-sheet.png'
-        )
-        self.__text_sheet = SpriteSheet(
-            'data/assets/sprites/white_text-sprite-sheet.png'
-        )
-
-        self.__text: SpriteFont = SpriteFont(self.__text_sheet)
-        self.__start_text = SpriteFont(self.__text_sheet, 100)
-
-        title_sheet = SpriteSheet(
-            'data/assets/sprites/yellow-sprite-sheet.png'
-        )
-        self.__title_text = SpriteFont(title_sheet, 100)
+        # The sprite sheet library loads all the sheets that are in the
+        # 'data/assets/sprites' folder you can access to all the sprites
+        # like a dictionary to the SpriteLibrary interface
+        SpriteLibrary()
+        # Is possible to add new key to access to the same value
+        # so it's easier to access to the same value in different contexts
+        SpriteLibrary.add_item('title', 'white_text')
 
         self.__menu: Menu = Menu()
 
