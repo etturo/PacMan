@@ -37,6 +37,7 @@ class Renderer:
         # Is possible to add new key to access to the same value
         # so it's easier to access to the same value in different contexts
         SpriteLibrary.add_item('title', 'white_text')
+        SpriteLibrary.add_item('wall_skins', 'blue')
 
         self.__menu: Menu = Menu()
 
@@ -56,7 +57,7 @@ class Renderer:
             self._render_maze(maze)
 
         # Update the screen
-        pygame.display.flip()
+        pygame.display.update()
         self.__frame_count += 1
 
     def _render_maze(self, maze: Maze) -> None:
@@ -69,7 +70,7 @@ class Renderer:
 
         self.__maze_renderer.render(
             self.__screen,
-            self.__walls_sheet,
+            SpriteLibrary['wall_skins'],
             maze,
             cell_size,
             self.__screen_width,
@@ -89,16 +90,21 @@ class Renderer:
         if not hasattr(self, "_starting_buffer"):
             self._starting_buffer = ""
 
-        glyph_size = max(8, self.__start_text.getSize())
+        if not hasattr(self, "__start_font"):
+            self.__start_font = SpriteFont(SpriteLibrary['title'], 100)
+        if not hasattr(self, "__end_font"):
+            self.__end_font = SpriteFont(SpriteLibrary['yellow'], 100)
+
+        glyph_size = max(8, self.__start_font.getSize())
         columns = max(10, self.__screen_width // glyph_size)
         rows = max(8, self.__screen_height // glyph_size)
         chars = \
-            [char for char in self.__start_text.CHAR_MAPPING if char != " "]
+            [char for char in self.__start_font.CHAR_MAPPING if char != " "]
         target_word = "PACMAN"
         center_row = rows // 2
         center_col = max(0, (columns // 2) - (len(target_word) // 2))
 
-        reveal_start = 100
+        reveal_start = 80
         reveal_duration = 100
 
         if self.__frame_count < reveal_start:
@@ -113,13 +119,13 @@ class Renderer:
                             row.append(random.choice(chars))
                     grid.append("".join(row))
                 self._starting_buffer = "\n".join(grid)
-            self.__start_text.render(self.__screen,
-                                     0, 0,
+            self.__start_font.render(self.__screen,
+                                     (0, 0),
                                      self._starting_buffer)
             return
 
         reveal_progress = (self.__frame_count - reveal_start) / reveal_duration
-        char_probability = 0.9 - (reveal_progress * 0.8)
+        char_probability = 0.9 - (reveal_progress * 1.75)
         space_probability = 1.0 - char_probability
 
         if self.__frame_count % 10 == 0:
@@ -154,10 +160,10 @@ class Renderer:
             self._starting_buffer = "\n".join(lines)
 
         if space_probability < 1.15:
-            self.__start_text.render(self.__screen,
-                                     0, 0,
+            self.__start_font.render(self.__screen,
+                                     (0, 0),
                                      self._starting_buffer)
         else:
-            self.__title_text.render(self.__screen,
-                                     0, 0,
+            self.__end_font.render(self.__screen,
+                                     (0, 0),
                                      self._starting_buffer)

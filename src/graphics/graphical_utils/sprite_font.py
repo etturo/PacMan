@@ -117,10 +117,11 @@ class SpriteFont:
 
     def render(self,
                screen: pygame.Surface,
-               pos_x: int,
-               pos_y: int,
+               position: tuple[int, int],
                text: str
                ) -> None:
+
+        pos_x, pos_y = position
 
         initial_x = pos_x
         current_x = pos_x

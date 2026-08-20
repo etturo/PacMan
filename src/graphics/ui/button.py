@@ -3,18 +3,18 @@ import pygame
 from typing import Callable
 
 from src.utils.sprite_sheet import SpriteSheet, SpriteType
-from src.graphics.graphical_utils.sprite_font import SpriteFont
 
-class Button:
+from src.graphics.graphical_utils.sprite_font import SpriteFont
+from src.graphics.drawable import Drawable
+
+class Button(Drawable):
     def __init__(self,
-                 x: int,
-                 y: int,
+                 position: tuple[int, int],
                  text: str,
                  sprite_sheet: SpriteSheet,
                  on_click: Callable[[], None],
                  ) -> None:
-        self.__position: tuple[int, int] = (x, y)
-        self.__sheet: SpriteSheet = sprite_sheet
+        super().__init__(position, sprite_sheet)
         self.__text: str = text.upper()
         self.__on_click: Callable[[], None] = on_click
         self.__is_hovered: bool = False
@@ -23,7 +23,8 @@ class Button:
         self.__offset = 5
         self.__sprite_size = self.__font.getSize()
         self.__surface: pygame.Surface
-        self.__is_surface_init: bool = False
+
+        self._create_textbox()
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEMOTION:
@@ -31,18 +32,6 @@ class Button:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1 and self.__is_hovered:
                 self.__on_click()
-
-    def render(self, screen: pygame.Surface, centered: bool = True) -> None:
-        if self.__is_surface_init == False:
-            self._create_textbox()
-            self.__is_surface_init = True
-
-        position = self.__position
-
-        if centered == True:
-            ...
-
-        screen.blit(self.__surface, position)
 
     def _create_textbox(self) -> None:
         box_width, box_height = self._calculate_text_size(
