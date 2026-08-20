@@ -68,9 +68,15 @@ class Renderer:
             self.__screen_height // maze.getSize()[1]
         ) // 2 - 1
 
+        if not self.__maze_renderer.is_initialized():
+            self.__maze_renderer.init_maze(
+                maze,
+                cell_size,
+                SpriteLibrary['wall_skins']
+                )
+
         self.__maze_renderer.render(
             self.__screen,
-            SpriteLibrary['wall_skins'],
             maze,
             cell_size,
             self.__screen_width,
