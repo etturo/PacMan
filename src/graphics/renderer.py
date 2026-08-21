@@ -96,6 +96,10 @@ class Renderer:
         if not hasattr(self, "_starting_buffer"):
             self._starting_buffer = ""
 
+        # Adjust these values to shift the starting text on screen.
+        offset_x = 50
+        offset_y = 0
+
         if not hasattr(self, "__start_font"):
             self.__start_font = SpriteFont(SpriteLibrary['title'], 100)
         if not hasattr(self, "__end_font"):
@@ -125,9 +129,11 @@ class Renderer:
                             row.append(random.choice(chars))
                     grid.append("".join(row))
                 self._starting_buffer = "\n".join(grid)
-            self.__start_font.render(self.__screen,
-                                     (0, 0),
-                                     self._starting_buffer)
+            self.__start_font.render(
+                self.__screen,
+                (offset_x, offset_y),
+                self._starting_buffer,
+            )
             return
 
         reveal_progress = (self.__frame_count - reveal_start) / reveal_duration
@@ -166,10 +172,14 @@ class Renderer:
             self._starting_buffer = "\n".join(lines)
 
         if space_probability < 1.15:
-            self.__start_font.render(self.__screen,
-                                     (0, 0),
-                                     self._starting_buffer)
+            self.__start_font.render(
+                self.__screen,
+                (offset_x, offset_y),
+                self._starting_buffer,
+            )
         else:
-            self.__end_font.render(self.__screen,
-                                     (0, 0),
-                                     self._starting_buffer)
+            self.__end_font.render(
+                self.__screen,
+                (offset_x, offset_y),
+                self._starting_buffer,
+            )
