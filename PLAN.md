@@ -17,3 +17,8 @@ the remaining time is in silence, but sticazzi
  - [x] Create a sprite library (SpriteLibrary) an interface to store all the sprite sheets into one place and let the other parts of the programs to access that variable without creating multiple instances of the same sheet.
  - [x] Create a element ABC class to inherite all the UI elements.
  - [X] Change the Maze renderer to a instanced object to use self and store the maze surface so isnt recalculated every frame.
+
+
+# BUG FOUND
+There is a bug starting the program from the terminal, that is different that starting it from the vs code terminal, the size of the character is also different.
+I dont know what could be but is significantly slower in the terminal cause of the pulling a lot of more character every time the time of calculation is higher
