@@ -22,7 +22,7 @@ class BaseSettings(BaseModel):
     level_max_time: int = Field(default=90, gt=0)
 
     @model_validator(mode="after")
-    def validate_scores(self) -> BaseSettings:
+    def validate_scores(self) -> 'BaseSettings':
         if self.points_per_super_pacgums <= self.points_per_pacgums:
             raise ValueError(
                 "points_per_super_pacgums "
