@@ -8,7 +8,7 @@ from src.graphics.ui.text import Text
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 
-from src.utils.settings import GameMode
+from src.utils.settings import GameMode, Settings
 
 
 class Menu:
@@ -16,7 +16,8 @@ class Menu:
         self.__buttons: list[Button]
         self.__texts: list[TextWrapper]
 
-        screen_width, screen_height = pygame.display.get_window_size()
+        screen_width = Settings.WINDOW_WIDTH
+        screen_height = Settings.WINDOW_HEIGHT
 
         # List of buttons
         start_button = Button(
@@ -25,6 +26,7 @@ class Menu:
             lambda: self._set_game_mode(GameMode.PLAYING),
             text='play',
             anchor='center',
+            sprite_size=50
         )
         # List of text boxes
         title_txt = Text(

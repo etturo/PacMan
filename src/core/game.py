@@ -37,8 +37,6 @@ class Game:
     __renderer: Renderer
 
     # SOUNDS UILS
-    __sounds: SoundEffect
-    __has_intro_played = False
 
     # WORLD ATTRIBUTES
     __maze: Maze
@@ -52,7 +50,6 @@ class Game:
         cls.__game_mode = GameMode.STARTING
 
         cls.__renderer = Renderer()
-        cls.__sound = SoundEffect()
 
         cls.__mazegen = MazeWrapper()
 
@@ -88,7 +85,6 @@ class Game:
                 if cls.__game_mode == GameMode.STARTING:
                     if event.key == pygame.K_RETURN:
                         cls.__game_mode = GameMode.MAIN_MENU
-                        cls.__sounds.intro_music.stop()
 
         if cls.__game_mode == GameMode.MAIN_MENU:
             cls.__renderer.handle_menu_events(events)
@@ -99,9 +95,6 @@ class Game:
 
     @classmethod
     def _render_graphics(cls) -> None:
-        if cls.__game_mode == GameMode.STARTING and not cls.__has_intro_played:
-            cls.__sounds.intro_music.play()
-            cls.__has_intro_played = True
         cls.__renderer.render(
             cls.__maze,
             cls.__game_mode

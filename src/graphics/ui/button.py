@@ -15,18 +15,19 @@ class Button(Drawable):
                  sprite_sheet: SpriteSheet,
                  on_click: Callable[[], None],
                  text: str,
+                 sprite_size: int,
                  on_click_sfx: SoundEffect | None  = None,
-                 anchor: str = "center"
+                 anchor: str = "center",
                  ) -> None:
         super().__init__(position, sprite_sheet, anchor)
         self.__text: str = text.upper()
         self.__on_click: Callable[[], None] = on_click
         self.__on_click_sfx: SoundEffect | None = on_click_sfx
         self.__is_hovered: bool = False
-        self.__font: SpriteFont = SpriteFont(sprite_sheet, 80)
+        self.__font: SpriteFont = SpriteFont(sprite_sheet, sprite_size)
         # Offset in pixel
         self.__offset = 5
-        self.__sprite_size = self.__font.getSize()
+        self.__sprite_size = sprite_size
 
         self._create_textbox()
 
