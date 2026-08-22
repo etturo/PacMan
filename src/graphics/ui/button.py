@@ -4,9 +4,10 @@ from typing import Callable
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.ui_utils import SpriteType
-
 from src.graphics.graphical_utils.sprite_font import SpriteFont, CHAR_MAPPING
 from src.graphics.ui.drawable import Drawable
+
+from src.sounds.sound_effects import SoundEffect
 
 class Button(Drawable):
     def __init__(self,
@@ -14,11 +15,13 @@ class Button(Drawable):
                  sprite_sheet: SpriteSheet,
                  on_click: Callable[[], None],
                  text: str,
+                 on_click_sfx: SoundEffect | None  = None,
                  anchor: str = "center"
                  ) -> None:
         super().__init__(position, sprite_sheet, anchor)
         self.__text: str = text.upper()
         self.__on_click: Callable[[], None] = on_click
+        self.__on_click_sfx: SoundEffect | None = on_click_sfx
         self.__is_hovered: bool = False
         self.__font: SpriteFont = SpriteFont(sprite_sheet, 80)
         # Offset in pixel
@@ -33,6 +36,8 @@ class Button(Drawable):
             self.__is_hovered = self.__rect.collidepoint(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1 and self.__is_hovered:
+                if self.__on_click_sfx:
+                    self.__on_click_sfx.play()
                 self.__on_click()
 
     def _create_textbox(self) -> None:

@@ -1,10 +1,8 @@
 import pygame
 
 
-class SoundEffects:
-    def __init__(self) -> None:
-        # TODO change the mp3 file, has not to be in the temp folder
-        pygame.mixer.init()
+class SoundEffect:
+    def __init__(self, file_path: str) -> None:
 
-        self.intro_music = pygame.mixer.Sound('temp/pac-man-startup.mp3')
+        self.intro_music = pygame.mixer.Sound(file_path)
         self.intro_music.set_volume(0.05)

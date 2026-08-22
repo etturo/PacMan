@@ -1,0 +1,1 @@
+- [ ] Create a SoundManager class similar to the sprite library to handle sounds

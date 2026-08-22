@@ -7,6 +7,7 @@ from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.ui.button import Button
+from src.graphics.ui.text import Text
 from src.graphics.menu import Menu
 
 from src.world.maze import Maze
@@ -101,10 +102,6 @@ class Renderer:
         if not hasattr(self, "_starting_buffer"):
             self._starting_buffer = ""
 
-        # Adjust these values to shift the starting text on screen.
-        offset_x = 50
-        offset_y = 0
-
         if not hasattr(self, "__start_font"):
             self.__start_font = SpriteFont(SpriteLibrary['title'], 100)
         if not hasattr(self, "__end_font"):
@@ -112,13 +109,16 @@ class Renderer:
 
         glyph_size = max(8, self.__start_font.getSize())
         columns: int = max(10, self.__screen_width // glyph_size)
+        if columns % 2 == 1:
+            columns -= 1
         rows: int = max(8, self.__screen_height // glyph_size)
 
-        chars = \
-            [char for char in CHAR_MAPPING if char != " "]
+        chars = [char for char in CHAR_MAPPING if char != " "]
         target_word = "PACMAN"
         center_row = rows // 2
-        center_col = max(0, (columns // 2) - (len(target_word) // 2))
+        # Center the word in the available columns by rounding to the nearest
+        # valid cell, instead of always floor()ing to the left.
+        start_col = max(0, int((columns - len(target_word)) / 2 + 0.5))
 
         reveal_start = 80
         reveal_duration = 100
@@ -135,11 +135,15 @@ class Renderer:
                             row.append(random.choice(chars))
                     grid.append("".join(row))
                 self._starting_buffer = "\n".join(grid)
-            self.__start_font.render(
-                self.__screen,
-                (offset_x, offset_y),
+
+            title = Text(
                 self._starting_buffer,
+                (self.__screen_width // 2, self.__screen_height // 2),
+                SpriteLibrary['title'],
+                100,
+                anchor='center',
             )
+            title.render(self.__screen)
             return
 
         reveal_progress = (self.__frame_count - reveal_start) / reveal_duration
@@ -147,24 +151,24 @@ class Renderer:
         space_probability = 1.0 - char_probability
 
         if self.__frame_count % 10 == 0:
-            lines = (self._starting_buffer.splitlines()
-                     if self._starting_buffer else [])
+            lines = (self._starting_buffer.splitlines() if self._starting_buffer else [])
             while len(lines) < rows:
                 lines.append("")
             lines = lines[:rows]
 
             for row_index in range(rows):
-                line = list(lines[row_index].ljust(columns))
-                line = line[:columns]
+                line = [" "] * columns
 
                 if row_index == center_row:
+                    for offset, char in enumerate(target_word):
+                        line[start_col + offset] = char
+
                     for col_index in range(columns):
-                        word_offset = col_index - center_col
-                        if 0 <= word_offset < len(target_word):
-                            line[col_index] = target_word[word_offset]
-                        elif random.random() < space_probability:
+                        if random.random() < space_probability and not (
+                            start_col <= col_index < start_col + len(target_word)
+                        ):
                             line[col_index] = " "
-                        else:
+                        elif not (start_col <= col_index < start_col + len(target_word)):
                             line[col_index] = random.choice(chars)
                 else:
                     for col_index in range(columns):
@@ -178,17 +182,27 @@ class Renderer:
             self._starting_buffer = "\n".join(lines)
 
         if space_probability < 1.15:
-            self.__start_font.render(
-                self.__screen,
-                (offset_x, offset_y),
-                self._starting_buffer,
-            )
+            title_sheet = SpriteLibrary['title']
         else:
-            self.__end_font.render(
-                self.__screen,
-                (offset_x, offset_y),
-                self._starting_buffer,
+            title_sheet = SpriteLibrary['yellow']
+        title = Text(
+            self._starting_buffer,
+            (self.__screen_width // 2, self.__screen_height // 2),
+            title_sheet,
+            100,
+            anchor='center',
+        )
+        title.render(self.__screen)
+
+        if space_probability > 1.15:
+            prompt = Text(
+                "PRESS ENTER",
+                (self.__screen_width // 2, self.__screen_height // 2 + 140),
+                SpriteLibrary['yellow'],
+                35,
+                anchor='center',
             )
+            prompt.render(self.__screen)
 
     def handle_menu_events(self, events: list[pygame.event.Event]) -> None:
         self.__menu.handle_events(events)

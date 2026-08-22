@@ -12,7 +12,7 @@ from src.utils.models import BaseSettings, ParsingError
 from src.utils.settings import GameMode
 from src.utils.parser import SettingParser
 
-from src.sounds.sound_effects import SoundEffects
+from src.sounds.sound_effects import SoundEffect
 
 class Game:
     # GAME SETTINGS
@@ -29,6 +29,7 @@ class Game:
     ]
 
     # PYGAME ATTRIBUTES
+    pygame.mixer.init()
     __screen: pygame.Surface
     __clock: pygame.time.Clock
 
@@ -36,7 +37,7 @@ class Game:
     __renderer: Renderer
 
     # SOUNDS UILS
-    __sounds: SoundEffects
+    __sounds: SoundEffect
     __has_intro_played = False
 
     # WORLD ATTRIBUTES
@@ -51,7 +52,7 @@ class Game:
         cls.__game_mode = GameMode.STARTING
 
         cls.__renderer = Renderer()
-        cls.__sounds = SoundEffects()
+        cls.__sound = SoundEffect()
 
         cls.__mazegen = MazeWrapper()
 
