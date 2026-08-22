@@ -14,7 +14,6 @@ from src.utils.sprite_library import SpriteLibrary
 
 from src.sounds.sound_effects import SoundEffects
 
-
 class Game:
     # GAME SETTINGS
     __is_running = True

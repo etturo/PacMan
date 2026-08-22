@@ -1,10 +1,15 @@
 from enum import Enum, auto
 
 
-class Settings(float, Enum):
+class Settings:
     DEFAULT_SCALE = 2.0
+
+    WINDOW_WIDTH = 1920
+    WINDOW_HEIGHT = 1080
+
     SMALL_SPRITE_LENGHT = 8
     SMALL_SPRITE_WIDTH = 8
+
     SPRITE_LENGHT = 16
     SPRITE_WIDTH = 16
 

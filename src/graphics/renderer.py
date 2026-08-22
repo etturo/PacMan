@@ -10,20 +10,24 @@ from src.world.maze import Maze
 
 from src.utils.sprite_library import SpriteLibrary
 from src.utils.sprite_sheet import SpriteSheet
-from src.utils.settings import GameMode
+from src.utils.settings import Settings
 
+from src.utils.settings import GameMode
 
 class Renderer:
     def __init__(self) -> None:
+        # RENDER UTILS
+        self.__screen_width = Settings.WINDOW_WIDTH
+        self.__screen_height = Settings.WINDOW_HEIGHT
+        self.__frame_count = 0
+
         # PYGAME VARIABLE INITIALIZED
         pygame.init()
-        self.__screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.__screen = pygame.display.set_mode(
+            (self.__screen_width, self.__screen_height),
+            pygame.FULLSCREEN | pygame.SCALED
+            )
         pygame.display.set_caption('PacMan')
-
-        # RENDER UTILS
-        self.__screen_width = self.__screen.get_width()
-        self.__screen_height = self.__screen.get_height()
-        self.__frame_count = 0
 
         # The maze renderer is an interface that render the maze,
         # the steps to make it work are first init, so it can initialize
@@ -106,8 +110,11 @@ class Renderer:
             self.__end_font = SpriteFont(SpriteLibrary['yellow'], 100)
 
         glyph_size = max(8, self.__start_font.getSize())
-        columns = max(10, self.__screen_width // glyph_size)
-        rows = max(8, self.__screen_height // glyph_size)
+        columns: int = max(10, self.__screen_width // glyph_size)
+        rows: int = max(8, self.__screen_height // glyph_size)
+
+        print(self.__screen_width, self.__screen_height)
+
         chars = \
             [char for char in self.__start_font.CHAR_MAPPING if char != " "]
         target_word = "PACMAN"
@@ -182,4 +189,4 @@ class Renderer:
                 self.__screen,
                 (offset_x, offset_y),
                 self._starting_buffer,
-            )
+            ) 

@@ -22,3 +22,6 @@ the remaining time is in silence, but sticazzi
 # BUG FOUND
 There is a bug starting the program from the terminal, that is different that starting it from the vs code terminal, the size of the character is also different.
 I dont know what could be but is significantly slower in the terminal cause of the pulling a lot of more character every time the time of calculation is higher
+
+## BUG FIXED
+I fixed it forcing the window resolution to be 1920x1080 and then asking to pygame to scale it in case of other resolution using pygame.SCALED
