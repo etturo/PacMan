@@ -1,4 +1,4 @@
-from src.utils.sprite_sheet import SpriteSheet
+from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 
 
 class SpriteLibrary:

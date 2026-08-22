@@ -1,6 +1,6 @@
 import pygame
 
-from src.utils.sprite_sheet import SpriteSheet, SpriteType
+from src.graphics.graphical_utils.sprite_sheet import SpriteSheet, SpriteType
 from src.world.cell import Direction
 from src.world.maze import Maze
 

@@ -1,6 +1,8 @@
 import pygame
 
-from src.utils.sprite_sheet import SpriteType, SpriteSheet
+from src.graphics.graphical_utils.sprite_sheet import SpriteType, SpriteSheet
+
+from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 
 
 class SpriteFont:
@@ -66,52 +68,6 @@ class SpriteFont:
         self.__characters[SpriteType.CH_ESCL] = self.__sheet._sprite(8, 3, 13)
         self.__characters[SpriteType.CH_SPACE] = self.__sheet._sprite(8, 8, 11)
 
-        self.CHAR_MAPPING: dict[str, SpriteType] = {
-            'A': SpriteType.L_A,
-            'B': SpriteType.L_B,
-            'C': SpriteType.L_C,
-            'D': SpriteType.L_D,
-            'E': SpriteType.L_E,
-            'F': SpriteType.L_F,
-            'G': SpriteType.L_G,
-            'H': SpriteType.L_H,
-            'I': SpriteType.L_I,
-            'J': SpriteType.L_J,
-            'K': SpriteType.L_K,
-            'L': SpriteType.L_L,
-            'M': SpriteType.L_M,
-            'N': SpriteType.L_N,
-            'O': SpriteType.L_O,
-            'P': SpriteType.L_P,
-            'Q': SpriteType.L_Q,
-            'R': SpriteType.L_R,
-            'S': SpriteType.L_S,
-            'T': SpriteType.L_T,
-            'U': SpriteType.L_U,
-            'V': SpriteType.L_V,
-            'W': SpriteType.L_W,
-            'X': SpriteType.L_X,
-            'Y': SpriteType.L_Y,
-            'Z': SpriteType.L_Z,
-            '0': SpriteType.NUM_0,
-            '1': SpriteType.NUM_1,
-            '2': SpriteType.NUM_2,
-            '3': SpriteType.NUM_3,
-            '4': SpriteType.NUM_4,
-            '5': SpriteType.NUM_5,
-            '6': SpriteType.NUM_6,
-            '7': SpriteType.NUM_7,
-            '8': SpriteType.NUM_8,
-            '9': SpriteType.NUM_9,
-            '/': SpriteType.CH_SLASH,
-            '!': SpriteType.CH_ESCL,
-            '-': SpriteType.CH_LINE,
-            '©': SpriteType.CH_CPR,
-            '.': SpriteType.CH_DOT,
-            "\"": SpriteType.CH_QUOTE,
-            " ": SpriteType.CH_SPACE,
-        }
-
         self.__original_char = self.__characters.copy()
         self.setSize(size)
 
@@ -129,14 +85,9 @@ class SpriteFont:
         text = text.upper()
 
         for char in text:
-            if char in self.CHAR_MAPPING:
-                sprite_type = self.CHAR_MAPPING[char]
+            if char in CHAR_MAPPING:
+                sprite_type = CHAR_MAPPING[char]
                 sprite = self.__characters[sprite_type]
-
-                # # Check if the text is going out of the surface
-                # if current_x + sprite.get_width() >= screen.get_width():
-                #     current_x = initial_x
-                #     current_y += self.__size
 
                 screen.blit(sprite, (current_x, current_y))
                 current_x += self.__size
@@ -155,7 +106,7 @@ class SpriteFont:
 
         size = (new_size, new_size)
 
-        for sprite_type in self.CHAR_MAPPING.values():
+        for sprite_type in CHAR_MAPPING.values():
             self.__characters[sprite_type] = pygame.transform.scale(
                 self.__original_char[sprite_type],
                 size

@@ -6,11 +6,11 @@ from src.world.maze import Maze
 from src.world.maze_wrapper import MazeWrapper
 
 from src.graphics.renderer import Renderer
+from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 
 from src.utils.models import BaseSettings, ParsingError
-from src.utils.parser import SettingParser
 from src.utils.settings import GameMode
-from src.utils.sprite_library import SpriteLibrary
+from src.utils.parser import SettingParser
 
 from src.sounds.sound_effects import SoundEffects
 
@@ -48,7 +48,7 @@ class Game:
         cls._load_config_file()
 
         cls.__clock = pygame.time.Clock()
-        cls.__game_mode = GameMode.STARTING
+        cls.__game_mode = GameMode.MAIN_MENU
 
         cls.__renderer = Renderer()
         cls.__sounds = SoundEffects()

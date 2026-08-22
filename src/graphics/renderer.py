@@ -3,13 +3,14 @@ import random
 
 from src.graphics.maze_render import MazeRender
 from src.graphics.graphical_utils.sprite_font import SpriteFont
+from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
+from src.graphics.graphical_utils.sprite_library import SpriteLibrary
+from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.ui.button import Button
 from src.graphics.menu import Menu
 
 from src.world.maze import Maze
 
-from src.utils.sprite_library import SpriteLibrary
-from src.utils.sprite_sheet import SpriteSheet
 from src.utils.settings import Settings
 
 from src.utils.settings import GameMode
@@ -113,10 +114,8 @@ class Renderer:
         columns: int = max(10, self.__screen_width // glyph_size)
         rows: int = max(8, self.__screen_height // glyph_size)
 
-        print(self.__screen_width, self.__screen_height)
-
         chars = \
-            [char for char in self.__start_font.CHAR_MAPPING if char != " "]
+            [char for char in CHAR_MAPPING if char != " "]
         target_word = "PACMAN"
         center_row = rows // 2
         center_col = max(0, (columns // 2) - (len(target_word) // 2))
