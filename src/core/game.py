@@ -48,7 +48,7 @@ class Game:
         cls._load_config_file()
 
         cls.__clock = pygame.time.Clock()
-        cls.__game_mode = GameMode.MAIN_MENU
+        cls.__game_mode = GameMode.STARTING
 
         cls.__renderer = Renderer()
         cls.__sounds = SoundEffects()
@@ -74,12 +74,23 @@ class Game:
 
     @classmethod
     def _catch_events(cls) -> None:
-        for event in pygame.event.get():
+        events = pygame.event.get()
+
+        for event in events:
             if event.type == pygame.QUIT:
                 cls.__is_running = False
+
             elif event.type == pygame.KEYDOWN:
                 if event.key in cls.__quit_buttons:
                     cls.__is_running = False
+
+                if cls.__game_mode == GameMode.STARTING:
+                    if event.key == pygame.K_RETURN:
+                        cls.__game_mode = GameMode.MAIN_MENU
+                        cls.__sounds.intro_music.stop()
+
+        if cls.__game_mode == GameMode.MAIN_MENU:
+            cls.__renderer.handle_menu_events(events)
 
     @classmethod
     def _update_logic(cls) -> None:
@@ -96,8 +107,12 @@ class Game:
             )
 
     @classmethod
-    def getGameMode(self) -> GameMode:
-        return self.__game_mode
+    def getGameMode(cls) -> GameMode:
+        return cls.__game_mode
+
+    @classmethod
+    def setGameMode(cls, game_mode: GameMode) -> None:
+        cls.__game_mode = game_mode
 
     @classmethod
     def _load_config_file(cls) -> None:

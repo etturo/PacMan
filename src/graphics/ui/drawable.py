@@ -7,26 +7,69 @@ from src.graphics.graphical_utils.ui_utils import SpriteType, CHAR_MAPPING
 
 
 class Drawable(ABC):
+    _VALID_ANCHORS = {
+        "center",
+        "topleft",
+        "topright",
+        "bottomleft",
+        "bottomright",
+        "midtop",
+        "midbottom",
+        "midleft",
+        "midright",
+    }
+
     def __init__(
             self,
             position: tuple[int, int],
             sprite_sheet: SpriteSheet,
-            centered: bool = True
+            anchor: str = "center",
         ) -> None:
         self._position = position
         self._sheet = sprite_sheet
 
-        self._centered = centered
-
+        self._anchor = self._normalize_anchor(anchor)
         self._surface: pygame.Surface
 
-    def render(self, surface: pygame.Surface) -> None:
-        if self._centered:
-            rect = self._surface.get_rect(center=self._position)
-            surface.blit(self._surface, rect)
-            return
+    @classmethod
+    def _normalize_anchor(cls, anchor: str | None) -> str:
+        if anchor is None:
+            return "center"
 
-        surface.blit(self._surface, self._position)
+        normalized = anchor.strip().lower().replace("-", "_")
+        normalized = normalized.replace(" ", "_").replace('_', "")
+        if normalized in cls._VALID_ANCHORS:
+            return normalized
+        print(f"WARINING: Unsupported anchor '{anchor}'.")
+
+    def _get_rect(self) -> pygame.Rect:
+        rect = self._surface.get_rect()
+
+        if self._anchor == "center":
+            rect.center = self._position
+        elif self._anchor == "topleft":
+            rect.topleft = self._position
+        elif self._anchor == "topright":
+            rect.topright = self._position
+        elif self._anchor == "bottomleft":
+            rect.bottomleft = self._position
+        elif self._anchor == "bottomright":
+            rect.bottomright = self._position
+        elif self._anchor == "midtop":
+            rect.midtop = self._position
+        elif self._anchor == "midbottom":
+            rect.midbottom = self._position
+        elif self._anchor == "midleft":
+            rect.midleft = self._position
+        elif self._anchor == "midright":
+            rect.midright = self._position
+        else:
+            raise ValueError(f"Unsupported anchor '{self._anchor}'.")
+
+        return rect
+
+    def render(self, surface: pygame.Surface) -> None:
+        surface.blit(self._surface, self._get_rect())
 
     @staticmethod
     def _calculate_text_size(

@@ -14,9 +14,9 @@ class Button(Drawable):
                  sprite_sheet: SpriteSheet,
                  on_click: Callable[[], None],
                  text: str,
-                 centered: bool = True
+                 anchor: str = "center"
                  ) -> None:
-        super().__init__(position, sprite_sheet, centered)
+        super().__init__(position, sprite_sheet, anchor)
         self.__text: str = text.upper()
         self.__on_click: Callable[[], None] = on_click
         self.__is_hovered: bool = False
@@ -29,6 +29,7 @@ class Button(Drawable):
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEMOTION:
+            self.__rect = self._get_rect()
             self.__is_hovered = self.__rect.collidepoint(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1 and self.__is_hovered:
@@ -45,8 +46,7 @@ class Button(Drawable):
         text_lines = self.__text.split("\n") or [""]
         _, text_height = self._calculate_text_render_size(
             self.__text,
-            self.__sprite_size,
-            CHAR_MAPPING
+            self.__sprite_size
         )
 
         inner_width = max(0, box_width - (self.__sprite_size * 2))
@@ -58,31 +58,32 @@ class Button(Drawable):
         v_border_lenght = max(1, box_height - (self.__sprite_size * 2))
 
         horizontal_sprites = pygame.transform.scale(
-            self.__sheet[SpriteType.HORIZONTAL_EDGE],
+            self._sheet[SpriteType.HORIZONTAL_EDGE],
             (h_border_lenght, self.__sprite_size)
         )
         vertical_sprites = pygame.transform.scale(
-            self.__sheet[SpriteType.VERTICAL_EDGE],
+            self._sheet[SpriteType.VERTICAL_EDGE],
             (self.__sprite_size, v_border_lenght)
         )
         top_left_sprite = pygame.transform.scale(
-            self.__sheet[SpriteType.TOP_LEFT],
+            self._sheet[SpriteType.TOP_LEFT],
             (self.__sprite_size, self.__sprite_size)
         )
         top_right_sprite = pygame.transform.scale(
-            self.__sheet[SpriteType.TOP_RIGHT],
+            self._sheet[SpriteType.TOP_RIGHT],
             (self.__sprite_size, self.__sprite_size)
         )
         bottom_left_sprite = pygame.transform.scale(
-            self.__sheet[SpriteType.BOTTOM_LEFT],
+            self._sheet[SpriteType.BOTTOM_LEFT],
             (self.__sprite_size, self.__sprite_size)
         )
         bottom_right_sprite = pygame.transform.scale(
-            self.__sheet[SpriteType.BOTTOM_RIGHT],
+            self._sheet[SpriteType.BOTTOM_RIGHT],
             (self.__sprite_size, self.__sprite_size)
         )
 
         self._surface = pygame.Surface((box_width, box_height))
+        self.__rect = self._get_rect()
 
         # top horizontal border
         self._surface.blit(
@@ -125,7 +126,7 @@ class Button(Drawable):
             )
             x_padding = self.__sprite_size + max(0, (inner_width - line_width) // 2)
             line_y = y_padding + (line_index * self.__sprite_size)
-            self.__font.render(self._surface, x_padding, line_y, line)
+            self.__font.render(self._surface, (x_padding, line_y), line)
 
     @staticmethod
     def _calculate_text_render_size(text: str,

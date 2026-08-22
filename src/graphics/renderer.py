@@ -188,4 +188,7 @@ class Renderer:
                 self.__screen,
                 (offset_x, offset_y),
                 self._starting_buffer,
-            ) 
+            )
+
+    def handle_menu_events(self, events: list[pygame.event.Event]) -> None:
+        self.__menu.handle_events(events)

@@ -12,9 +12,9 @@ class Text(Drawable):
             position: tuple[int, int],
             sprite_sheet: SpriteSheet,
             text_size: int,
-            centered: bool = True
+            anchor: str = "center",
         ) -> None:
-        super().__init__(position, sprite_sheet, centered)
+        super().__init__(position, sprite_sheet, anchor)
 
         self.__text = text.upper()
         self.__font = SpriteFont(sprite_sheet, text_size)
