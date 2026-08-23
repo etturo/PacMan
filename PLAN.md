@@ -19,9 +19,10 @@ the remaining time is in silence, but sticazzi
  - [X] Change the Maze renderer to a instanced object to use self and store the maze surface so isnt recalculated every frame.
 
 
-# BUG FOUND
-There is a bug starting the program from the terminal, that is different that starting it from the vs code terminal, the size of the character is also different.
-I dont know what could be but is significantly slower in the terminal cause of the pulling a lot of more character every time the time of calculation is higher
-
-## BUG FIXED
-I fixed it forcing the window resolution to be 1920x1080 and then asking to pygame to scale it in case of other resolution using pygame.SCALED
+# FUTURE ARCHITECTURAL IMPROVEMENTS
+ - [ ] **Refactor Game Class to Instance-Based:** Replace the static `@classmethod` structure with an instantiable class to improve testability and allow clean state initialization/resets.
+ - [ ] **Implement Game State Manager (State Pattern):** Decouple `GameMode` logic from rendering and loop functions. Use a context manager/state machine with independent state classes (e.g., `MenuState`, `PlayingState`).
+ - [ ] **Add Virtual Resolution and Aspect Ratio Scaling (Letterboxing):** Render the game to a fixed-size retro canvas (e.g., 448x496) and scale it dynamically to fit the window with letterboxing.
+ - [ ] **Fix Config Field Name Mismatch (Pydantic <-> JSON):** Rename `pacgum` to `pacgums` and `points_per_pacgum` to `points_per_pacgums` in `config.json` (or use validation aliases in `src/utils/models.py`) so configuration changes are not silently ignored.
+ - [ ] **Relocate Sound Assets:** Move `pac-man-startup.mp3` from `temp/` to a permanent assets subdirectory (e.g., `data/assets/sounds/`) and reference it cleanly.
+ - [ ] **Implement Movement, Collision, and AI Systems:** Complete the empty `Entity`, `Pacman`, and `Ghost` stubs using grid-to-screen coordinate mapping and standard Pac-man ghost behaviors.
