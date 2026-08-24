@@ -58,7 +58,7 @@ class SpriteSheet:
 
         return return_value
 
-    def _sprite(
+    def getSprite(
             self,
             sprite_size: int,
             row: int,
@@ -107,108 +107,108 @@ class SpriteSheet:
 
     def _load_maze(self) -> None:
         self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 8, 3),
-            self._sprite(8, 8, 3),
-            self._sprite(8, 8, 3),
-            self._sprite(8, 8, 3)
+            self.getSprite(8, 8, 3),
+            self.getSprite(8, 8, 3),
+            self.getSprite(8, 8, 3),
+            self.getSprite(8, 8, 3)
         )
         self.__data[SpriteType.UP_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 2, 17),
-            self._sprite(8, 2, 19),
-            self._sprite(8, 3, 17),
-            self._sprite(8, 3, 19)
+            self.getSprite(8, 2, 17),
+            self.getSprite(8, 2, 19),
+            self.getSprite(8, 3, 17),
+            self.getSprite(8, 3, 19)
         )
         self.__data[SpriteType.RIGHT_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 1, 17),
-            self._sprite(8, 1, 18),
-            self._sprite(8, 3, 17),
-            self._sprite(8, 3, 18)
+            self.getSprite(8, 1, 17),
+            self.getSprite(8, 1, 18),
+            self.getSprite(8, 3, 17),
+            self.getSprite(8, 3, 18)
         )
         self.__data[SpriteType.UP_RIGHT_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 2, 17),
-            self._sprite(8, 5, 19),
-            self._sprite(8, 3, 17),
-            self._sprite(8, 3, 18)
+            self.getSprite(8, 2, 17),
+            self.getSprite(8, 5, 19),
+            self.getSprite(8, 3, 17),
+            self.getSprite(8, 3, 18)
         )
         self.__data[SpriteType.DOWN_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 1, 17),
-            self._sprite(8, 1, 19),
-            self._sprite(8, 2, 17),
-            self._sprite(8, 2, 19)
+            self.getSprite(8, 1, 17),
+            self.getSprite(8, 1, 19),
+            self.getSprite(8, 2, 17),
+            self.getSprite(8, 2, 19)
         )
         self.__data[SpriteType.VERTICAL_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 2, 17),
-            self._sprite(8, 2, 19),
-            self._sprite(8, 2, 17),
-            self._sprite(8, 2, 19)
+            self.getSprite(8, 2, 17),
+            self.getSprite(8, 2, 19),
+            self.getSprite(8, 2, 17),
+            self.getSprite(8, 2, 19)
         )
         self.__data[SpriteType.DOWN_RIGHT_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 1, 17),
-            self._sprite(8, 1, 18),
-            self._sprite(8, 2, 17),
-            self._sprite(8, 6, 19)
+            self.getSprite(8, 1, 17),
+            self.getSprite(8, 1, 18),
+            self.getSprite(8, 2, 17),
+            self.getSprite(8, 6, 19)
         )
         self.__data[SpriteType.VERTICAL_RIGHT_WALL] = \
             self._combine_sprites_2x2(
-                self._sprite(8, 2, 17),
-                self._sprite(8, 5, 19),
-                self._sprite(8, 2, 17),
-                self._sprite(8, 6, 19)
+                self.getSprite(8, 2, 17),
+                self.getSprite(8, 5, 19),
+                self.getSprite(8, 2, 17),
+                self.getSprite(8, 6, 19)
         )
         self.__data[SpriteType.LEFT_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 1, 18),
-            self._sprite(8, 1, 19),
-            self._sprite(8, 3, 18),
-            self._sprite(8, 3, 19)
+            self.getSprite(8, 1, 18),
+            self.getSprite(8, 1, 19),
+            self.getSprite(8, 3, 18),
+            self.getSprite(8, 3, 19)
         )
         self.__data[SpriteType.UP_LEFT_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 5, 18),
-            self._sprite(8, 2, 19),
-            self._sprite(8, 3, 18),
-            self._sprite(8, 3, 19)
+            self.getSprite(8, 5, 18),
+            self.getSprite(8, 2, 19),
+            self.getSprite(8, 3, 18),
+            self.getSprite(8, 3, 19)
         )
         self.__data[SpriteType.HORIZONTAL_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 1, 18),
-            self._sprite(8, 1, 18),
-            self._sprite(8, 3, 18),
-            self._sprite(8, 3, 18)
+            self.getSprite(8, 1, 18),
+            self.getSprite(8, 1, 18),
+            self.getSprite(8, 3, 18),
+            self.getSprite(8, 3, 18)
         )
         self.__data[SpriteType.HORIZONTAL_UP_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 5, 18),
-            self._sprite(8, 5, 19),
-            self._sprite(8, 3, 18),
-            self._sprite(8, 3, 18)
+            self.getSprite(8, 5, 18),
+            self.getSprite(8, 5, 19),
+            self.getSprite(8, 3, 18),
+            self.getSprite(8, 3, 18)
         )
         self.__data[SpriteType.DOWN_LEFT_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 1, 18),
-            self._sprite(8, 1, 19),
-            self._sprite(8, 6, 18),
-            self._sprite(8, 2, 19)
+            self.getSprite(8, 1, 18),
+            self.getSprite(8, 1, 19),
+            self.getSprite(8, 6, 18),
+            self.getSprite(8, 2, 19)
         )
         self.__data[SpriteType.VERTICAL_LEFT_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 5, 18),
-            self._sprite(8, 2, 19),
-            self._sprite(8, 6, 18),
-            self._sprite(8, 2, 19)
+            self.getSprite(8, 5, 18),
+            self.getSprite(8, 2, 19),
+            self.getSprite(8, 6, 18),
+            self.getSprite(8, 2, 19)
         )
         self.__data[SpriteType.HORIZONTAL_DOWN_WALL] = \
             self._combine_sprites_2x2(
-                self._sprite(8, 1, 18),
-                self._sprite(8, 1, 18),
-                self._sprite(8, 6, 18),
-                self._sprite(8, 6, 19)
+                self.getSprite(8, 1, 18),
+                self.getSprite(8, 1, 18),
+                self.getSprite(8, 6, 18),
+                self.getSprite(8, 6, 19)
         )
         self.__data[SpriteType.CROSS_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 5, 18),
-            self._sprite(8, 5, 19),
-            self._sprite(8, 6, 18),
-            self._sprite(8, 6, 19)
+            self.getSprite(8, 5, 18),
+            self.getSprite(8, 5, 19),
+            self.getSprite(8, 6, 18),
+            self.getSprite(8, 6, 19)
         )
         self.__data[SpriteType.FULL_WALL] = self._combine_sprites_2x2(
-            self._sprite(8, 4, 17),
-            self._sprite(8, 4, 20),
-            self._sprite(8, 7, 17),
-            self._sprite(8, 7, 20)
+            self.getSprite(8, 4, 17),
+            self.getSprite(8, 4, 20),
+            self.getSprite(8, 7, 17),
+            self.getSprite(8, 7, 20)
         )
 
     def getMazeWalls(self) -> dict[SpriteType, Surface]:

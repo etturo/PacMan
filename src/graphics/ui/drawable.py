@@ -75,6 +75,7 @@ class Drawable(ABC):
     def _calculate_text_size(
         text: str,
         sprite_size: int = 0,
+        box_sprite_size: int = 0,
         offset: int = 0,
         include_padding: bool = False,
     ) -> tuple[int, int]:
@@ -98,7 +99,7 @@ class Drawable(ABC):
         box_height = max(1, len(text_lines)) * (sprite_size + offset)
 
         if include_padding:
-            box_width += sprite_size * 2
-            box_height += sprite_size * 2
+            box_width += box_sprite_size * 2
+            box_height += box_sprite_size * 2
 
         return (box_width, box_height)

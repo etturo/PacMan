@@ -67,8 +67,9 @@ class Game:
                 cls.__clock.tick(cls.__fps)
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
-        finally:
             pygame.quit()
+        exit()
+        pygame.quit()
 
     @classmethod
     def _catch_events(cls) -> None:
@@ -107,6 +108,10 @@ class Game:
     @classmethod
     def setGameMode(cls, game_mode: GameMode) -> None:
         cls.__game_mode = game_mode
+
+    @classmethod
+    def quit(cls) -> None:
+        cls.__is_running = False
 
     @classmethod
     def _load_config_file(cls) -> None:

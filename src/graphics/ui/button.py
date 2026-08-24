@@ -42,9 +42,13 @@ class Button(Drawable):
                 self.__on_click()
 
     def _create_textbox(self) -> None:
+        text_size = self.__sprite_size
+        box_sprite_size = text_size / 2
+
         box_width, box_height = self._calculate_text_size(
             text=self.__text,
-            sprite_size=self.__sprite_size,
+            sprite_size=text_size,
+            box_sprite_size=box_sprite_size,
             offset=self.__offset,
             include_padding=True,
         )
@@ -55,37 +59,37 @@ class Button(Drawable):
             self.__sprite_size
         )
 
-        inner_width = max(0, box_width - (self.__sprite_size * 2))
-        inner_height = max(0, box_height - (self.__sprite_size * 2))
+        inner_width = max(0, box_width - (box_sprite_size * 2))
+        inner_height = max(0, box_height - (box_sprite_size * 2))
 
-        y_padding: int = self.__sprite_size + max(0, (inner_height - text_height) // 2)
+        y_padding: int = box_sprite_size + max(0, (inner_height - text_height) / 2)
 
-        h_border_lenght = max(1, box_width - (self.__sprite_size * 2))
-        v_border_lenght = max(1, box_height - (self.__sprite_size * 2))
+        h_border_lenght = max(1, box_width - (box_sprite_size * 2))
+        v_border_lenght = max(1, box_height - (box_sprite_size * 2))
 
         horizontal_sprites = pygame.transform.scale(
             self._sheet[SpriteType.HORIZONTAL_EDGE],
-            (h_border_lenght, self.__sprite_size)
+            (h_border_lenght, box_sprite_size)
         )
         vertical_sprites = pygame.transform.scale(
             self._sheet[SpriteType.VERTICAL_EDGE],
-            (self.__sprite_size, v_border_lenght)
+            (box_sprite_size, v_border_lenght)
         )
         top_left_sprite = pygame.transform.scale(
             self._sheet[SpriteType.TOP_LEFT],
-            (self.__sprite_size, self.__sprite_size)
+            (box_sprite_size, box_sprite_size)
         )
         top_right_sprite = pygame.transform.scale(
             self._sheet[SpriteType.TOP_RIGHT],
-            (self.__sprite_size, self.__sprite_size)
+            (box_sprite_size, box_sprite_size)
         )
         bottom_left_sprite = pygame.transform.scale(
             self._sheet[SpriteType.BOTTOM_LEFT],
-            (self.__sprite_size, self.__sprite_size)
+            (box_sprite_size, box_sprite_size)
         )
         bottom_right_sprite = pygame.transform.scale(
             self._sheet[SpriteType.BOTTOM_RIGHT],
-            (self.__sprite_size, self.__sprite_size)
+            (box_sprite_size, box_sprite_size)
         )
 
         self._surface = pygame.Surface((box_width, box_height))
@@ -94,44 +98,44 @@ class Button(Drawable):
         # top horizontal border
         self._surface.blit(
             horizontal_sprites,
-            (self.__sprite_size, 0))
+            (box_sprite_size, 0))
 
         # bottom horizontal border
         self._surface.blit(
             horizontal_sprites,
-            (self.__sprite_size, box_height - self.__sprite_size))
+            (box_sprite_size, box_height - box_sprite_size))
 
         # left vertical border
         self._surface.blit(
             vertical_sprites,
-            (0, self.__sprite_size))
+            (0, box_sprite_size))
 
         # right vertical blit
         self._surface.blit(
             vertical_sprites,
-            (box_width - self.__sprite_size, self.__sprite_size))
+            (box_width - box_sprite_size, box_sprite_size))
 
         self._surface.blit(
             top_left_sprite,
             (0, 0))
         self._surface.blit(
             top_right_sprite,
-            (box_width - self.__sprite_size, 0))
+            (box_width - box_sprite_size, 0))
         self._surface.blit(
             bottom_left_sprite,
-            (0, box_height - self.__sprite_size))
+            (0, box_height - box_sprite_size))
         self._surface.blit(
             bottom_right_sprite,
-            (box_width - self.__sprite_size, box_height - self.__sprite_size))
+            (box_width - box_sprite_size, box_height - box_sprite_size))
 
         # Center each line independently so multiline labels are truly centered.
         for line_index, line in enumerate(text_lines):
             line_width, _ = self._calculate_text_render_size(
                 line,
-                self.__sprite_size
+                text_size
             )
-            x_padding = self.__sprite_size + max(0, (inner_width - line_width) // 2)
-            line_y = y_padding + (line_index * self.__sprite_size)
+            x_padding = box_sprite_size + max(0, (inner_width - line_width) / 2)
+            line_y = y_padding + (line_index * text_size)
             self.__font.render(self._surface, (x_padding, line_y), line)
 
     @staticmethod

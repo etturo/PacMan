@@ -19,14 +19,40 @@ class Menu:
         screen_width = Settings.WINDOW_WIDTH
         screen_height = Settings.WINDOW_HEIGHT
 
+        button_size = 60
+        first_y_button = screen_height / 3.5
         # List of buttons
         start_button = Button(
-            (screen_width / 2, screen_height / 4),
+            (screen_width / 2, first_y_button),
             SpriteLibrary['yellow'],
             lambda: self._set_game_mode(GameMode.PLAYING),
             text='play',
             anchor='center',
-            sprite_size=50
+            sprite_size=button_size
+        )
+        settings_button = Button(
+            (screen_width / 2, first_y_button + 2 * button_size + 10),
+            SpriteLibrary['yellow'],
+            lambda: ...,
+            text='settings',
+            anchor='center',
+            sprite_size=button_size
+        )
+        scores_button = Button(
+            (screen_width / 2, first_y_button + 4 * button_size + 20),
+            SpriteLibrary['yellow'],
+            lambda: ...,
+            text='scores',
+            anchor='center',
+            sprite_size=button_size
+        )
+        exit_button = Button(
+            (screen_width / 2, first_y_button + 6 * button_size + 30),
+            SpriteLibrary['yellow'],
+            lambda: self._quit(),
+            text='exit',
+            anchor='center',
+            sprite_size=button_size
         )
         # List of text boxes
         title_txt = Text(
@@ -52,7 +78,10 @@ class Menu:
         )
 
         self.__buttons = [
-            start_button
+            start_button,
+            settings_button,
+            scores_button,
+            exit_button
         ]
         self.__texts = [
             title_txt,
@@ -64,6 +93,11 @@ class Menu:
     def _set_game_mode(mode: GameMode) -> None:
         from src.core.game import Game
         Game.setGameMode(mode)
+
+    @staticmethod
+    def _quit() -> None:
+        from src.core.game import Game
+        Game.quit()
 
     def render(self, surface: pygame.Surface) -> None:
         try:
