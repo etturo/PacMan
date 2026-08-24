@@ -31,6 +31,8 @@ class Renderer:
             )
         pygame.display.set_caption('PacMan')
 
+        self.__crt_overlay = self._create_crt_overlay()
+
         # The maze renderer is an interface that render the maze,
         # the steps to make it work are first init, so it can initialize
         # every attribute that it need, and then the render method itself
@@ -47,6 +49,20 @@ class Renderer:
 
         self.__menu: Menu = Menu()
 
+    def _create_crt_overlay(self) -> pygame.Surface:
+        overlay = pygame.Surface(
+            (self.__screen_width, self.__screen_height),
+            pygame.SRCALPHA)
+
+        for y in range(0, self.__screen_height, 3):
+            pygame.draw.line(
+                overlay,
+                (0, 0, 0, 70),
+                (0, y),
+                (self.__screen_width, y))
+
+        return overlay
+
     def render(
             self,
             maze: Maze,
@@ -62,8 +78,10 @@ class Renderer:
         if actual_game_mode == GameMode.PLAYING:
             self._render_maze(maze)
 
+        self.__screen.blit(self.__crt_overlay, (0, 0))
+
         # Update the screen
-        pygame.display.update()
+        pygame.display.flip()
         self.__frame_count += 1
 
     def _render_maze(self, maze: Maze) -> None:
