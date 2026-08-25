@@ -9,11 +9,13 @@ from src.graphics.ui.drawable import Drawable
 
 from src.sounds.sound_effects import SoundEffect
 
+from src.utils.settings import GameEvent
+
 class Button(Drawable):
     def __init__(self,
                  position: tuple[int, int],
                  sprite_sheet: SpriteSheet,
-                 on_click: Callable[[], None],
+                 on_click: GameEvent,
                  text: str,
                  sprite_size: int,
                  on_click_sfx: SoundEffect | None  = None,
@@ -21,7 +23,7 @@ class Button(Drawable):
                  ) -> None:
         super().__init__(position, sprite_sheet, anchor)
         self.__text: str = text.upper()
-        self.__on_click: Callable[[], None] = on_click
+        self.__on_click: GameEvent = on_click
         self.__on_click_sfx: SoundEffect | None = on_click_sfx
         self.__is_hovered: bool = False
         self.__font: SpriteFont = SpriteFont(sprite_sheet, sprite_size)
@@ -39,7 +41,7 @@ class Button(Drawable):
             if event.button == 1 and self.__is_hovered:
                 if self.__on_click_sfx:
                     self.__on_click_sfx.play()
-                self.__on_click()
+                pygame.event.post(pygame.event.Event(self.__on_click))
 
     def _create_textbox(self) -> None:
         text_size = self.__sprite_size

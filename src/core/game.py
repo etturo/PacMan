@@ -2,119 +2,94 @@ from argparse import ArgumentParser
 
 import pygame
 
+from src.core.game_state import BaseState, StartingState, MenuState, PlayingState
+
 from src.world.maze import Maze
 from src.world.maze_wrapper import MazeWrapper
 
-from src.graphics.renderer import Renderer
+from src.graphics.screen_manager import ScreenManager
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 
 from src.utils.models import BaseSettings, ParsingError
-from src.utils.settings import GameMode
+from src.utils.settings import GameMode, Settings, GameEvent
 from src.utils.parser import SettingParser
 
 from src.sounds.sound_effects import SoundEffect
 
 class Game:
-    # GAME SETTINGS
-    __is_running = True
-    __fps = 60
-    __actual_level: int = 0
-    __game_settings: BaseSettings
-    __game_mode: GameMode
+    def __init__(self):
+        self._load_config_file()
 
-    # SIMULATION UTILS
-    __quit_buttons = [
-        pygame.K_q,
-        pygame.QUIT
-    ]
+        # GAME SETTINGS
+        self.__is_running: bool = True
+        self.__fps: int = 60
+        self.__actual_level: int = 0
+        self.__game_settings: BaseSettings
+        self.__active_state: BaseState = StartingState()
 
-    # PYGAME ATTRIBUTES
-    pygame.mixer.init()
-    __screen: pygame.Surface
-    __clock: pygame.time.Clock
+        # SIMULATION UTILS
+        self.__quit_buttons: list[int] = [
+            pygame.K_q,
+            pygame.QUIT
+        ]
 
-    # RENDER UTILS
-    __renderer: Renderer
+        # PYGAME ATTRIBUTES
+        pygame.mixer.init()
 
-    # SOUNDS UILS
+        # RENDER UTILS
+        self.__screen_manager: ScreenManager = ScreenManager()
 
-    # WORLD ATTRIBUTES
-    __maze: Maze
-    __mazegen: MazeWrapper
+        # SOUNDS UILS
 
-    @classmethod
-    def _init(cls) -> None:
-        cls._load_config_file()
+        # WORLD ATTRIBUTES
+        self.__maze: Maze
+        self.__mazegen: MazeWrapper = MazeWrapper()
 
-        cls.__clock = pygame.time.Clock()
-        cls.__game_mode = GameMode.STARTING
-
-        cls.__renderer = Renderer()
-
-        cls.__mazegen = MazeWrapper()
-
-    @classmethod
-    def run(cls) -> None:
-        cls._init()
-
-        cls._generate_new_level()
-
+    def run(self) -> None:
         try:
-            while cls.__is_running:
-                cls._catch_events()
-                cls._update_logic()
-                cls._render_graphics()
-                cls.__clock.tick(cls.__fps)
+            while self.__is_running:
+                events = pygame.event.get()
+                self._catch_events(events)
+                self.__active_state.handle_events(events)
+                self._render()
+                self.__active_state.update()
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
             pygame.quit()
         exit()
         pygame.quit()
 
-    @classmethod
-    def _catch_events(cls) -> None:
-        events = pygame.event.get()
+    def _render(self) -> None:
+        self.__screen_manager.render(
+            surface=self.__active_state.getSurface(),
+            crt=True
+        )
 
+    def _catch_events(self, events: list[pygame.event.Event]) -> None:
         for event in events:
-            if event.type == pygame.QUIT:
-                cls.__is_running = False
+            # Quit program conditions
+            if (event.type == pygame.QUIT or
+                    event.type == GameEvent.EXIT or
+                    event.type == pygame.KEYDOWN and
+                    event.key in self.__quit_buttons):
+                self.__is_running = False
 
-            elif event.type == pygame.KEYDOWN:
-                if event.key in cls.__quit_buttons:
-                    cls.__is_running = False
+            elif event.type == GameEvent.MODE_TO_STARTING:
+                self.__active_state = StartingState()
 
-                if cls.__game_mode == GameMode.STARTING:
-                    if event.key == pygame.K_RETURN:
-                        cls.__game_mode = GameMode.MAIN_MENU
+            elif event.type == GameEvent.MODE_TO_MENU:
+                self.__active_state = MenuState()
 
-        if cls.__game_mode == GameMode.MAIN_MENU:
-            cls.__renderer.handle_menu_events(events)
+            elif event.type == GameEvent.MODE_TO_PLAYING:
+                self.__active_state = PlayingState(self.__game_settings)
 
-    @classmethod
-    def _update_logic(cls) -> None:
-        ...
+            elif event.type == GameEvent.MODE_TO_SCORES:
+                self.__active_state = ScoresState()
 
-    @classmethod
-    def _render_graphics(cls) -> None:
-        cls.__renderer.render(
-            cls.__maze,
-            cls.__game_mode
-            )
+            elif event.type == GameEvent.MODE_TO_SETTINGS:
+                self.__active_state = SettingsState()
 
-    @classmethod
-    def getGameMode(cls) -> GameMode:
-        return cls.__game_mode
-
-    @classmethod
-    def setGameMode(cls, game_mode: GameMode) -> None:
-        cls.__game_mode = game_mode
-
-    @classmethod
-    def quit(cls) -> None:
-        cls.__is_running = False
-
-    @classmethod
-    def _load_config_file(cls) -> None:
+    def _load_config_file(self) -> None:
         arg_parser = ArgumentParser(
             prog="PacMan",
             description="Clone of the legendary retro game."
@@ -124,18 +99,7 @@ class Game:
 
         parser = SettingParser()
         try:
-            cls.__game_settings = parser.parse(args.config_file)
+            self.__game_settings = parser.parse(args.config_file)
         except ParsingError as exc:
             raise SystemExit(str(exc)) from exc
 
-    @classmethod
-    def _generate_new_level(cls) -> None:
-        maze_size = (
-            cls.__game_settings.levels[cls.__actual_level].width,
-            cls.__game_settings.levels[cls.__actual_level].height
-        )
-        cls.__mazegen.generate(
-            maze_size,
-            cls.__game_settings.seed
-        )
-        cls.__maze = cls.__mazegen.maze

@@ -68,8 +68,8 @@ class Drawable(ABC):
 
         return rect
 
-    def render(self, surface: pygame.Surface) -> None:
-        surface.blit(self._surface, self._get_rect())
+    def render(self, screen: pygame.Surface) -> None:
+        screen.blit(self._surface, self._get_rect())
 
     @staticmethod
     def _calculate_text_size(
