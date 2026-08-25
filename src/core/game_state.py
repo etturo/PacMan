@@ -51,7 +51,8 @@ class MenuState(BaseState):
             GameEvent.MODE_TO_PLAYING,
             text='play',
             anchor='center',
-            sprite_size=button_size
+            sprite_size=button_size,
+            secondary_sheet=SpriteLibrary['yellow']
         )
         settings_button = Button(
             (screen_width / 2, first_y_button + 2 * button_size + 10),
@@ -59,7 +60,8 @@ class MenuState(BaseState):
             GameEvent.MODE_TO_SETTINGS,
             text='settings',
             anchor='center',
-            sprite_size=button_size
+            sprite_size=button_size,
+            secondary_sheet=SpriteLibrary['yellow']
         )
         scores_button = Button(
             (screen_width / 2, first_y_button + 4 * button_size + 20),
@@ -67,7 +69,8 @@ class MenuState(BaseState):
             GameEvent.MODE_TO_SCORES,
             text='scores',
             anchor='center',
-            sprite_size=button_size
+            sprite_size=button_size,
+            secondary_sheet=SpriteLibrary['yellow']
         )
         exit_button = Button(
             (screen_width / 2, first_y_button + 6 * button_size + 30),
@@ -75,15 +78,17 @@ class MenuState(BaseState):
             GameEvent.EXIT,
             text='exit',
             anchor='center',
-            sprite_size=button_size
+            sprite_size=button_size,
+            secondary_sheet=SpriteLibrary['yellow']
         )
+
         # List of text boxes
         title_txt = Text(
             "pacman",
             (screen_width / 2, 100),
             SpriteLibrary['yellow'],
             100,
-            anchor='center'
+            anchor='center',
         )
         credits_text = Text(
             f"authors - {__authors__}",

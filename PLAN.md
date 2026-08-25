@@ -17,3 +17,7 @@ the remaining time is in silence, but sticazzi
  - [x] Create a sprite library (SpriteLibrary) an interface to store all the sprite sheets into one place and let the other parts of the programs to access that variable without creating multiple instances of the same sheet.
  - [x] Create a element ABC class to inherite all the UI elements.
  - [X] Change the Maze renderer to a instanced object to use self and store the maze surface so isnt recalculated every frame.
+
+
+# NEXT TODO
+Is to decide how to make this buttons, color no color primary secondary cazzi mazzi hover no hover... decide

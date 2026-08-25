@@ -20,6 +20,7 @@ class Button(Drawable):
                  sprite_size: int,
                  on_click_sfx: SoundEffect | None = None,
                  anchor: str = "center",
+                 secondary_sheet: None | SpriteSheet = None,
                  ) -> None:
         super().__init__(position, sprite_sheet, anchor)
         self.__text: str = text.upper()
@@ -31,7 +32,15 @@ class Button(Drawable):
         self.__offset = 5
         self.__sprite_size = sprite_size
 
+        self.__secondary_surface: pygame.Surface
+        self.__secondary_font = self.__font
+        if secondary_sheet is not None:
+            self.__secondary_font = \
+                SpriteFont(secondary_sheet, sprite_size)
+
         self._create_textbox()
+
+        self.__primary_surface: pygame.Surface = self._surface
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEMOTION:
@@ -42,6 +51,11 @@ class Button(Drawable):
                 if self.__on_click_sfx:
                     self.__on_click_sfx.play()
                 pygame.event.post(pygame.event.Event(self.__on_click))
+
+        if self.__is_hovered:
+            self._surface = self.__secondary_surface
+        else:
+            self._surface = self.__primary_surface
 
     def _create_textbox(self) -> None:
         text_size = self.__sprite_size
@@ -96,6 +110,7 @@ class Button(Drawable):
         )
 
         self._surface = pygame.Surface((box_width, box_height))
+        self.__secondary_surface = pygame.Surface((box_width, box_height))
         self.__rect = self._get_rect()
 
         # top horizontal border
@@ -141,6 +156,8 @@ class Button(Drawable):
             x_padding = \
                 box_sprite_size + max(0, (inner_width - line_width) / 2)
             line_y = y_padding + (line_index * text_size)
+            self.__secondary_font.render(
+                self.__secondary_surface, (x_padding, line_y), line)
             self.__font.render(self._surface, (x_padding, line_y), line)
 
     @staticmethod
