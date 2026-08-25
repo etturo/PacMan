@@ -3,7 +3,7 @@ import pygame
 from abc import ABC
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
-from src.graphics.graphical_utils.ui_utils import SpriteType, CHAR_MAPPING
+from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 
 
 class Drawable(ABC):
@@ -21,10 +21,10 @@ class Drawable(ABC):
 
     def __init__(
             self,
-            position: tuple[int, int],
+            position: tuple[float, float],
             sprite_sheet: SpriteSheet,
             anchor: str = "center",
-        ) -> None:
+            ) -> None:
         self._position = position
         self._sheet = sprite_sheet
 
@@ -41,6 +41,7 @@ class Drawable(ABC):
         if normalized in cls._VALID_ANCHORS:
             return normalized
         print(f"WARINING: Unsupported anchor '{anchor}'.")
+        return ""
 
     def _get_rect(self) -> pygame.Rect:
         rect = self._surface.get_rect()

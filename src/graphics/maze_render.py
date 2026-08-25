@@ -1,6 +1,7 @@
 import pygame
 
-from src.graphics.graphical_utils.sprite_sheet import SpriteSheet, SpriteType
+from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
+from src.graphics.graphical_utils.ui_utils import SpriteType
 from src.world.cell import Direction
 from src.world.maze import Maze
 
@@ -29,10 +30,10 @@ class MazeRender:
         }
 
     def init_maze(self,
-             maze: Maze,
-             cell_size: int,
-             sprite_sheet: SpriteSheet
-              ) -> None:
+                  maze: Maze,
+                  cell_size: int,
+                  sprite_sheet: SpriteSheet
+                  ) -> None:
         self.__sheet = sprite_sheet
         self.__screen_width = Settings.WINDOW_WIDTH
         self.__screen_height = Settings.WINDOW_HEIGHT
@@ -80,7 +81,8 @@ class MazeRender:
         self.__v_maze_width = self.__maze_columns * 2 + 1
 
         self.__walls = \
-            [[False] * self.__v_maze_width for _ in range(self.__v_maze_height)]
+            [[False] * self.__v_maze_width
+                for _ in range(self.__v_maze_height)]
 
         for y in range(self.__maze_rows):
             for x in range(self.__maze_columns):

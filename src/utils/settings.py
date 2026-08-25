@@ -1,15 +1,7 @@
 import pygame
 
-from enum import Enum, auto, IntEnum
+from enum import IntEnum
 
-class GameMode(Enum):
-    STARTING = auto()
-    MAIN_MENU = auto()
-    SETTINGS_MENU = auto()
-    SCORES_MENU = auto()
-    PLAYING = auto()
-    PAUSED = auto()
-    GAME_OVER = auto()
 
 class Settings:
     DEFAULT_SCALE = 2.0
@@ -22,6 +14,7 @@ class Settings:
 
     SPRITE_LENGHT = 16
     SPRITE_WIDTH = 16
+
 
 class GameEvent(IntEnum):
     MODE_TO_STARTING = pygame.USEREVENT + 1

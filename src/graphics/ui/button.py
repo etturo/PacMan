@@ -1,24 +1,24 @@
 import pygame
 
-from typing import Callable
-
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.ui_utils import SpriteType
-from src.graphics.graphical_utils.sprite_font import SpriteFont, CHAR_MAPPING
+from src.graphics.graphical_utils.sprite_font import SpriteFont
+from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 from src.graphics.ui.drawable import Drawable
 
 from src.sounds.sound_effects import SoundEffect
 
 from src.utils.settings import GameEvent
 
+
 class Button(Drawable):
     def __init__(self,
-                 position: tuple[int, int],
+                 position: tuple[float, float],
                  sprite_sheet: SpriteSheet,
                  on_click: GameEvent,
                  text: str,
                  sprite_size: int,
-                 on_click_sfx: SoundEffect | None  = None,
+                 on_click_sfx: SoundEffect | None = None,
                  anchor: str = "center",
                  ) -> None:
         super().__init__(position, sprite_sheet, anchor)
@@ -50,7 +50,7 @@ class Button(Drawable):
         box_width, box_height = self._calculate_text_size(
             text=self.__text,
             sprite_size=text_size,
-            box_sprite_size=box_sprite_size,
+            box_sprite_size=int(box_sprite_size),
             offset=self.__offset,
             include_padding=True,
         )
@@ -64,7 +64,8 @@ class Button(Drawable):
         inner_width = max(0, box_width - (box_sprite_size * 2))
         inner_height = max(0, box_height - (box_sprite_size * 2))
 
-        y_padding: int = box_sprite_size + max(0, (inner_height - text_height) / 2)
+        y_padding = \
+            box_sprite_size + max(0, (inner_height - text_height) / 2)
 
         h_border_lenght = max(1, box_width - (box_sprite_size * 2))
         v_border_lenght = max(1, box_height - (box_sprite_size * 2))
@@ -130,13 +131,15 @@ class Button(Drawable):
             bottom_right_sprite,
             (box_width - box_sprite_size, box_height - box_sprite_size))
 
-        # Center each line independently so multiline labels are truly centered.
+        # Center each line independently so
+        #  multiline labels are truly centered.
         for line_index, line in enumerate(text_lines):
             line_width, _ = self._calculate_text_render_size(
                 line,
                 text_size
             )
-            x_padding = box_sprite_size + max(0, (inner_width - line_width) / 2)
+            x_padding = \
+                box_sprite_size + max(0, (inner_width - line_width) / 2)
             line_y = y_padding + (line_index * text_size)
             self.__font.render(self._surface, (x_padding, line_y), line)
 

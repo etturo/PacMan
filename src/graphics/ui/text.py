@@ -5,15 +5,16 @@ from src.graphics.ui.drawable import Drawable
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 
+
 class Text(Drawable):
     def __init__(
             self,
             text: str,
-            position: tuple[int, int],
+            position: tuple[float, float],
             sprite_sheet: SpriteSheet,
             text_size: int,
             anchor: str = "center",
-        ) -> None:
+            ) -> None:
         super().__init__(position, sprite_sheet, anchor)
 
         self.__text = text.upper()

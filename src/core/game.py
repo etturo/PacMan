@@ -2,22 +2,25 @@ from argparse import ArgumentParser
 
 import pygame
 
-from src.core.game_state import BaseState, StartingState, MenuState, PlayingState
+from src.core.game_state import (
+    BaseState,
+    StartingState,
+    MenuState,
+    PlayingState
+    )
 
 from src.world.maze import Maze
 from src.world.maze_wrapper import MazeWrapper
 
 from src.graphics.screen_manager import ScreenManager
-from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 
 from src.utils.models import BaseSettings, ParsingError
-from src.utils.settings import GameMode, Settings, GameEvent
+from src.utils.settings import GameEvent
 from src.utils.parser import SettingParser
 
-from src.sounds.sound_effects import SoundEffect
 
 class Game:
-    def __init__(self):
+    def __init__(self) -> None:
         self._load_config_file()
 
         # GAME SETTINGS
@@ -83,11 +86,11 @@ class Game:
             elif event.type == GameEvent.MODE_TO_PLAYING:
                 self.__active_state = PlayingState(self.__game_settings)
 
-            elif event.type == GameEvent.MODE_TO_SCORES:
-                self.__active_state = ScoresState()
+            # elif event.type == GameEvent.MODE_TO_SCORES:
+            #     self.__active_state = ScoresState()
 
-            elif event.type == GameEvent.MODE_TO_SETTINGS:
-                self.__active_state = SettingsState()
+            # elif event.type == GameEvent.MODE_TO_SETTINGS:
+            #     self.__active_state = SettingsState()
 
     def _load_config_file(self) -> None:
         arg_parser = ArgumentParser(
@@ -102,4 +105,3 @@ class Game:
             self.__game_settings = parser.parse(args.config_file)
         except ParsingError as exc:
             raise SystemExit(str(exc)) from exc
-

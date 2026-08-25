@@ -1,5 +1,3 @@
-from enum import Enum, auto
-
 import pygame
 from pygame.surface import Surface
 

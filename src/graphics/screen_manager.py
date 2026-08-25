@@ -1,19 +1,9 @@
 import pygame
-import random
 
-from src.graphics.maze_render import MazeRender
-from src.graphics.graphical_utils.sprite_font import SpriteFont
-from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
-from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
-from src.graphics.ui.button import Button
-from src.graphics.ui.text import Text
-
-from src.world.maze import Maze
 
 from src.utils.settings import Settings
 
-from src.utils.settings import GameMode
 
 class ScreenManager:
     def __init__(self) -> None:
@@ -69,13 +59,3 @@ class ScreenManager:
         self.__screen.blit(self.__crt_overlay, (0, 0))
 
         pygame.display.flip()
-
-    
-
-    def _render_main_menu(self) -> None:
-        self.__menu.render(self.__screen)
-
-    
-
-    def handle_menu_events(self, events: list[pygame.event.Event]) -> None:
-        self.__menu.handle_events(events)

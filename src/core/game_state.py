@@ -8,7 +8,6 @@ from src import __version__, __authors__
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
 
-from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING as CHAR_MAPPING
@@ -17,13 +16,13 @@ from src.graphics.maze_render import MazeRender
 from src.world.maze_wrapper import MazeWrapper
 from src.world.maze import Maze
 
-from src.utils.settings import GameMode, Settings, GameEvent
+from src.utils.settings import Settings, GameEvent
 from src.utils.models import BaseSettings
 
 
 class BaseState(ABC):
     @abstractmethod
-    def getSurface(self) -> None:
+    def getSurface(self) -> pygame.Surface:
         pass
 
     @abstractmethod
@@ -38,7 +37,7 @@ class BaseState(ABC):
 class MenuState(BaseState):
     def __init__(self) -> None:
         self.__buttons: list[Button]
-        self.__texts: list[TextWrapper]
+        self.__texts: list[Text]
 
         screen_width = Settings.WINDOW_WIDTH
         screen_height = Settings.WINDOW_HEIGHT
@@ -113,7 +112,10 @@ class MenuState(BaseState):
             version_text,
         ]
 
-        self.__surface = pygame.Surface((Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT))
+        self.__surface = \
+            pygame.Surface(
+                (Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
+                )
 
     def getSurface(self) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
@@ -135,8 +137,8 @@ class StartingState(BaseState):
         self.__screen_width = Settings.WINDOW_WIDTH
         self.__screen_height = Settings.WINDOW_HEIGHT
         self.__starting_buffer = ""
-        self.__start_font = SpriteFont(SpriteLibrary['title'], 100)
-        self.__end_font = SpriteFont(SpriteLibrary['yellow'], 100)
+        self.__start_font = SpriteFont(SpriteLibrary.get('title'), 100)
+        self.__end_font = SpriteFont(SpriteLibrary.get('yellow'), 100)
         self.__glyph_size = max(8, self.__start_font.getSize())
         self.__columns: int = max(10, self.__screen_width // self.__glyph_size)
         if self.__columns % 2 == 1:
@@ -145,19 +147,23 @@ class StartingState(BaseState):
         self.__chars = [char for char in CHAR_MAPPING if char != " "]
         self.__target_word = "PACMAN"
         self.__center_row = self.__rows // 2
-        self.__start_col = max(0, int((self.__columns - len(self.__target_word)) / 2 + 0.5))
+        self.__start_col = \
+            max(0,
+                int((self.__columns - len(self.__target_word)) / 2 + 0.5))
         self.__reveal_start = 80
         self.__reveal_duration = 100
         self.__frame_count = 0
 
-    def getSurface(self) -> None:
+    def getSurface(self) -> pygame.Surface:
         '''Logic of the starting screen:
         - Keep the random background linear and smooth
         - After a fixed delay, start overriding the letters with PACMAN
         - During the reveal, characters become less likely while
             spaces become more likely
         '''
-        screen = pygame.Surface((Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT))
+        screen = pygame.Surface(
+            (Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
+            )
         if self.__frame_count < self.__reveal_start:
             if self.__frame_count % 10 == 0:
                 grid = []
@@ -174,7 +180,7 @@ class StartingState(BaseState):
             title = Text(
                 self.__starting_buffer,
                 (self.__screen_width // 2, self.__screen_height // 2),
-                SpriteLibrary['title'],
+                SpriteLibrary.get('title'),
                 100,
                 anchor='center',
             )
@@ -182,12 +188,16 @@ class StartingState(BaseState):
 
             return screen
 
-        reveal_progress = (self.__frame_count - self.__reveal_start) / self.__reveal_duration
+        reveal_progress = \
+            (self.__frame_count - self.__reveal_start) / self.__reveal_duration
         char_probability = 0.9 - (reveal_progress * 1.75)
         space_probability = 1.0 - char_probability
 
         if self.__frame_count % 10 == 0:
-            lines = (self.__starting_buffer.splitlines() if self.__starting_buffer else [])
+            lines = \
+                (self.__starting_buffer.splitlines()
+                    if self.__starting_buffer else []
+                 )
             while len(lines) < self.__rows:
                 lines.append("")
             lines = lines[:self.__rows]
@@ -201,10 +211,12 @@ class StartingState(BaseState):
 
                     for col_index in range(self.__columns):
                         if random.random() < space_probability and not (
-                            self.__start_col <= col_index < self.__start_col + len(self.__target_word)
+                            self.__start_col <= col_index <
+                            self.__start_col + len(self.__target_word)
                         ):
                             line[col_index] = " "
-                        elif not (self.__start_col <= col_index < self.__start_col + len(self.__target_word)):
+                        elif not (self.__start_col <= col_index <
+                                  self.__start_col + len(self.__target_word)):
                             line[col_index] = random.choice(self.__chars)
                 else:
                     for col_index in range(self.__columns):
@@ -218,9 +230,9 @@ class StartingState(BaseState):
             self.__starting_buffer = "\n".join(lines)
 
         if space_probability < 1.15:
-            title_sheet = SpriteLibrary['title']
+            title_sheet = SpriteLibrary.get('title')
         else:
-            title_sheet = SpriteLibrary['yellow']
+            title_sheet = SpriteLibrary.get('yellow')
         title = Text(
             self.__starting_buffer,
             (self.__screen_width // 2, self.__screen_height // 2),
@@ -234,7 +246,7 @@ class StartingState(BaseState):
             prompt = Text(
                 "PRESS ENTER",
                 (self.__screen_width // 2, self.__screen_height // 2 + 140),
-                SpriteLibrary['yellow'],
+                SpriteLibrary.get('yellow'),
                 35,
                 anchor='center',
             )
@@ -292,7 +304,7 @@ class PlayingState(BaseState):
             self.__maze_renderer.init_maze(
                 maze,
                 cell_size,
-                SpriteLibrary['wall_skins']
+                SpriteLibrary.get('wall_skins')
                 )
 
         self.__maze_renderer.render(

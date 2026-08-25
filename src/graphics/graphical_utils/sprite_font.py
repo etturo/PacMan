@@ -1,6 +1,7 @@
 import pygame
 
-from src.graphics.graphical_utils.sprite_sheet import SpriteType, SpriteSheet
+from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
+from src.graphics.graphical_utils.ui_utils import SpriteType
 
 from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 
@@ -60,20 +61,27 @@ class SpriteFont:
         self.__characters[SpriteType.NUM_9] = self.__sheet.getSprite(8, 1, 10)
 
         # SPECIAL CHARACTERS
-        self.__characters[SpriteType.CH_SLASH] = self.__sheet.getSprite(8, 2, 11)
-        self.__characters[SpriteType.CH_LINE] = self.__sheet.getSprite(8, 2, 12)
-        self.__characters[SpriteType.CH_DOT] = self.__sheet.getSprite(8, 2, 13)
-        self.__characters[SpriteType.CH_QUOTE] = self.__sheet.getSprite(8, 3, 11)
-        self.__characters[SpriteType.CH_CPR] = self.__sheet.getSprite(8, 3, 12)
-        self.__characters[SpriteType.CH_ESCL] = self.__sheet.getSprite(8, 3, 13)
-        self.__characters[SpriteType.CH_SPACE] = self.__sheet.getSprite(8, 8, 11)
+        self.__characters[SpriteType.CH_SLASH] = \
+            self.__sheet.getSprite(8, 2, 11)
+        self.__characters[SpriteType.CH_LINE] = \
+            self.__sheet.getSprite(8, 2, 12)
+        self.__characters[SpriteType.CH_DOT] = \
+            self.__sheet.getSprite(8, 2, 13)
+        self.__characters[SpriteType.CH_QUOTE] = \
+            self.__sheet.getSprite(8, 3, 11)
+        self.__characters[SpriteType.CH_CPR] = \
+            self.__sheet.getSprite(8, 3, 12)
+        self.__characters[SpriteType.CH_ESCL] = \
+            self.__sheet.getSprite(8, 3, 13)
+        self.__characters[SpriteType.CH_SPACE] = \
+            self.__sheet.getSprite(8, 8, 11)
 
         self.__original_char = self.__characters.copy()
         self.setSize(size)
 
     def render(self,
                screen: pygame.Surface,
-               position: tuple[int, int],
+               position: tuple[float, float],
                text: str
                ) -> None:
 
