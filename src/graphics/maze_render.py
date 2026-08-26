@@ -28,6 +28,7 @@ class MazeRender:
             14: SpriteType.HORIZONTAL_DOWN_WALL,
             15: SpriteType.CROSS_WALL,
         }
+        self._cached_surface: pygame.Surface | None = None
 
     def init_maze(self,
                   maze: Maze,
@@ -37,14 +38,10 @@ class MazeRender:
         self.__sheet = sprite_sheet
         self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
-
         self.__maze = maze
         self.__maze_columns, self.__maze_rows = maze.getSize()
-
         self._create_expanded_maze()
-
         self.__cell_size = cell_size
-
         self.__offset_x = (
             self.__screen_width - (self.__cell_size * self.__v_maze_width)
         ) / 2
@@ -59,74 +56,60 @@ class MazeRender:
 
     def _get_neighbour(self, x: int, y: int) -> int:
         result: int = 0
-
         if not self.__walls[y][x]:
             return 0
-
         result |= 1 if self._check_wall(x, y - 1) else 0
         result |= 2 if self._check_wall(x + 1, y) else 0
         result |= 4 if self._check_wall(x, y + 1) else 0
         result |= 8 if self._check_wall(x - 1, y) else 0
-
         return result
 
     def is_initialized(self) -> bool:
         try:
-            return isinstance(self.__maze, Maze)
+            return isinstance(self.__maze, Maze) and self._cached_surface is not None
         except AttributeError:
             return False
 
     def _create_expanded_maze(self) -> None:
         self.__v_maze_height = self.__maze_rows * 2 + 1
         self.__v_maze_width = self.__maze_columns * 2 + 1
-
         self.__walls = \
             [[False] * self.__v_maze_width
                 for _ in range(self.__v_maze_height)]
-
         for y in range(self.__maze_rows):
             for x in range(self.__maze_columns):
                 rx: int = x * 2 + 1
                 ry: int = y * 2 + 1
-
                 cell = self.__maze[x, y]
-
                 n = cell.hasWall(Direction.NORTH)
                 w = cell.hasWall(Direction.WEST)
                 e = cell.hasWall(Direction.EAST)
                 s = cell.hasWall(Direction.SOUTH)
-
                 self.__walls[ry - 1][rx] |= n
                 self.__walls[ry][rx - 1] |= w
                 self.__walls[ry][rx + 1] |= e
                 self.__walls[ry + 1][rx] |= s
-
                 self.__walls[ry - 1][rx - 1] |= n or w
                 self.__walls[ry - 1][rx + 1] |= n or e
                 self.__walls[ry + 1][rx - 1] |= s or w
                 self.__walls[ry + 1][rx + 1] |= s or e
 
-    def render(self,
-               screen: pygame.Surface,
-               maze: Maze,
-               cell_size: int,
-               screen_width: int,
-               screen_height: int
-               ) -> None:
+    def build_maze_surface(self) -> None:
+        self._cached_surface = pygame.Surface(
+            (self.__screen_width, self.__screen_height), 
+            pygame.SRCALPHA
+        )
         for y in range(self.__v_maze_height):
             for x in range(self.__v_maze_width):
                 cell_center_x = self.__offset_x + (x + 0.5) * self.__cell_size
                 cell_center_y = self.__offset_y + (y + 0.5) * self.__cell_size
-
                 wall_map = self._get_neighbour(x, y)
-
                 if wall_map > 0:
                     sprite_type = self.WALL_MAPPING.get(
                         wall_map,
                         SpriteType.EMPTY_WALL,
                     )
                     sprite = self.__sheet[sprite_type]
-
                     scaled_sprite = pygame.transform.scale(
                         sprite,
                         (self.__cell_size, self.__cell_size),
@@ -134,5 +117,8 @@ class MazeRender:
                     rect = scaled_sprite.get_rect(
                         center=(cell_center_x, cell_center_y),
                     )
+                    self._cached_surface.blit(scaled_sprite, rect)
 
-                    screen.blit(scaled_sprite, rect)
+    def render(self, screen: pygame.Surface) -> None:
+        if self._cached_surface:
+            screen.blit(self._cached_surface, (0, 0))

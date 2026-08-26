@@ -30,7 +30,6 @@ class Direction(IntEnum):
         }
         return mapping[self]
 
-    @property
     def opposite(self) -> "Direction":
         """Retrieve the exact logical opposite cardinal direction."""
         mapping = {

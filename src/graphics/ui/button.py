@@ -38,6 +38,8 @@ class Button(Drawable):
             self.__secondary_font = \
                 SpriteFont(secondary_sheet, sprite_size)
 
+        self.__is_pressed: bool = False
+
         self._create_textbox()
 
         self.__primary_surface: pygame.Surface = self._surface

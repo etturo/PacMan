@@ -305,7 +305,7 @@ class PlayingState(BaseState):
         self._render_maze()
 
         for entity in self.__entities:
-            e_x, e_y = entity.getPos()
+            e_x, e_y = entity.get_visual_pos()
             screen_x, screen_y = self._get_entity_screen_pos(e_x, e_y)
 
             entity.render(self.__surface, (screen_x, screen_y))
@@ -313,32 +313,43 @@ class PlayingState(BaseState):
         return self.__surface
 
     def update(self, dt: float) -> None:
-        print(dt)
         for entity in self.__entities:
-            entity_pos = entity.getPos()
-            dir: Direction = entity.getDir()
+            entity.update(dt)
 
-            if not self.__actual_maze[entity_pos].hasWall(dir):
-                d_x, d_y = dir.vector()
-                speed = entity.getSpeed()
+            if not entity.is_moving():
+                current_cell = entity.getCurrentCell()
+                queued_dir = entity.get_queued_direction()
+                current_dir = entity.get_current_direction()
 
-                step_x = d_x * speed * dt
-                step_y = d_y * speed * dt
+                if (queued_dir != Direction.STILL and not
+                    self.__actual_maze[current_cell].hasWall(queued_dir) and
+                    queued_dir != current_dir.opposite()
+                    ):
+                    d_x, d_y = queued_dir.vector()
+                    target_cell = (current_cell[0] + d_x, current_cell[1] + d_y)
+                    entity.move_to(target_cell, queued_dir)
 
-                new_pos = (entity_pos[0] + step_x, entity_pos[1] + step_y)
-                entity.update(new_pos)
+                elif (current_dir != Direction.STILL and not
+                      self.__actual_maze[current_cell].hasWall(current_dir)
+                      ):
+                    d_x, d_y = current_dir.vector()
+                    target_cell = (current_cell[0] + d_x, current_cell[1] + d_y)
+                    entity.move_to(target_cell, current_dir)
+
+                else:
+                    entity.move_to(current_cell, Direction.STILL)
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    self.__pacman.setDir(Direction.NORTH)
+                    self.__pacman.queue_direction(Direction.NORTH)
                 if event.key == pygame.K_a:
-                    self.__pacman.setDir(Direction.WEST)
+                    self.__pacman.queue_direction(Direction.WEST)
                 if event.key == pygame.K_d:
-                    self.__pacman.setDir(Direction.EAST)
+                    self.__pacman.queue_direction(Direction.EAST)
                 if event.key == pygame.K_s:
-                    self.__pacman.setDir(Direction.SOUTH)
+                    self.__pacman.queue_direction(Direction.SOUTH)
 
     def _render_maze(self) -> None:
         # Calculation to make the tiles of the maze proportional to the size
@@ -355,13 +366,9 @@ class PlayingState(BaseState):
                 SpriteLibrary.get('wall_skins')
                 )
 
-        self.__maze_renderer.render(
-            self.__surface,
-            self.__actual_maze,
-            self.__cell_size,
-            self.__screen_width,
-            self.__screen_height
-            )
+            self.__maze_renderer.build_maze_surface()
+
+        self.__maze_renderer.render(self.__surface)
 
     def _get_entity_screen_pos(
             self,
