@@ -1,5 +1,5 @@
 from .settings import Settings, GameEvent
-from .models import BaseSettings, LevelConfig, ParsingError
+from .models import GameSettings, LevelConfig, ParsingError
 from .parser import SettingParser
 
 __all__ = [

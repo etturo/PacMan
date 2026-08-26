@@ -65,7 +65,8 @@ class Drawable(ABC):
         elif self._anchor == "midright":
             rect.midright = self._position
         else:
-            raise ValueError(f"Unsupported anchor '{self._anchor}'.")
+            rect.center = self._position
+            print("WARNING: anchor not valid.")
 
         return rect
 

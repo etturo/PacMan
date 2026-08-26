@@ -14,7 +14,7 @@ from src.world.maze_wrapper import MazeWrapper
 
 from src.graphics.screen_manager import ScreenManager
 
-from src.utils.models import BaseSettings, ParsingError
+from src.utils.models import GameSettings, ParsingError
 from src.utils.settings import GameEvent
 from src.utils.parser import SettingParser
 
@@ -27,7 +27,7 @@ class Game:
         self.__is_running: bool = True
         self.__fps: int = 60
         self.__actual_level: int = 0
-        self.__game_settings: BaseSettings
+        self.__game_settings: GameSettings
         self.__active_state: BaseState = StartingState()
 
         # SIMULATION UTILS
@@ -37,7 +37,6 @@ class Game:
         ]
 
         # PYGAME ATTRIBUTES
-        pygame.mixer.init()
 
         # RENDER UTILS
         self.__screen_manager: ScreenManager = ScreenManager()

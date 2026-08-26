@@ -7,17 +7,18 @@ from src import __version__, __authors__
 
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
+from src.graphics.ui.element import Element
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.sprite_font import SpriteFont
-from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING as CHAR_MAPPING
+from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING, SpriteType
 from src.graphics.maze_render import MazeRender
 
 from src.world.maze_wrapper import MazeWrapper
 from src.world.maze import Maze
 
 from src.utils.settings import Settings, GameEvent
-from src.utils.models import BaseSettings
+from src.utils.models import GameSettings
 
 
 class BaseState(ABC):
@@ -43,7 +44,8 @@ class MenuState(BaseState):
         screen_height = Settings.WINDOW_HEIGHT
 
         button_size = 60
-        first_y_button = screen_height / 3.5
+        first_y_button = screen_height / 3
+
         # List of buttons
         start_button = Button(
             (screen_width / 2, first_y_button),
@@ -85,7 +87,7 @@ class MenuState(BaseState):
         # List of text boxes
         title_txt = Text(
             "pacman",
-            (screen_width / 2, 100),
+            (screen_width / 2, screen_height / 6),
             SpriteLibrary['yellow'],
             100,
             anchor='center',
@@ -116,15 +118,18 @@ class MenuState(BaseState):
             credits_text,
             version_text,
         ]
+        self.__elements = [
+            
+        ]
 
         self.__surface = \
             pygame.Surface(
-                (Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
+                (Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT),
                 )
 
     def getSurface(self) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
-        for element in self.__buttons + self.__texts:
+        for element in self.__buttons + self.__texts + self.__elements:
             element.render(self.__surface)
         return self.__surface
 
@@ -269,7 +274,7 @@ class StartingState(BaseState):
 
 
 class PlayingState(BaseState):
-    def __init__(self, settings: BaseSettings) -> None:
+    def __init__(self, settings: GameSettings) -> None:
         self.__maze_renderer = MazeRender()
         self.__screen_width = Settings.WINDOW_WIDTH
         self.__screen_height = Settings.WINDOW_HEIGHT

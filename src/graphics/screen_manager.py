@@ -14,6 +14,7 @@ class ScreenManager:
 
         # PYGAME VARIABLE INITIALIZED
         pygame.init()
+
         self.__screen = pygame.display.set_mode(
             (self.__screen_width, self.__screen_height),
             pygame.FULLSCREEN | pygame.SCALED
@@ -30,8 +31,6 @@ class ScreenManager:
         # so it's easier to access to the same value in different contexts
         SpriteLibrary.add_item('title', 'white_text')
         SpriteLibrary.add_item('wall_skins', 'blue')
-
-        self.__crt_overlay = self._generate_crt_overlay()
 
     def _generate_crt_overlay(self) -> pygame.Surface:
         overlay = pygame.Surface(

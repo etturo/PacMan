@@ -19,5 +19,5 @@ the remaining time is in silence, but sticazzi
  - [X] Change the Maze renderer to a instanced object to use self and store the maze surface so isnt recalculated every frame.
 
 
-# NEXT TODO
-Is to decide how to make this buttons, color no color primary secondary cazzi mazzi hover no hover... decide
+# REMEMBER
+ - In the menu there are two blank space at the edges, in the left i would like to print the character/nickname menu, and in the right the scores

@@ -10,7 +10,7 @@ class LevelConfig(BaseModel):
     height: int
 
 
-class BaseSettings(BaseModel):
+class GameSettings(BaseModel):
     highscore_filename: str = Field(default="config.json")
     levels: list[LevelConfig]
     lives: int = Field(default=3, gt=0, le=99)

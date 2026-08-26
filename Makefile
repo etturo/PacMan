@@ -22,6 +22,7 @@ clean:
 	rm -rf .mypy_cache
 	rm -rf src/.mypy_cache
 	rm -rf __pycache__
+	systemctl --user restart pipewire pipewire-pulse pulseaudio
 
 lint:
 	$(BIN)/flake8 $(SRC)

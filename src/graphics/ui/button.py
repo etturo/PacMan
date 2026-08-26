@@ -53,9 +53,9 @@ class Button(Drawable):
                 pygame.event.post(pygame.event.Event(self.__on_click))
 
         if self.__is_hovered:
-            self._surface = self.__secondary_surface
-        else:
             self._surface = self.__primary_surface
+        else:
+            self._surface = self.__secondary_surface
 
     def _create_textbox(self) -> None:
         text_size = self.__sprite_size

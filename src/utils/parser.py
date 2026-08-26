@@ -4,12 +4,12 @@ import re
 
 from pydantic import ValidationError
 
-from src.utils.models import BaseSettings, ParsingError
+from src.utils.models import GameSettings, ParsingError
 
 
 class SettingParser:
     def __init__(self) -> None:
-        self.__parsed_settings: BaseSettings | None = None
+        self.__parsed_settings: GameSettings | None = None
 
     @staticmethod
     def _clean_text(text: str) -> str:
@@ -19,7 +19,7 @@ class SettingParser:
         )
         return pattern.sub(lambda m: m.group(1) if m.group(1) else "", text)
 
-    def parse(self, file_path: str) -> BaseSettings:
+    def parse(self, file_path: str) -> GameSettings:
         path = Path(file_path)
 
         try:
@@ -38,7 +38,7 @@ class SettingParser:
             ) from exc
 
         try:
-            results = BaseSettings(**parsed_dict)
+            results = GameSettings(**parsed_dict)
         except ValidationError as exc:
             error_messages = []
 
