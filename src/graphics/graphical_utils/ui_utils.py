@@ -80,6 +80,26 @@ class SpriteType(Enum):
     HORIZONTAL_EDGE = HORIZONTAL_WALL
     VERTICAL_EDGE = VERTICAL_WALL
 
+    GHOST_EYE_RIGHT_1 = auto()
+    GHOST_EYE_RIGHT_2 = auto()
+    GHOST_EYE_LEFT_1 = auto()
+    GHOST_EYE_LEFT_2 = auto()
+    GHOST_EYE_DOWN_1 = auto()
+    GHOST_EYE_DOWN_2 = auto()
+    GHOST_EYE_UP_1 = auto()
+    GHOST_EYE_UP_2 = auto()
+    FRIGHTENED_GHOST_1 = auto()
+    FRIGHTENED_GHOST_2 = auto()
+
+    PACMAN_RIGHT_1 = auto()
+    PACMAN_RIGHT_2 = auto()
+    PACMAN_LEFT_1 = auto()
+    PACMAN_LEFT_2 = auto()
+    PACMAN_DOWN_1 = auto()
+    PACMAN_DOWN_2 = auto()
+    PACMAN_UP_1 = auto()
+    PACMAN_UP_2 = auto()
+
 
 CHAR_MAPPING: dict[str, SpriteType] = {
     'A': SpriteType.L_A,

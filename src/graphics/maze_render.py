@@ -35,8 +35,8 @@ class MazeRender:
                   sprite_sheet: SpriteSheet
                   ) -> None:
         self.__sheet = sprite_sheet
-        self.__screen_width = Settings.WINDOW_WIDTH
-        self.__screen_height = Settings.WINDOW_HEIGHT
+        self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
         self.__maze = maze
         self.__maze_columns, self.__maze_rows = maze.getSize()

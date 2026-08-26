@@ -43,7 +43,7 @@ class SpriteSheet:
                 ) in self._GRID_LAYOUTS.items()
         }
 
-        self._load_maze()
+        self._load_skins()
 
     def __getitem__(
             self,
@@ -103,7 +103,7 @@ class SpriteSheet:
     def _scale_surface(surface: pygame.Surface) -> pygame.Surface:
         return pygame.transform.scale_by(surface, Settings.DEFAULT_SCALE)
 
-    def _load_maze(self) -> None:
+    def _load_skins(self) -> None:
         self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2(
             self.getSprite(8, 8, 3),
             self.getSprite(8, 8, 3),
@@ -208,9 +208,23 @@ class SpriteSheet:
             self.getSprite(8, 7, 17),
             self.getSprite(8, 7, 20)
         )
+        self.__data[SpriteType.GHOST_EYE_RIGHT_1] = self.getSprite(16, 1, 1)
+        self.__data[SpriteType.GHOST_EYE_RIGHT_2] = self.getSprite(16, 1, 2)
+        self.__data[SpriteType.GHOST_EYE_LEFT_1] = self.getSprite(16, 1, 5)
+        self.__data[SpriteType.GHOST_EYE_LEFT_2] = self.getSprite(16, 1, 6)
+        self.__data[SpriteType.GHOST_EYE_DOWN_1] = self.getSprite(16, 1, 3)
+        self.__data[SpriteType.GHOST_EYE_DOWN_2] = self.getSprite(16, 1, 4)
+        self.__data[SpriteType.GHOST_EYE_UP_1] = self.getSprite(16, 1, 7)
+        self.__data[SpriteType.GHOST_EYE_UP_2] = self.getSprite(16, 1, 8)
 
-    def getMazeWalls(self) -> dict[SpriteType, Surface]:
-        return self.__data
+        self.__data[SpriteType.PACMAN_DOWN_1] = self.getSprite(16, 5, 8)
+        self.__data[SpriteType.PACMAN_DOWN_2] = self.getSprite(16, 4, 8)
+        self.__data[SpriteType.PACMAN_RIGHT_1] = self.getSprite(16, 5, 7)
+        self.__data[SpriteType.PACMAN_RIGHT_2] = self.getSprite(16, 4, 7)
+        self.__data[SpriteType.PACMAN_UP_1] = self.getRotatedSprite(16, 5, 8, 180)
+        self.__data[SpriteType.PACMAN_UP_2] = self.getRotatedSprite(16, 4, 8, 180)
+        self.__data[SpriteType.PACMAN_LEFT_1] = self.getRotatedSprite(16, 5, 8, 180)
+        self.__data[SpriteType.PACMAN_LEFT_2] = self.getRotatedSprite(16, 4, 8, 180)
 
     @staticmethod
     def _combine_sprites_2x2(
@@ -234,3 +248,14 @@ class SpriteSheet:
         combined_surface.blit(bottom_right, (single_width, single_height))
 
         return combined_surface
+
+    def getRotatedSprite(
+            self,
+            sprite_size: int,
+            row: int,
+            column: int,
+            degree: int
+            ) -> pygame.Surface:
+        
+        base_surface = self.getSprite(sprite_size, row, column)
+        return pygame.transform.rotate(base_surface, degree)

@@ -1,7 +1,40 @@
-# TODO find a solution for unimported module
-from mazegenerator import MazeGenerator  # type: ignore
+import sys
+import os
+
+from functools import wraps
+
+from mazegenerator import MazeGenerator
+
 from src.world.maze import Maze
 
+def suppress_prints(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        sys.stdout.flush()
+        sys.stderr.flush()
+
+        original_stdout_fd = os.dup(1)
+        original_stderr_fd = os.dup(2)
+        
+        devnull_fd = os.open(os.devnull, os.O_WRONLY)
+        
+        os.dup2(devnull_fd, 1)
+        os.dup2(devnull_fd, 2)
+        
+        try:
+            return func(*args, **kwargs)
+        finally:
+            sys.stdout.flush()
+            sys.stderr.flush()
+            
+            os.dup2(original_stdout_fd, 1)
+            os.dup2(original_stderr_fd, 2)
+            
+            os.close(original_stdout_fd)
+            os.close(original_stderr_fd)
+            os.close(devnull_fd)
+            
+    return wrapper
 
 class MazeWrapper:
     def __init__(self) -> None:
@@ -9,6 +42,7 @@ class MazeWrapper:
         self.__maze_list: list[list[int]] = list()
         self.__maze: Maze
 
+    @suppress_prints
     def generate(self, size: tuple[int, int], seed: int) -> None:
         self._size: tuple[int, int] = size
         self._seed: int = seed

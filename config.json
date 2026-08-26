@@ -2,8 +2,8 @@
 	"highscore_filename": "highscore.txt",
 	"levels": [
 		{
-			"width": 30,
-			"height": 30
+			"width": 10,
+			"height": 10
 		},
 		{
 			"width": 15,

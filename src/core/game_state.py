@@ -31,7 +31,7 @@ class BaseState(ABC):
         pass
 
     @abstractmethod
-    def update(self) -> None:
+    def update(self, dt: float) -> None:
         pass
 
 
@@ -40,11 +40,11 @@ class MenuState(BaseState):
         self.__buttons: list[Button]
         self.__texts: list[Text]
 
-        screen_width = Settings.WINDOW_WIDTH
-        screen_height = Settings.WINDOW_HEIGHT
+        screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
-        button_size = 60
-        first_y_button = screen_height / 3
+        button_size = 20
+        first_y_button = screen_height / 3.5
 
         # List of buttons
         start_button = Button(
@@ -87,23 +87,23 @@ class MenuState(BaseState):
         # List of text boxes
         title_txt = Text(
             "pacman",
-            (screen_width / 2, screen_height / 6),
+            (screen_width / 2, screen_height / 8),
             SpriteLibrary['yellow'],
-            100,
+            40,
             anchor='center',
         )
         credits_text = Text(
             f"authors - {__authors__}",
             (0, screen_height),
             SpriteLibrary['white_text'],
-            20,
+            8,
             anchor='bottom left'
         )
         version_text = Text(
             f"version - {__version__}",
             (screen_width, screen_height),
             SpriteLibrary['white_text'],
-            20,
+            8,
             anchor='bottom right'
         )
 
@@ -124,7 +124,7 @@ class MenuState(BaseState):
 
         self.__surface = \
             pygame.Surface(
-                (Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT),
+                (Settings.VIRTUAL_WINDOW_WIDTH, Settings.VIRTUAL_WINDOW_HEIGHT),
                 )
 
     def getSurface(self) -> pygame.Surface:
@@ -138,17 +138,21 @@ class MenuState(BaseState):
             for button in self.__buttons:
                 button.handle_event(event)
 
-    def update(self) -> None:
+    def update(self, dt: float) -> None:
         pass
 
 
 class StartingState(BaseState):
     def __init__(self) -> None:
-        self.__screen_width = Settings.WINDOW_WIDTH
-        self.__screen_height = Settings.WINDOW_HEIGHT
+        self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
+        
+        self.__surface = pygame.Surface((self.__screen_width, self.__screen_height))
+        
         self.__starting_buffer = ""
-        self.__start_font = SpriteFont(SpriteLibrary.get('title'), 100)
-        self.__end_font = SpriteFont(SpriteLibrary.get('yellow'), 100)
+        self.__text_size = 32
+        self.__start_font = SpriteFont(SpriteLibrary.get('title'), self.__text_size)
+        self.__end_font = SpriteFont(SpriteLibrary.get('yellow'), self.__text_size)
         self.__glyph_size = max(8, self.__start_font.getSize())
         self.__columns: int = max(10, self.__screen_width // self.__glyph_size)
         if self.__columns % 2 == 1:
@@ -157,25 +161,20 @@ class StartingState(BaseState):
         self.__chars = [char for char in CHAR_MAPPING if char != " "]
         self.__target_word = "PACMAN"
         self.__center_row = self.__rows // 2
-        self.__start_col = \
-            max(0,
-                int((self.__columns - len(self.__target_word)) / 2 + 0.5))
-        self.__reveal_start = 80
-        self.__reveal_duration = 100
-        self.__frame_count = 0
+        self.__start_col = max(0, int((self.__columns - len(self.__target_word)) / 2 + 0.5))
+        
+        self.__reveal_start = 1.5
+        self.__reveal_duration = 1.5
+        self.__elapsed_time = 0.0
+        self.__grid_timer = 0.0
+        self.__grid_interval = 0.15
 
     def getSurface(self) -> pygame.Surface:
-        '''Logic of the starting screen:
-        - Keep the random background linear and smooth
-        - After a fixed delay, start overriding the letters with PACMAN
-        - During the reveal, characters become less likely while
-            spaces become more likely
-        '''
-        screen = pygame.Surface(
-            (Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
-            )
-        if self.__frame_count < self.__reveal_start:
-            if self.__frame_count % 10 == 0:
+        self.__surface.fill((0, 0, 0))
+
+        if self.__elapsed_time < self.__reveal_start:
+            if self.__grid_timer >= self.__grid_interval:
+                self.__grid_timer = 0.0
                 grid = []
                 for _ in range(self.__rows):
                     row = []
@@ -191,23 +190,22 @@ class StartingState(BaseState):
                 self.__starting_buffer,
                 (self.__screen_width // 2, self.__screen_height // 2),
                 SpriteLibrary.get('title'),
-                100,
+                self.__text_size,
                 anchor='center',
             )
-            title.render(screen)
+            title.render(self.__surface)
 
-            return screen
+            return self.__surface
 
-        reveal_progress = \
-            (self.__frame_count - self.__reveal_start) / self.__reveal_duration
+        reveal_progress = (self.__elapsed_time - self.__reveal_start) / self.__reveal_duration
+        reveal_progress = min(1.0, max(0.0, reveal_progress))
+        
         char_probability = 0.9 - (reveal_progress * 1.75)
         space_probability = 1.0 - char_probability
 
-        if self.__frame_count % 10 == 0:
-            lines = \
-                (self.__starting_buffer.splitlines()
-                    if self.__starting_buffer else []
-                 )
+        if self.__grid_timer >= self.__grid_interval:
+            self.__grid_timer = 0.0
+            lines = (self.__starting_buffer.splitlines() if self.__starting_buffer else [])
             while len(lines) < self.__rows:
                 lines.append("")
             lines = lines[:self.__rows]
@@ -221,12 +219,10 @@ class StartingState(BaseState):
 
                     for col_index in range(self.__columns):
                         if random.random() < space_probability and not (
-                            self.__start_col <= col_index <
-                            self.__start_col + len(self.__target_word)
+                            self.__start_col <= col_index < self.__start_col + len(self.__target_word)
                         ):
                             line[col_index] = " "
-                        elif not (self.__start_col <= col_index <
-                                  self.__start_col + len(self.__target_word)):
+                        elif not (self.__start_col <= col_index < self.__start_col + len(self.__target_word)):
                             line[col_index] = random.choice(self.__chars)
                 else:
                     for col_index in range(self.__columns):
@@ -243,41 +239,43 @@ class StartingState(BaseState):
             title_sheet = SpriteLibrary.get('title')
         else:
             title_sheet = SpriteLibrary.get('yellow')
+            
         title = Text(
             self.__starting_buffer,
             (self.__screen_width // 2, self.__screen_height // 2),
             title_sheet,
-            100,
+            self.__text_size,
             anchor='center',
         )
-        title.render(screen)
+        title.render(self.__surface)
 
         if space_probability > 1.15:
             prompt = Text(
                 "PRESS ENTER",
-                (self.__screen_width // 2, self.__screen_height // 2 + 140),
+                (self.__screen_width // 2, self.__screen_height // 2 + self.__text_size),
                 SpriteLibrary.get('yellow'),
-                35,
+                12,
                 anchor='center',
             )
-            prompt.render(screen)
+            prompt.render(self.__surface)
 
-        return screen
+        return self.__surface
 
-    def update(self) -> None:
-        self.__frame_count += 1
+    def update(self, dt: float) -> None:
+        self.__elapsed_time += dt
+        self.__grid_timer += dt
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                GameEvent.post(GameEvent.MODE_TO_MENU)
+                pygame.event.post(pygame.event.Event(GameEvent.MODE_TO_MENU))
 
 
 class PlayingState(BaseState):
     def __init__(self, settings: GameSettings) -> None:
         self.__maze_renderer = MazeRender()
-        self.__screen_width = Settings.WINDOW_WIDTH
-        self.__screen_height = Settings.WINDOW_HEIGHT
+        self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
         self.__actual_level = 0
         size = (
@@ -289,14 +287,14 @@ class PlayingState(BaseState):
         self.__actual_maze = self.__maze_wrapper.maze
 
         self.__surface = pygame.Surface(
-            (Settings.WINDOW_WIDTH, Settings.WINDOW_HEIGHT)
+            (Settings.VIRTUAL_WINDOW_WIDTH, Settings.VIRTUAL_WINDOW_HEIGHT)
         )
 
     def getSurface(self) -> pygame.Surface:
         self._render_maze(self.__actual_maze)
         return self.__surface
 
-    def update(self) -> None:
+    def update(self, dt: float) -> None:
         ...
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:

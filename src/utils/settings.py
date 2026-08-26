@@ -6,8 +6,8 @@ from enum import IntEnum
 class Settings:
     DEFAULT_SCALE = 2.0
 
-    WINDOW_WIDTH = 1920
-    WINDOW_HEIGHT = 1080
+    VIRTUAL_WINDOW_WIDTH = 640
+    VIRTUAL_WINDOW_HEIGHT = 360
 
     SMALL_SPRITE_LENGHT = 8
     SMALL_SPRITE_WIDTH = 8

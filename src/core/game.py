@@ -26,6 +26,7 @@ class Game:
         # GAME SETTINGS
         self.__is_running: bool = True
         self.__fps: int = 60
+        self.__clock = pygame.time.Clock()
         self.__actual_level: int = 0
         self.__game_settings: GameSettings
         self.__active_state: BaseState = StartingState()
@@ -50,11 +51,12 @@ class Game:
     def run(self) -> None:
         try:
             while self.__is_running:
+                dt = self.__clock.tick(self.__fps) / 1000.0
                 events = pygame.event.get()
                 self._catch_events(events)
                 self.__active_state.handle_events(events)
+                self.__active_state.update(dt)
                 self._render()
-                self.__active_state.update()
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
             pygame.quit()
