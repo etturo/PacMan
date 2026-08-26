@@ -99,6 +99,7 @@ class SpriteType(Enum):
     PACMAN_DOWN_2 = auto()
     PACMAN_UP_1 = auto()
     PACMAN_UP_2 = auto()
+    PACMAN_FULL = auto()
 
 
 CHAR_MAPPING: dict[str, SpriteType] = {

@@ -13,12 +13,12 @@ class Direction(IntEnum):
     EAST = 2
     SOUTH = 4
     WEST = 8
+    STILL = 0
 
     def __str__(self) -> str:
         """Return the first letter of the named Enum for printing."""
         return self.name[0]
 
-    @property
     def vector(self) -> Tuple[int, int]:
         """Retrieve the 2D coordinate vector associated with the direction."""
         mapping = {
@@ -26,6 +26,7 @@ class Direction(IntEnum):
             Direction.SOUTH: (0, 1),
             Direction.EAST:  (1, 0),
             Direction.WEST:  (-1, 0),
+            Direction.STILL: (0, 0),
         }
         return mapping[self]
 
@@ -37,6 +38,7 @@ class Direction(IntEnum):
             Direction.SOUTH: Direction.NORTH,
             Direction.EAST:  Direction.WEST,
             Direction.WEST:  Direction.EAST,
+            Direction.STILL: Direction.STILL,
         }
         return mapping[self]
 
@@ -44,9 +46,10 @@ class Direction(IntEnum):
     def vecToDir(vector: Tuple[int, int]) -> "Direction":
         """Map a 2D unit direction vector back to its Direction enum."""
         return {(0, -1): Direction.NORTH,
-                (0, 1): Direction.SOUTH,
-                (1, 0): Direction.EAST,
-                (-1, 0): Direction.WEST}[vector]
+                (0, 1):  Direction.SOUTH,
+                (1, 0):  Direction.EAST,
+                (-1, 0): Direction.WEST,
+                (0, 0):  Direction.STILL}[vector]
 
 
 class Cell:

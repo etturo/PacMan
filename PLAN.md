@@ -21,3 +21,5 @@ the remaining time is in silence, but sticazzi
 
 # REMEMBER
  - In the menu there are two blank space at the edges, in the left i would like to print the character/nickname menu, and in the right the scores
+
+ Next to do is to make the movement from a cell to another and lerping the animation between

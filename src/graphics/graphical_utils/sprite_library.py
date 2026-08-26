@@ -1,4 +1,4 @@
-from typing import cast
+from typing import cast, Optional
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 
@@ -17,20 +17,26 @@ class SpriteLibraryMeta(type):
 
 
 class SpriteLibrary(metaclass=SpriteLibraryMeta):
-    sprites: dict[str, SpriteSheet] = {
-        "azure": SpriteSheet('data/assets/sprites/azure-sprite-sheet.png'),
-        "b&w": SpriteSheet('data/assets/sprites/b&w-sprite-sheet.png'),
-        "blue": SpriteSheet('data/assets/sprites/blue-sprite-sheet.png'),
-        "melon": SpriteSheet('data/assets/sprites/melon-sprite-sheet.png'),
-        "orange": SpriteSheet('data/assets/sprites/orange-sprite-sheet.png'),
-        "pink": SpriteSheet('data/assets/sprites/pink-sprite-sheet.png'),
-        "red": SpriteSheet('data/assets/sprites/red-sprite-sheet.png'),
-        "white_text": SpriteSheet(
-            'data/assets/sprites/white_text-sprite-sheet.png'),
-        "yellow": SpriteSheet('data/assets/sprites/yellow-sprite-sheet.png')
-    }
-    __original_keys: list[str] = list(sprites.keys())
-    __default_sprite: SpriteSheet = sprites['b&w']
+    sprites: dict[str, SpriteSheet] = {}
+    __original_keys: list[str] = []
+    __default_sprite: Optional[SpriteSheet] = None
+
+    @classmethod
+    def load(cls) -> None:
+        cls.sprites = {
+            "azure": SpriteSheet('data/assets/sprites/azure-sprite-sheet.png'),
+            "b&w": SpriteSheet('data/assets/sprites/b&w-sprite-sheet.png'),
+            "blue": SpriteSheet('data/assets/sprites/blue-sprite-sheet.png'),
+            "melon": SpriteSheet('data/assets/sprites/melon-sprite-sheet.png'),
+            "orange": SpriteSheet('data/assets/sprites/orange-sprite-sheet.png'),
+            "pink": SpriteSheet('data/assets/sprites/pink-sprite-sheet.png'),
+            "red": SpriteSheet('data/assets/sprites/red-sprite-sheet.png'),
+            "white_text": SpriteSheet(
+                'data/assets/sprites/white_text-sprite-sheet.png'),
+            "yellow": SpriteSheet('data/assets/sprites/yellow-sprite-sheet.png')
+        }
+        cls.__original_keys = list(cls.sprites.keys())
+        cls.__default_sprite = cls.sprites['b&w']
 
     @classmethod
     def __class_getitem__(cls, key: str) -> SpriteSheet:

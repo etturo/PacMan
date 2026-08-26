@@ -5,6 +5,9 @@ from abc import ABC, abstractmethod
 
 from src import __version__, __authors__
 
+from src.entities.pacman import Pacman
+from src.entities.entity import Entity
+
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
 from src.graphics.ui.element import Element
@@ -16,6 +19,7 @@ from src.graphics.maze_render import MazeRender
 
 from src.world.maze_wrapper import MazeWrapper
 from src.world.maze import Maze
+from src.world.cell import Direction
 
 from src.utils.settings import Settings, GameEvent
 from src.utils.models import GameSettings
@@ -290,35 +294,92 @@ class PlayingState(BaseState):
             (Settings.VIRTUAL_WINDOW_WIDTH, Settings.VIRTUAL_WINDOW_HEIGHT)
         )
 
+        self._render_maze()
+
+        self.__pacman: Pacman = Pacman((0, 0), self.__cell_size, 4.0)
+        self.__current_direction = self.__pacman.getDir()
+        self.__entities: list[Entity] = [self.__pacman]
+
     def getSurface(self) -> pygame.Surface:
-        self._render_maze(self.__actual_maze)
+        self.__surface.fill((0, 0, 0))
+        self._render_maze()
+
+        for entity in self.__entities:
+            e_x, e_y = entity.getPos()
+            screen_x, screen_y = self._get_entity_screen_pos(e_x, e_y)
+
+            entity.render(self.__surface, (screen_x, screen_y))
+
         return self.__surface
 
     def update(self, dt: float) -> None:
-        ...
+        print(dt)
+        for entity in self.__entities:
+            entity_pos = entity.getPos()
+            dir: Direction = entity.getDir()
+
+            if not self.__actual_maze[entity_pos].hasWall(dir):
+                d_x, d_y = dir.vector()
+                speed = entity.getSpeed()
+
+                step_x = d_x * speed * dt
+                step_y = d_y * speed * dt
+
+                new_pos = (entity_pos[0] + step_x, entity_pos[1] + step_y)
+                entity.update(new_pos)
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
-        ...
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_w:
+                    self.__pacman.setDir(Direction.NORTH)
+                if event.key == pygame.K_a:
+                    self.__pacman.setDir(Direction.WEST)
+                if event.key == pygame.K_d:
+                    self.__pacman.setDir(Direction.EAST)
+                if event.key == pygame.K_s:
+                    self.__pacman.setDir(Direction.SOUTH)
 
-    def _render_maze(self, maze: Maze) -> None:
+    def _render_maze(self) -> None:
         # Calculation to make the tiles of the maze proportional to the size
         # of the screen. The -1 is to not cut out of the screen the maze
-        cell_size = min(
-            self.__screen_width // maze.getSize()[0],
-            self.__screen_height // maze.getSize()[1]
+        self.__cell_size = min(
+            self.__screen_width // self.__actual_maze.getSize()[0],
+            self.__screen_height // self.__actual_maze.getSize()[1]
         ) // 2 - 1
 
         if not self.__maze_renderer.is_initialized():
             self.__maze_renderer.init_maze(
-                maze,
-                cell_size,
+                self.__actual_maze,
+                self.__cell_size,
                 SpriteLibrary.get('wall_skins')
                 )
 
         self.__maze_renderer.render(
             self.__surface,
-            maze,
-            cell_size,
+            self.__actual_maze,
+            self.__cell_size,
             self.__screen_width,
             self.__screen_height
             )
+
+    def _get_entity_screen_pos(
+            self,
+            logical_x: float,
+            logical_y: float
+            ) -> tuple[float, float]:
+        maze_columns, maze_rows = self.__actual_maze.getSize()
+        
+        v_maze_width = maze_columns * 2 + 1
+        v_maze_height = maze_rows * 2 + 1
+        
+        offset_x = (self.__screen_width - (self.__cell_size * v_maze_width)) / 2
+        offset_y = (self.__screen_height - (self.__cell_size * v_maze_height)) / 2
+        
+        v_x = logical_x * 2 + 1
+        v_y = logical_y * 2 + 1
+        
+        pixel_x = offset_x + (v_x + 0.5) * self.__cell_size
+        pixel_y = offset_y + (v_y + 0.5) * self.__cell_size
+        
+        return pixel_x, pixel_y

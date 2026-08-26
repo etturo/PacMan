@@ -23,6 +23,9 @@ class Game:
     def __init__(self) -> None:
         self._load_config_file()
 
+        # RENDER UTILS
+        self.__screen_manager: ScreenManager = ScreenManager()
+
         # GAME SETTINGS
         self.__is_running: bool = True
         self.__fps: int = 60
@@ -38,9 +41,6 @@ class Game:
         ]
 
         # PYGAME ATTRIBUTES
-
-        # RENDER UTILS
-        self.__screen_manager: ScreenManager = ScreenManager()
 
         # SOUNDS UILS
 
@@ -77,6 +77,9 @@ class Game:
                     event.type == pygame.KEYDOWN and
                     event.key in self.__quit_buttons):
                 self.__is_running = False
+
+            elif (event.type == pygame.KEYDOWN and event.key == pygame.K_F11):
+                pygame.display.toggle_fullscreen()
 
             elif event.type == GameEvent.MODE_TO_STARTING:
                 self.__active_state = StartingState()

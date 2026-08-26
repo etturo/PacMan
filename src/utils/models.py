@@ -15,15 +15,15 @@ class GameSettings(BaseModel):
     levels: list[LevelConfig]
     lives: int = Field(default=3, gt=0, le=99)
     pacgums: int = Field(default=42, ge=0)
-    points_per_pacgums: int = Field(default=10, gt=0)
-    points_per_super_pacgums: int = Field(default=50, gt=0)
+    points_per_pacgum: int = Field(default=10, gt=0)
+    points_per_super_pacgum: int = Field(default=50, gt=0)
     points_per_ghost: int = Field(default=200, gt=0)
     seed: int = Field(default=42, ge=0)
     level_max_time: int = Field(default=90, gt=0)
 
     @model_validator(mode="after")
     def validate_scores(self) -> 'BaseSettings':
-        if self.points_per_super_pacgums <= self.points_per_pacgums:
+        if self.points_per_super_pacgum <= self.points_per_pacgum:
             raise ValueError(
                 "points_per_super_pacgums "
                 "must be greater than points_per_pacgums"

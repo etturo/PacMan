@@ -12,13 +12,15 @@ class ScreenManager:
 
         self.__screen = pygame.display.set_mode(
             (self.__virtual_screen_width, self.__virtual_screen_height),
-            pygame.FULLSCREEN | pygame.SCALED
+            pygame.FULLSCREEN | pygame.SCALED | pygame.RESIZABLE
         )
         pygame.display.set_caption('PacMan')
 
         self.__crt_overlay = self._generate_crt_overlay()
 
-        SpriteLibrary()
+        self.__is_fullscreen = True
+
+        SpriteLibrary.load()
         SpriteLibrary.add_item('title', 'white_text')
         SpriteLibrary.add_item('wall_skins', 'blue')
 
