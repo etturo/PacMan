@@ -27,7 +27,7 @@ from src.utils.models import GameSettings
 
 class BaseState(ABC):
     @abstractmethod
-    def getSurface(self) -> pygame.Surface:
+    def getSurface(self, dt: float) -> pygame.Surface:
         pass
 
     @abstractmethod
@@ -131,7 +131,7 @@ class MenuState(BaseState):
                 (Settings.VIRTUAL_WINDOW_WIDTH, Settings.VIRTUAL_WINDOW_HEIGHT),
                 )
 
-    def getSurface(self) -> pygame.Surface:
+    def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
         for element in self.__buttons + self.__texts + self.__elements:
             element.render(self.__surface)
@@ -173,7 +173,7 @@ class StartingState(BaseState):
         self.__grid_timer = 0.0
         self.__grid_interval = 0.15
 
-    def getSurface(self) -> pygame.Surface:
+    def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
 
         if self.__elapsed_time < self.__reveal_start:
@@ -300,7 +300,7 @@ class PlayingState(BaseState):
         self.__current_direction = self.__pacman.getDir()
         self.__entities: list[Entity] = [self.__pacman]
 
-    def getSurface(self) -> pygame.Surface:
+    def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
         self._render_maze()
 
@@ -308,7 +308,7 @@ class PlayingState(BaseState):
             e_x, e_y = entity.get_visual_pos()
             screen_x, screen_y = self._get_entity_screen_pos(e_x, e_y)
 
-            entity.render(self.__surface, (screen_x, screen_y))
+            entity.render(self.__surface, (screen_x, screen_y), dt)
 
         return self.__surface
 

@@ -56,17 +56,17 @@ class Game:
                 self._catch_events(events)
                 self.__active_state.handle_events(events)
                 self.__active_state.update(dt)
-                self._render()
+                self._render(dt)
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
             pygame.quit()
         exit()
         pygame.quit()
 
-    def _render(self) -> None:
+    def _render(self, dt: float) -> None:
         self.__screen_manager.render(
-            surface=self.__active_state.getSurface(),
-            crt=True
+            surface=self.__active_state.getSurface(dt),
+            crt=True,
         )
 
     def _catch_events(self, events: list[pygame.event.Event]) -> None:

@@ -1,3 +1,5 @@
+import pygame
+
 from src.entities.entity import Entity, Direction
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
@@ -40,4 +42,30 @@ class Pacman(Entity):
 
         self._surface = self.__sprite_full
         self._direction = Direction.STILL
+        self.__animation_timer = 0
+        self.__animation_delay = 0.15
+        self.__frame_index = 0
+
+    def update(self, dt: float) -> None:
+        super().update(dt)
+
+        self.__animation_timer += dt
+        if self.__animation_timer >= self.__animation_delay:
+            self.__animation_timer = 0.0
+            self.__frame_index = (self.__frame_index + 1) % 2
+
+    def render(self,
+               screen: pygame.Surface,
+               screen_pos: tuple[float, float],
+               dt: float,
+               ) -> None:
+        if self._current_direction == Direction.NORTH:
+            self._surface = self.__sprite_animation_up[self.__frame_index]
+        elif self._current_direction == Direction.SOUTH:
+            self._surface = self.__sprite_animation_down[self.__frame_index]
+        elif self._current_direction == Direction.WEST:
+            self._surface = self.__sprite_animation_left[self.__frame_index]
+        elif self._current_direction == Direction.EAST:
+            self._surface = self.__sprite_animation_right[self.__frame_index]
+        super().render(screen, screen_pos, dt)
 

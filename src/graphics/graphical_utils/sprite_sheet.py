@@ -225,8 +225,8 @@ class SpriteSheet:
         self.__data[SpriteType.PACMAN_RIGHT_2] = self.getSprite(16, 4, 7)
         self.__data[SpriteType.PACMAN_UP_1] = self.getRotatedSprite(16, 5, 8, 180)
         self.__data[SpriteType.PACMAN_UP_2] = self.getRotatedSprite(16, 4, 8, 180)
-        self.__data[SpriteType.PACMAN_LEFT_1] = self.getRotatedSprite(16, 5, 8, 180)
-        self.__data[SpriteType.PACMAN_LEFT_2] = self.getRotatedSprite(16, 4, 8, 180)
+        self.__data[SpriteType.PACMAN_LEFT_1] = self.getRotatedSprite(16, 5, 7, 180)
+        self.__data[SpriteType.PACMAN_LEFT_2] = self.getRotatedSprite(16, 4, 7, 180)
         self.__data[SpriteType.PACMAN_FULL] = self.getSprite(16, 6, 7)
 
     @staticmethod

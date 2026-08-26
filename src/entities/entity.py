@@ -63,7 +63,8 @@ class Entity(ABC):
     def render(
             self,
             screen: pygame.Surface,
-            screen_pos: tuple[float, float]
+            screen_pos: tuple[float, float],
+            dt: float,
             ) -> None:
         rect = self._surface.get_rect(center=screen_pos)
         screen.blit(self._surface, rect)
