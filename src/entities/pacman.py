@@ -78,7 +78,7 @@ class Pacman(Entity):
         self.__animation_timer += dt
         if self.__animation_timer >= self.__animation_delay:
             self.__animation_timer = 0.0
-            self.__frame_index = (self.__frame_index + 1) % 4
+            self.__frame_index = (self.__frame_index + 1) % len(self.__sprite_animation_down)
 
     def takeDamage(self) -> None:
         self.__lives -= 1

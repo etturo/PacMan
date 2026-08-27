@@ -116,6 +116,9 @@ class SpriteType(Enum):
 
     LIVES_SPRITE = auto()
 
+    PACGUM = auto()
+    SUPER_PACGUMS = auto()
+
 
 CHAR_MAPPING: dict[str, SpriteType] = {
     'A': SpriteType.L_A,

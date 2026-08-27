@@ -7,6 +7,7 @@ from src import __version__, __authors__
 
 from src.entities.pacman import Pacman
 from src.entities.entity import Entity
+from src.entities.pacgums import Pacgum, SuperPacgum
 
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
@@ -298,11 +299,31 @@ class PlayingState(BaseState):
             (Settings.VIRTUAL_WINDOW_WIDTH, Settings.VIRTUAL_WINDOW_HEIGHT)
         )
 
+        self.__entities: list[Entity] = []
         self._render_maze()
 
-        self.__pacman: Pacman = Pacman((0, 0), self.__cell_size * 1.6, 4.0, settings.lives)
+        self.__pacman_initial_pos = (0,0)
+
+        self.__pacman: Pacman = Pacman(self.__pacman_initial_pos, self.__cell_size * 1.6, 4.0, settings.lives)
         self.__current_direction = self.__pacman.getDir()
-        self.__entities: list[Entity] = [self.__pacman]
+
+        maze_w, maze_h = self.__actual_maze.getSize()
+
+        self.__pacgums: list[Pacgum] = []
+
+        for x in range(maze_w):
+            for y in range(maze_h):
+                if ((x == 0 and y == 0) or
+                      (x == 0 and y == maze_h - 1) or
+                      (x == maze_w - 1 and y == 0) or
+                      (x == maze_w - 1 and y == maze_h - 1)):
+                    self.__pacgums.append(SuperPacgum((x, y), self.__cell_size / 1.3, settings.points_per_super_pacgum))
+
+                elif (x, y) == self.__pacman_initial_pos:
+                    continue
+
+                else:
+                    self.__pacgums.append(Pacgum((x, y), self.__cell_size, settings.points_per_pacgum))
 
         lives = Lives(
             (0, 0),
@@ -321,6 +342,8 @@ class PlayingState(BaseState):
             lives,
             points,
         ]
+        self.__entities.extend(self.__pacgums)
+        self.__entities.append(self.__pacman)
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
@@ -347,7 +370,7 @@ class PlayingState(BaseState):
 
         for entity in self.__entities:
             if not entity.isAlive():
-                continue
+                self.__entities.remove(entity)
 
             entity.update(dt)
 

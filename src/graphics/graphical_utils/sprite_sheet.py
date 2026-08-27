@@ -250,6 +250,9 @@ class SpriteSheet:
             self.getSprite(8, 9, 2)
         )
 
+        self.__data[SpriteType.PACGUM] = self.getSprite(8, 2, 16)
+        self.__data[SpriteType.SUPER_PACGUMS] = self.getSprite(8, 4, 16)
+
 
     @staticmethod
     def _combine_sprites_2x2(
