@@ -238,7 +238,7 @@ class StartingState(BaseState):
         if space_probability > 1.15:
             prompt = Text(
                 "PRESS ENTER",
-                (self.__screen_width // 2, self.__screen_height // 2 + self.__text_size),
+                (self.__screen_width // 2, self.__screen_height // 2 + self.__text_size + 20),
                 SpriteLibrary.get('yellow'),
                 12,
                 anchor='center',
@@ -344,20 +344,21 @@ class PlayingState(BaseState):
         return self.__surface
 
     def update(self, dt: float) -> None:
-
-        self._detect_collision()
-
         for element in self.__ui_elements:
             if isinstance(element, Lives):
                 element.update(self.__pacman.getLives())
             elif isinstance(element, Points):
                 element.update(self.__points)
 
+        self.__pacman.update(dt)
+        self._detect_collision()
+
         for entity in self.__entities:
             if not entity.isAlive():
                 self.__entities.remove(entity)
 
-            entity.update(dt)
+            if not isinstance(entity, Pacman):
+                entity.update(dt)
 
             if not entity.isMoving():
                 current_cell = entity.getCurrentCell()

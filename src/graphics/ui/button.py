@@ -52,7 +52,7 @@ class Button(Drawable):
             if event.button == 1 and self.__is_hovered:
                 if self.__on_click_sfx:
                     self.__on_click_sfx.play()
-                pygame.event.post(pygame.event.Event(self.__on_click))
+                GameEvent.post(self.__on_click)
 
         if self.__is_hovered:
             self._surface = self.__primary_surface

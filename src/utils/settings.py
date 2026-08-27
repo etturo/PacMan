@@ -25,5 +25,6 @@ class GameEvent(IntEnum):
     MODE_TO_PLAYING = pygame.USEREVENT + 3
     EXIT = pygame.USEREVENT + 6
 
+    @staticmethod
     def post(mode: 'GameEvent') -> None:
         pygame.event.post(pygame.event.Event(mode))
