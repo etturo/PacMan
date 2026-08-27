@@ -74,11 +74,11 @@ class Lives(LiveElement):
                 self._surface.blit(self.__sprite, (i * self.__size, 0))
 
             text = Text(
-                f" x{self.__lives}",
-                (0, self.__size * 2),
+                f"x{self.__lives}",
+                (0, self.__size),
                 self.__sprite_sheet,
-                self.__text_size,
-                anchor='bottomleft'
+                self.__text_size / 1.5,
+                anchor='topleft'
                 )
 
             text.render(self._surface)
@@ -106,7 +106,7 @@ class Points(LiveElement):
         self.__size = size
         self.__sprite_sheet = sprite_sheet
         formatted_points = str(self.__points).center(5)
-        self.__str = f"{'scores'.center(5)}\n{formatted_points}"
+        self.__str = f"{'score'.center(5)}\n{formatted_points}"
         self.__text = Text(
             self.__str,
             (0, 0),
@@ -122,13 +122,14 @@ class Points(LiveElement):
 
         self._surface.fill((0, 0, 0, 0))
 
-        formatted_points = str(self.__points).center(10)
-        text = Text(
+        formatted_points = str(self.__points).center(5)
+        self.__str = f"{'score'.center(5)}\n{formatted_points}"
+        self.__text = Text(
             self.__str,
             (0, 0),
             self.__sprite_sheet,
-            self.__size,
+            self.__size / 1.2,
             anchor='topleft'
             )
 
-        text.render(self._surface)
+        self.__text.render(self._surface)

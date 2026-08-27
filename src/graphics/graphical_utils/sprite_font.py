@@ -49,16 +49,16 @@ class SpriteFont:
         self.__characters[SpriteType.L_Z] = self.__sheet.getSprite(8, 5, 13)
 
         # NUMBERS
-        self.__characters[SpriteType.NUM_0] = self.__sheet.getSprite(8, 1, 1)
-        self.__characters[SpriteType.NUM_1] = self.__sheet.getSprite(8, 1, 2)
-        self.__characters[SpriteType.NUM_2] = self.__sheet.getSprite(8, 1, 3)
-        self.__characters[SpriteType.NUM_3] = self.__sheet.getSprite(8, 1, 4)
-        self.__characters[SpriteType.NUM_4] = self.__sheet.getSprite(8, 1, 5)
-        self.__characters[SpriteType.NUM_5] = self.__sheet.getSprite(8, 1, 6)
-        self.__characters[SpriteType.NUM_6] = self.__sheet.getSprite(8, 1, 7)
-        self.__characters[SpriteType.NUM_7] = self.__sheet.getSprite(8, 1, 8)
-        self.__characters[SpriteType.NUM_8] = self.__sheet.getSprite(8, 1, 9)
-        self.__characters[SpriteType.NUM_9] = self.__sheet.getSprite(8, 1, 10)
+        self.__characters[SpriteType.NUM_0] = self.__sheet.getSprite(8, 3, 1)
+        self.__characters[SpriteType.NUM_1] = self.__sheet.getSprite(8, 3, 2)
+        self.__characters[SpriteType.NUM_2] = self.__sheet.getSprite(8, 3, 3)
+        self.__characters[SpriteType.NUM_3] = self.__sheet.getSprite(8, 3, 4)
+        self.__characters[SpriteType.NUM_4] = self.__sheet.getSprite(8, 3, 5)
+        self.__characters[SpriteType.NUM_5] = self.__sheet.getSprite(8, 3, 6)
+        self.__characters[SpriteType.NUM_6] = self.__sheet.getSprite(8, 3, 7)
+        self.__characters[SpriteType.NUM_7] = self.__sheet.getSprite(8, 3, 8)
+        self.__characters[SpriteType.NUM_8] = self.__sheet.getSprite(8, 3, 9)
+        self.__characters[SpriteType.NUM_9] = self.__sheet.getSprite(8, 3, 10)
 
         # SPECIAL CHARACTERS
         self.__characters[SpriteType.CH_SLASH] = \
