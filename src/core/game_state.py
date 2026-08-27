@@ -10,7 +10,8 @@ from src.entities.entity import Entity
 
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
-from src.graphics.ui.element import Element
+from src.graphics.ui.element import Element, LiveElement, Lives, Points
+from src.graphics.ui.drawable import Drawable
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.sprite_font import SpriteFont
@@ -281,6 +282,9 @@ class PlayingState(BaseState):
         self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
+        self.__settings = settings
+        self.__points: int = 0
+
         self.__actual_level = 0
         size = (
             settings.levels[self.__actual_level].width,
@@ -296,13 +300,34 @@ class PlayingState(BaseState):
 
         self._render_maze()
 
-        self.__pacman: Pacman = Pacman((0, 0), self.__cell_size, 4.0)
+        self.__pacman: Pacman = Pacman((0, 0), self.__cell_size * 1.6, 4.0, settings.lives)
         self.__current_direction = self.__pacman.getDir()
         self.__entities: list[Entity] = [self.__pacman]
+
+        lives = Lives(
+            (0, 0),
+            SpriteLibrary['yellow'],
+            SpriteType.LIVES_SPRITE,
+            self.__cell_size
+            )
+        points = Points(
+            (Settings.VIRTUAL_WINDOW_WIDTH - 120, 10),
+            SpriteLibrary['white'],
+            10,
+            self.__points
+            )
+
+        self.__ui_elements: list[Drawable] = [
+            lives,
+            points,
+        ]
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
         self._render_maze()
+
+        for element in self.__ui_elements:
+            element.render(self.__surface)
 
         for entity in self.__entities:
             e_x, e_y = entity.get_visual_pos()
@@ -313,7 +338,17 @@ class PlayingState(BaseState):
         return self.__surface
 
     def update(self, dt: float) -> None:
+
+        for element in self.__ui_elements:
+            if isinstance(element, Lives):
+                element.update(self.__pacman.getLives())
+            elif isinstance(element, Points):
+                element.update(self.__points)
+
         for entity in self.__entities:
+            if not entity.isAlive():
+                continue
+
             entity.update(dt)
 
             if not entity.is_moving():

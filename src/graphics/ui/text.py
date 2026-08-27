@@ -20,11 +20,15 @@ class Text(Drawable):
         self.__text = text.upper()
         self.__font = SpriteFont(sprite_sheet, text_size)
 
-        self.__lenght, self.__height = self._calculate_text_size(
+        self.__width, self.__height = self._calculate_text_size(
             text=self.__text,
             sprite_size=self.__font.getSize(),
             include_padding=False,
         )
 
-        self._surface = pygame.Surface((self.__lenght, self.__height))
+        self._surface = pygame.Surface((self.__width, self.__height))
         self.__font.render(self._surface, (0, 0), self.__text)
+
+    def getSize(self) -> tuple[float, float]:
+        return (self.__width, self.__height)
+

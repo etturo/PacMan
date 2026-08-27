@@ -229,6 +229,28 @@ class SpriteSheet:
         self.__data[SpriteType.PACMAN_LEFT_2] = self.getRotatedSprite(16, 4, 7, 180)
         self.__data[SpriteType.PACMAN_FULL] = self.getSprite(16, 6, 7)
 
+        self.__data[SpriteType.PACMAN_DEATH_1] = self.getSprite(16, 4, 1)
+        self.__data[SpriteType.PACMAN_DEATH_2] = self.getSprite(16, 4, 2)
+        self.__data[SpriteType.PACMAN_DEATH_3] = self.getSprite(16, 4, 3)
+        self.__data[SpriteType.PACMAN_DEATH_4] = self.getSprite(16, 4, 4)
+        self.__data[SpriteType.PACMAN_DEATH_5] = self.getSprite(16, 4, 5)
+        self.__data[SpriteType.PACMAN_DEATH_6] = self.getSprite(16, 4, 6)
+
+        self.__data[SpriteType.PACMAN_DEATH_7] = self.getSprite(16, 5, 1)
+        self.__data[SpriteType.PACMAN_DEATH_8] = self.getSprite(16, 5, 2)
+        self.__data[SpriteType.PACMAN_DEATH_9] = self.getSprite(16, 5, 3)
+        self.__data[SpriteType.PACMAN_DEATH_10] = self.getSprite(16, 5, 4)
+        self.__data[SpriteType.PACMAN_DEATH_11] = self.getSprite(16, 5, 5)
+        self.__data[SpriteType.PACMAN_DEATH_12] = self.getSprite(16, 5, 6)
+
+        self.__data[SpriteType.LIVES_SPRITE] = self._combine_sprites_2x2(
+            self.getSprite(8, 8, 1),
+            self.getSprite(8, 8, 2),
+            self.getSprite(8, 9, 1),
+            self.getSprite(8, 9, 2)
+        )
+
+
     @staticmethod
     def _combine_sprites_2x2(
             top_left: pygame.Surface,

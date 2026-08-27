@@ -16,7 +16,7 @@ class Entity(ABC):
         self._lerp_progress: float = 0.0
         self._speed: float = speed
         self._surface = pygame.Surface((size, size))
-        
+        self._is_alive: bool = True
         self._current_direction: Direction = Direction.STILL
         self._queued_direction: Direction = Direction.STILL
 
@@ -31,6 +31,9 @@ class Entity(ABC):
         v_y = c_y + (t_y - c_y) * self._lerp_progress
         
         return v_x, v_y
+
+    def isAlive(self) -> bool:
+        return self._is_alive
 
     def getDir(self) -> Direction:
         return self._current_direction

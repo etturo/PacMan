@@ -101,6 +101,21 @@ class SpriteType(Enum):
     PACMAN_UP_2 = auto()
     PACMAN_FULL = auto()
 
+    PACMAN_DEATH_1 = auto()
+    PACMAN_DEATH_2 = auto()
+    PACMAN_DEATH_3 = auto()
+    PACMAN_DEATH_4 = auto()
+    PACMAN_DEATH_5 = auto()
+    PACMAN_DEATH_6 = auto()
+    PACMAN_DEATH_7 = auto()
+    PACMAN_DEATH_8 = auto()
+    PACMAN_DEATH_9 = auto()
+    PACMAN_DEATH_10 = auto()
+    PACMAN_DEATH_11 = auto()
+    PACMAN_DEATH_12 = auto()
+
+    LIVES_SPRITE = auto()
+
 
 CHAR_MAPPING: dict[str, SpriteType] = {
     'A': SpriteType.L_A,
