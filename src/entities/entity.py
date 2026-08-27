@@ -38,25 +38,28 @@ class Entity(ABC):
     def getDir(self) -> Direction:
         return self._current_direction
 
-    def get_current_direction(self) -> Direction:
+    def getPos(self) -> tuple[int, int]:
+        return self._current_cell
+
+    def getCurrentDirection(self) -> Direction:
         return self._current_direction
 
-    def get_queued_direction(self) -> Direction:
+    def getQueuedDirection(self) -> Direction:
         return self._queued_direction
 
-    def queue_direction(self, new_dir: Direction) -> None:
+    def setQueueDirection(self, new_dir: Direction) -> None:
         self._queued_direction = new_dir
 
-    def is_moving(self) -> bool:
+    def isMoving(self) -> bool:
         return self._current_cell != self._target_cell
 
-    def move_to(self, target: tuple[int, int], taken_dir: Direction) -> None:
+    def moveTo(self, target: tuple[int, int], taken_dir: Direction) -> None:
         self._target_cell = target
         self._lerp_progress = 0.0
         self._current_direction = taken_dir
 
     def update(self, dt: float) -> None:
-        if self.is_moving():
+        if self.isMoving():
             self._lerp_progress += self._speed * dt
             
             if self._lerp_progress >= 1.0:
@@ -71,3 +74,6 @@ class Entity(ABC):
             ) -> None:
         rect = self._surface.get_rect(center=screen_pos)
         screen.blit(self._surface, rect)
+
+    def die(self) -> None:
+        self._is_alive = False

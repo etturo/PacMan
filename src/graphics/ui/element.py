@@ -62,7 +62,7 @@ class Lives(LiveElement):
         self.__lives = initial_lives
         self.__size = size
         self.__text_size = size / 1.3
-        self._surface = pygame.Surface(((size * 8), size))
+        self._surface = pygame.Surface((size * 3, size * 2))
         self.__sprite_sheet = sprite_sheet
         self.__sprite = pygame.transform.scale(sprite_sheet[sprite_type], (size, size))
 
@@ -75,10 +75,10 @@ class Lives(LiveElement):
 
             text = Text(
                 f" x{self.__lives}",
-                (3 * self.__size, 1),
+                (0, self.__size * 2),
                 self.__sprite_sheet,
                 self.__text_size,
-                anchor='topleft'
+                anchor='bottomleft'
                 )
 
             text.render(self._surface)
@@ -105,9 +105,10 @@ class Points(LiveElement):
         self.__points = initial_points
         self.__size = size
         self.__sprite_sheet = sprite_sheet
-        formatted_points = str(self.__points).center(10)
+        formatted_points = str(self.__points).center(5)
+        self.__str = f"{'scores'.center(5)}\n{formatted_points}"
         self.__text = Text(
-            f"high score\n{formatted_points}",
+            self.__str,
             (0, 0),
             self.__sprite_sheet,
             self.__size,
@@ -119,4 +120,15 @@ class Points(LiveElement):
     def update(self, points: int) -> None:
         self.__points = points
 
-        self.__text.render(self._surface)
+        self._surface.fill((0, 0, 0, 0))
+
+        formatted_points = str(self.__points).center(10)
+        text = Text(
+            self.__str,
+            (0, 0),
+            self.__sprite_sheet,
+            self.__size,
+            anchor='topleft'
+            )
+
+        text.render(self._surface)

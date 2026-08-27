@@ -32,3 +32,4 @@ class Text(Drawable):
     def getSize(self) -> tuple[float, float]:
         return (self.__width, self.__height)
 
+

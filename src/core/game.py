@@ -90,12 +90,6 @@ class Game:
             elif event.type == GameEvent.MODE_TO_PLAYING:
                 self.__active_state = PlayingState(self.__game_settings)
 
-            # elif event.type == GameEvent.MODE_TO_SCORES:
-            #     self.__active_state = ScoresState()
-
-            # elif event.type == GameEvent.MODE_TO_SETTINGS:
-            #     self.__active_state = SettingsState()
-
     def _load_config_file(self) -> None:
         arg_parser = ArgumentParser(
             prog="PacMan",

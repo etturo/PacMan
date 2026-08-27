@@ -22,7 +22,6 @@ class SpriteSheet:
 
         self.__sheet = pygame.image.load(filename).convert()
         self.__sheet.set_colorkey((0, 0, 0))
-        self.__sheet = self.__sheet.convert_alpha()
 
         self.__data: dict[SpriteType, pygame.Surface] = {}
 

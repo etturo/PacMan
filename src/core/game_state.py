@@ -49,8 +49,8 @@ class MenuState(BaseState):
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
-        button_size = 20
-        first_y_button = screen_height / 3.5
+        button_size = screen_height / 15
+        first_y_button = screen_height / 2
 
         # List of buttons
         start_button = Button(
@@ -62,26 +62,8 @@ class MenuState(BaseState):
             sprite_size=button_size,
             secondary_sheet=SpriteLibrary['yellow']
         )
-        settings_button = Button(
-            (screen_width / 2, first_y_button + 2 * button_size + 10),
-            SpriteLibrary['yellow'],
-            GameEvent.MODE_TO_SETTINGS,
-            text='settings',
-            anchor='center',
-            sprite_size=button_size,
-            secondary_sheet=SpriteLibrary['yellow']
-        )
-        scores_button = Button(
-            (screen_width / 2, first_y_button + 4 * button_size + 20),
-            SpriteLibrary['yellow'],
-            GameEvent.MODE_TO_SCORES,
-            text='scores',
-            anchor='center',
-            sprite_size=button_size,
-            secondary_sheet=SpriteLibrary['yellow']
-        )
         exit_button = Button(
-            (screen_width / 2, first_y_button + 6 * button_size + 30),
+            (screen_width / 2, first_y_button + button_size * 2 + screen_height / 30),
             SpriteLibrary['yellow'],
             GameEvent.EXIT,
             text='exit',
@@ -95,28 +77,26 @@ class MenuState(BaseState):
             "pacman",
             (screen_width / 2, screen_height / 8),
             SpriteLibrary['yellow'],
-            40,
+            screen_height / 10,
             anchor='center',
         )
         credits_text = Text(
             f"authors - {__authors__}",
             (0, screen_height),
             SpriteLibrary['white_text'],
-            8,
+            screen_height / 30,
             anchor='bottom left'
         )
         version_text = Text(
             f"version - {__version__}",
             (screen_width, screen_height),
             SpriteLibrary['white_text'],
-            8,
+            screen_height / 30,
             anchor='bottom right'
         )
 
         self.__buttons = [
             start_button,
-            settings_button,
-            scores_button,
             exit_button
         ]
         self.__texts = [
@@ -156,7 +136,7 @@ class StartingState(BaseState):
         self.__surface = pygame.Surface((self.__screen_width, self.__screen_height))
         
         self.__starting_buffer = ""
-        self.__text_size = 32
+        self.__text_size = self.__screen_height // 16
         self.__start_font = SpriteFont(SpriteLibrary.get('title'), self.__text_size)
         self.__end_font = SpriteFont(SpriteLibrary.get('yellow'), self.__text_size)
         self.__glyph_size = max(8, self.__start_font.getSize())
@@ -302,6 +282,8 @@ class PlayingState(BaseState):
         self.__entities: list[Entity] = []
         self._render_maze()
 
+        self.__text_size = self.__screen_width / 30
+
         self.__pacman_initial_pos = (0,0)
 
         self.__pacman: Pacman = Pacman(self.__pacman_initial_pos, self.__cell_size * 1.6, 4.0, settings.lives)
@@ -317,7 +299,8 @@ class PlayingState(BaseState):
                       (x == 0 and y == maze_h - 1) or
                       (x == maze_w - 1 and y == 0) or
                       (x == maze_w - 1 and y == maze_h - 1)):
-                    self.__pacgums.append(SuperPacgum((x, y), self.__cell_size / 1.3, settings.points_per_super_pacgum))
+                    super_pacgum_size = self.__cell_size / 1.3 if self.__cell_size >= 1 else 1
+                    self.__pacgums.append(SuperPacgum((x, y), super_pacgum_size, settings.points_per_super_pacgum))
 
                 elif (x, y) == self.__pacman_initial_pos:
                     continue
@@ -329,12 +312,12 @@ class PlayingState(BaseState):
             (0, 0),
             SpriteLibrary['yellow'],
             SpriteType.LIVES_SPRITE,
-            self.__cell_size
+            self.__text_size * 1.5
             )
         points = Points(
-            (Settings.VIRTUAL_WINDOW_WIDTH - 120, 10),
+            (Settings.VIRTUAL_WINDOW_WIDTH - 280, 10),
             SpriteLibrary['white'],
-            10,
+            self.__text_size,
             self.__points
             )
 
@@ -362,6 +345,8 @@ class PlayingState(BaseState):
 
     def update(self, dt: float) -> None:
 
+        self._detect_collision()
+
         for element in self.__ui_elements:
             if isinstance(element, Lives):
                 element.update(self.__pacman.getLives())
@@ -374,10 +359,10 @@ class PlayingState(BaseState):
 
             entity.update(dt)
 
-            if not entity.is_moving():
+            if not entity.isMoving():
                 current_cell = entity.getCurrentCell()
-                queued_dir = entity.get_queued_direction()
-                current_dir = entity.get_current_direction()
+                queued_dir = entity.getQueuedDirection()
+                current_dir = entity.getCurrentDirection()
 
                 if (queued_dir != Direction.STILL and not
                     self.__actual_maze[current_cell].hasWall(queued_dir) and
@@ -385,48 +370,63 @@ class PlayingState(BaseState):
                     ):
                     d_x, d_y = queued_dir.vector()
                     target_cell = (current_cell[0] + d_x, current_cell[1] + d_y)
-                    entity.move_to(target_cell, queued_dir)
+                    entity.moveTo(target_cell, queued_dir)
 
                 elif (current_dir != Direction.STILL and not
                       self.__actual_maze[current_cell].hasWall(current_dir)
                       ):
                     d_x, d_y = current_dir.vector()
                     target_cell = (current_cell[0] + d_x, current_cell[1] + d_y)
-                    entity.move_to(target_cell, current_dir)
+                    entity.moveTo(target_cell, current_dir)
 
                 else:
-                    entity.move_to(current_cell, Direction.STILL)
+                    entity.moveTo(current_cell, Direction.STILL)
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    self.__pacman.queue_direction(Direction.NORTH)
+                    self.__pacman.setQueueDirection(Direction.NORTH)
                 if event.key == pygame.K_a:
-                    self.__pacman.queue_direction(Direction.WEST)
+                    self.__pacman.setQueueDirection(Direction.WEST)
                 if event.key == pygame.K_d:
-                    self.__pacman.queue_direction(Direction.EAST)
+                    self.__pacman.setQueueDirection(Direction.EAST)
                 if event.key == pygame.K_s:
-                    self.__pacman.queue_direction(Direction.SOUTH)
+                    self.__pacman.setQueueDirection(Direction.SOUTH)
 
     def _render_maze(self) -> None:
-        # Calculation to make the tiles of the maze proportional to the size
-        # of the screen. The -1 is to not cut out of the screen the maze
+        columns, rows = self.__actual_maze.getSize()
+
         self.__cell_size = min(
-            self.__screen_width // self.__actual_maze.getSize()[0],
-            self.__screen_height // self.__actual_maze.getSize()[1]
-        ) // 2 - 1
+            self.__screen_width // (columns * 2 + 1),
+            self.__screen_height // (rows * 2 + 1)
+        )
+
+        self.__cell_size = max(8, (self.__cell_size // 8) * 8) + 1
 
         if not self.__maze_renderer.is_initialized():
             self.__maze_renderer.init_maze(
                 self.__actual_maze,
                 self.__cell_size,
                 SpriteLibrary.get('wall_skins')
-                )
-
+            )
             self.__maze_renderer.build_maze_surface()
 
         self.__maze_renderer.render(self.__surface)
+
+    def _detect_collision(self) -> None:
+        pacman_pos = self.__pacman.getPos()
+
+        for entity in self.__entities:
+            if entity == self.__pacman:
+                continue
+            if entity.getPos() == pacman_pos:
+                if isinstance(entity, Pacgum):
+                    entity.die()
+                    self.__points += self.__settings.points_per_pacgum
+                if isinstance(entity, SuperPacgum):
+                    entity.die()
+                    self.__points += self.__settings.points_per_super_pacgum
 
     def _get_entity_screen_pos(
             self,
