@@ -315,8 +315,7 @@ class PlayingState(BaseState):
                       (x == 0 and y == maze_h - 1) or
                       (x == maze_w - 1 and y == 0) or
                       (x == maze_w - 1 and y == maze_h - 1)):
-                    super_pacgum_size = self.__scaled_size / 1.3 if self.__scaled_size >= 1 else 1
-                    self.__pacgums.append(SuperPacgum((x, y), super_pacgum_size, settings.points_per_super_pacgum))
+                    self.__pacgums.append(SuperPacgum((x, y), self.__scaled_size * 1.6, settings.points_per_super_pacgum))
 
                 elif (x, y) == self.__pacman_initial_pos:
                     continue
