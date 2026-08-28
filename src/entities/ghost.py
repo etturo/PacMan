@@ -1,3 +1,5 @@
+import pygame
+
 from typing import Callable
 from enum import Enum, auto
 
@@ -27,7 +29,7 @@ class Ghost(Entity):
         # def strategy(maze: Maze, ghost_pos: tuple[int, int], pacman_pos: tuple[int, int])
         # '''
         # and returns the Direction the ghost should take next turn
-        strategy: Callable[Maze, tuple[int, int], tuple[int, int]][Direction]
+        strategy: Callable[[Maze, tuple[int, int], tuple[int, int]], Direction],
         ) -> None:
 
         #TOREMOVE
