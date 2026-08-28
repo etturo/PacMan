@@ -26,10 +26,10 @@ class Entity(ABC):
     def get_visual_pos(self) -> tuple[float, float]:
         c_x, c_y = self._current_cell
         t_x, t_y = self._target_cell
-        
+
         v_x = c_x + (t_x - c_x) * self._lerp_progress
         v_y = c_y + (t_y - c_y) * self._lerp_progress
-        
+
         return v_x, v_y
 
     def isAlive(self) -> bool:

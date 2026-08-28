@@ -282,31 +282,39 @@ class PlayingState(BaseState):
         self.__entities: list[Entity] = []
         self._render_maze()
 
+        maze_w, maze_h = self.__actual_maze.getSize()
+        v_maze_height = maze_w * 2 + 1
+        original_maze_height = v_maze_height * self.__cell_size
+        scale_factor = self.__screen_height / original_maze_height
+
+        self.__scaled_size = self.__cell_size * scale_factor
+
         self.__text_size = self.__screen_width / 30
 
-        self.__pacman_initial_pos = (0,0)
+        self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
 
-        self.__pacman: Pacman = Pacman(self.__pacman_initial_pos, self.__cell_size * 1.6, 4.0, settings.lives)
+        self.__pacman: Pacman = Pacman(self.__pacman_initial_pos, self.__scaled_size * 1.6, 4.0, settings.lives)
         self.__current_direction = self.__pacman.getDir()
 
-        maze_w, maze_h = self.__actual_maze.getSize()
-
         self.__pacgums: list[Pacgum] = []
+        self.__ft_cells = self._get_42_coord()
 
         for x in range(maze_w):
             for y in range(maze_h):
+                if (x, y) in self.__ft_cells:
+                    continue
                 if ((x == 0 and y == 0) or
                       (x == 0 and y == maze_h - 1) or
                       (x == maze_w - 1 and y == 0) or
                       (x == maze_w - 1 and y == maze_h - 1)):
-                    super_pacgum_size = self.__cell_size / 1.3 if self.__cell_size >= 1 else 1
+                    super_pacgum_size = self.__scaled_size / 1.3 if self.__scaled_size >= 1 else 1
                     self.__pacgums.append(SuperPacgum((x, y), super_pacgum_size, settings.points_per_super_pacgum))
 
                 elif (x, y) == self.__pacman_initial_pos:
                     continue
 
                 else:
-                    self.__pacgums.append(Pacgum((x, y), self.__cell_size, settings.points_per_pacgum))
+                    self.__pacgums.append(Pacgum((x, y), self.__scaled_size, settings.points_per_pacgum))
 
         lives = Lives(
             (0, 0),
@@ -315,7 +323,7 @@ class PlayingState(BaseState):
             self.__text_size * 1.5
             )
         points = Points(
-            (Settings.VIRTUAL_WINDOW_WIDTH - 280, 10),
+            (Settings.VIRTUAL_WINDOW_WIDTH - 220, 10),
             SpriteLibrary['white'],
             self.__text_size,
             self.__points
@@ -439,13 +447,40 @@ class PlayingState(BaseState):
         v_maze_width = maze_columns * 2 + 1
         v_maze_height = maze_rows * 2 + 1
         
-        offset_x = (self.__screen_width - (self.__cell_size * v_maze_width)) / 2
-        offset_y = (self.__screen_height - (self.__cell_size * v_maze_height)) / 2
+        original_maze_height = v_maze_height * self.__cell_size
+        original_maze_width = v_maze_width * self.__cell_size
+        
+        scale_factor = self.__screen_height / original_maze_height
+        
+        scaled_cell_size = self.__cell_size * scale_factor
+        scaled_maze_width = original_maze_width * scale_factor
+        
+        offset_x = (self.__screen_width - scaled_maze_width) / 2
+        offset_y = 0
         
         v_x = logical_x * 2 + 1
         v_y = logical_y * 2 + 1
         
-        pixel_x = offset_x + (v_x + 0.5) * self.__cell_size
-        pixel_y = offset_y + (v_y + 0.5) * self.__cell_size
+        pixel_x = offset_x + (v_x + 0.5) * scaled_cell_size
+        pixel_y = offset_y + (v_y + 0.5) * scaled_cell_size
         
         return pixel_x, pixel_y
+
+    def _get_42_coord(self) -> list[tuple[int, int]]:
+        ft_small = [[1, 0, 0, 0, 1, 1, 1],
+                    [1, 0, 0, 0, 0, 0, 1],
+                    [1, 1, 1, 0, 1, 1, 1],
+                    [0, 0, 1, 0, 1, 0, 0],
+                    [0, 0, 1, 0, 1, 1, 1]
+                    ]
+        maze_w, maze_h = self.__actual_maze.getSize()
+        ft_cells = []
+        if len(ft_small)*2 > maze_h or len(ft_small[0])*2 > maze_w:
+            return
+        posy = int((maze_h - len(ft_small)) / 2)
+        posx = int((maze_w - len(ft_small[0])) / 2)
+        for y in range(len(ft_small)):
+            for x in range(len(ft_small[0])):
+                if ft_small[y][x] == 1:
+                    ft_cells.append((x + posx, y + posy))
+        return ft_cells

@@ -42,12 +42,6 @@ class MazeRender:
         self.__maze_columns, self.__maze_rows = maze.getSize()
         self._create_expanded_maze()
         self.__cell_size = cell_size
-        self.__offset_x = (
-            self.__screen_width - (self.__cell_size * self.__v_maze_width)
-        ) / 2
-        self.__offset_y = (
-            self.__screen_height - (self.__cell_size * self.__v_maze_height)
-        ) / 2
 
     def _check_wall(self, x: int, y: int) -> bool:
         h = len(self.__walls)
@@ -95,14 +89,16 @@ class MazeRender:
                 self.__walls[ry + 1][rx + 1] |= s or e
 
     def build_maze_surface(self) -> None:
+        surface_w = self.__cell_size * self.__v_maze_width
+        surface_h = self.__cell_size * self.__v_maze_height
         self._cached_surface = pygame.Surface(
-            (self.__screen_width, self.__screen_height), 
+            (surface_w, surface_h),
             pygame.SRCALPHA
         )
         for y in range(self.__v_maze_height):
             for x in range(self.__v_maze_width):
-                cell_center_x = self.__offset_x + (x + 0.5) * self.__cell_size
-                cell_center_y = self.__offset_y + (y + 0.5) * self.__cell_size
+                cell_center_x = (x + 0.5) * self.__cell_size
+                cell_center_y = (y + 0.5) * self.__cell_size
                 wall_map = self._get_neighbour(x, y)
                 if wall_map > 0:
                     sprite_type = self.WALL_MAPPING.get(
@@ -121,4 +117,21 @@ class MazeRender:
 
     def render(self, screen: pygame.Surface) -> None:
         if self._cached_surface:
-            screen.blit(self._cached_surface, (0, 0))
+            screen_height = screen.get_height()
+            screen_width = screen.get_width()
+            
+            original_width = self._cached_surface.get_width()
+            original_height = self._cached_surface.get_height()
+            
+            scale_factor = screen_height / original_height
+            new_width = int(original_width * scale_factor)
+            
+            scaled_surface = pygame.transform.scale(
+                self._cached_surface, 
+                (new_width, screen_height)
+            )
+            
+            center_x = (screen_width - new_width) // 2
+            center_y = 0 
+            
+            screen.blit(scaled_surface, (center_x, center_y))
