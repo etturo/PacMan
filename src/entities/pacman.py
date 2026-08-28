@@ -6,6 +6,8 @@ from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.ui_utils import SpriteType
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 
+from src.utils.settings import GameEvent
+
 from src.world.maze import Maze
 
 
@@ -53,16 +55,28 @@ class Pacman(Entity):
 
         self.__death_animation = [
             scale(self.__sheet[SpriteType.PACMAN_DEATH_1], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_1], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_2], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_2], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_3], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_3], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_4], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_4], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_5], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_5], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_6], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_6], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_7], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_7], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_8], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_8], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_9], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_9], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_10], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_10], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_11], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_11], size),
+            scale(self.__sheet[SpriteType.PACMAN_DEATH_12], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_12], size),
         ]
 
@@ -71,6 +85,7 @@ class Pacman(Entity):
         self.__animation_timer = 0
         self.__animation_delay = 0.1
         self.__frame_index = 0
+        self.__death_index = 0
 
     def update(self, dt: float) -> None:
         super().update(dt)
@@ -78,11 +93,18 @@ class Pacman(Entity):
         self.__animation_timer += dt
         if self.__animation_timer >= self.__animation_delay:
             self.__animation_timer = 0.0
-            self.__frame_index = (self.__frame_index + 1) % len(self.__sprite_animation_down)
+            if self._is_alive:
+                self.__frame_index = (self.__frame_index + 1) % len(self.__sprite_animation_down)
+            elif self.__death_index + 1 < len(self.__death_animation):
+                self.__death_index += 1
+            elif self.__death_index + 1 >= len(self.__death_animation):
+                self.__death_index = 0
+                self.takeDamage()
+                GameEvent.post(GameEvent.RESET_POSITIONS)
 
     def takeDamage(self) -> None:
         self.__lives -= 1
-        if self.lives <= 0:
+        if self.__lives <= 0:
             self._is_alive = False
 
     def getLives(self) -> None:
@@ -93,7 +115,11 @@ class Pacman(Entity):
                screen_pos: tuple[float, float],
                dt: float,
                ) -> None:
-        if self._current_direction == Direction.NORTH:
+
+        if not self._is_alive:
+            self._surface = self.__death_animation[self.__death_index]
+
+        elif self._current_direction == Direction.NORTH:
             self._surface = self.__sprite_animation_up[self.__frame_index]
         elif self._current_direction == Direction.SOUTH:
             self._surface = self.__sprite_animation_down[self.__frame_index]
@@ -102,4 +128,3 @@ class Pacman(Entity):
         elif self._current_direction == Direction.EAST:
             self._surface = self.__sprite_animation_right[self.__frame_index]
         super().render(screen, screen_pos, dt)
-

@@ -8,6 +8,7 @@ from src import __version__, __authors__
 from src.entities.pacman import Pacman
 from src.entities.entity import Entity
 from src.entities.pacgums import Pacgum, SuperPacgum
+from src.entities.ghost import Ghost, GhostMode
 
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
@@ -299,6 +300,13 @@ class PlayingState(BaseState):
         self.__pacgums: list[Pacgum] = []
         self.__ft_cells = self._get_42_coord()
 
+        #================#
+        def nothing():
+            ...
+        #================#
+
+        self.__ghost = Ghost((0, 0), self.__scaled_size * 1.6, 0, SpriteLibrary['red'], nothing)
+
         for x in range(maze_w):
             for y in range(maze_h):
                 if (x, y) in self.__ft_cells:
@@ -335,6 +343,7 @@ class PlayingState(BaseState):
         ]
         self.__entities.extend(self.__pacgums)
         self.__entities.append(self.__pacman)
+        self.__entities.append(self.__ghost)
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
@@ -344,6 +353,8 @@ class PlayingState(BaseState):
             element.render(self.__surface)
 
         for entity in self.__entities:
+            if self.__pacman.isAlive() == False and isinstance(entity, Ghost):
+                continue
             e_x, e_y = entity.get_visual_pos()
             screen_x, screen_y = self._get_entity_screen_pos(e_x, e_y)
 
@@ -361,8 +372,10 @@ class PlayingState(BaseState):
         self.__pacman.update(dt)
         self._detect_collision()
 
+        print(self.__pacman.getLives())
+
         for entity in self.__entities:
-            if not entity.isAlive():
+            if not entity.isAlive() and not isinstance(entity, Pacman | Ghost):
                 self.__entities.remove(entity)
 
             if not isinstance(entity, Pacman):
@@ -375,7 +388,7 @@ class PlayingState(BaseState):
 
                 if (queued_dir != Direction.STILL and not
                     self.__actual_maze[current_cell].hasWall(queued_dir) and
-                    queued_dir != current_dir.opposite()
+                    (queued_dir != current_dir.opposite() or isinstance(entity, Pacman))
                     ):
                     d_x, d_y = queued_dir.vector()
                     target_cell = (current_cell[0] + d_x, current_cell[1] + d_y)
@@ -389,19 +402,27 @@ class PlayingState(BaseState):
                     entity.moveTo(target_cell, current_dir)
 
                 else:
-                    entity.moveTo(current_cell, Direction.STILL)
+                    entity.moveTo(current_cell, current_dir)
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
         for event in events:
+
+            if event.type == GameEvent.RESET_POSITIONS:
+                self._reset_entity_pos()
+
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_w or event.key == pygame.K_UP:
                     self.__pacman.setQueueDirection(Direction.NORTH)
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                     self.__pacman.setQueueDirection(Direction.WEST)
-                if event.key == pygame.K_d:
+                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     self.__pacman.setQueueDirection(Direction.EAST)
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_s or event.key == pygame.K_DOWN:
                     self.__pacman.setQueueDirection(Direction.SOUTH)
+
+    def _reset_entity_pos(self) -> None:
+        for entity in self.__entities:
+            entity.resetPosition()
 
     def _render_maze(self) -> None:
         columns, rows = self.__actual_maze.getSize()
@@ -436,6 +457,8 @@ class PlayingState(BaseState):
                 if isinstance(entity, SuperPacgum):
                     entity.die()
                     self.__points += self.__settings.points_per_super_pacgum
+                if isinstance(entity, Ghost) and entity.getMode() != GhostMode.FRIGHTENED:
+                    self.__pacman.die()
 
     def _get_entity_screen_pos(
             self,
@@ -476,7 +499,7 @@ class PlayingState(BaseState):
         maze_w, maze_h = self.__actual_maze.getSize()
         ft_cells = []
         if len(ft_small)*2 > maze_h or len(ft_small[0])*2 > maze_w:
-            return
+            return ft_cells
         posy = int((maze_h - len(ft_small)) / 2)
         posx = int((maze_w - len(ft_small[0])) / 2)
         for y in range(len(ft_small)):

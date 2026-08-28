@@ -12,6 +12,7 @@ class Entity(ABC):
         speed: float = 4.0
     ) -> None:
         self._current_cell: tuple[int, int] = initial_position
+        self._initial_cell = initial_position
         self._target_cell: tuple[int, int] = initial_position
         self._lerp_progress: float = 0.0
         self._speed: float = speed
@@ -50,15 +51,25 @@ class Entity(ABC):
     def setQueueDirection(self, new_dir: Direction) -> None:
         self._queued_direction = new_dir
 
+    def setSpeed(self, new_speed: float) -> None:
+        self._speed = new_speed
+
+    def resetPosition(self) -> None:
+        self._current_cell = self._initial_cell
+
     def isMoving(self) -> bool:
         return self._current_cell != self._target_cell
 
     def moveTo(self, target: tuple[int, int], taken_dir: Direction) -> None:
+        if not self._is_alive:
+            return
         self._target_cell = target
         self._lerp_progress = 0.0
         self._current_direction = taken_dir
 
     def update(self, dt: float) -> None:
+        if not self._is_alive:
+            return
         if self.isMoving():
             self._lerp_progress += self._speed * dt
             
