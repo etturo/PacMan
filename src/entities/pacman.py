@@ -91,6 +91,8 @@ class Pacman(Entity):
         super().update(dt)
 
         self.__animation_timer += dt
+        print(self.__death_index)
+        print(len(self.__death_animation))
         if self.__animation_timer >= self.__animation_delay:
             self.__animation_timer = 0.0
             if self._is_alive:
@@ -98,16 +100,15 @@ class Pacman(Entity):
             elif self.__death_index + 1 < len(self.__death_animation):
                 self.__death_index += 1
             elif self.__death_index + 1 >= len(self.__death_animation):
-                self.__death_index = 0
-                self.takeDamage()
                 GameEvent.post(GameEvent.RESET_POSITIONS)
+                self.takeDamage()
 
     def takeDamage(self) -> None:
         self.__lives -= 1
         if self.__lives <= 0:
             self._is_alive = False
 
-    def getLives(self) -> None:
+    def getLives(self) -> int:
         return self.__lives
 
     def render(self,
@@ -127,4 +128,12 @@ class Pacman(Entity):
             self._surface = self.__sprite_animation_left[self.__frame_index]
         elif self._current_direction == Direction.EAST:
             self._surface = self.__sprite_animation_right[self.__frame_index]
+        elif self._current_direction == Direction.STILL:
+            self._surface = self.__sprite_full
         super().render(screen, screen_pos, dt)
+
+    def respawn(self) -> None:
+        self._is_alive = True
+        self.__death_index = 0
+        self._queued_direction = Direction.STILL
+        self._current_direction = Direction.STILL

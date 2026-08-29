@@ -28,7 +28,7 @@ class Game:
 
         # GAME SETTINGS
         self.__is_running: bool = True
-        self.__fps: int = 120
+        self.__fps: int = 60
         self.__clock = pygame.time.Clock()
         self.__actual_level: int = 0
         self.__game_settings: GameSettings

@@ -371,7 +371,10 @@ class PlayingState(BaseState):
         self.__pacman.update(dt)
         self._detect_collision()
 
-        print(self.__pacman.getLives())
+        print("vite: " + str(self.__pacman.getLives()))
+        print("pos pacman: " + str(self.__pacman.getPos()))
+        print("pos ghost: "+ str(self.__ghost.getPos()))
+        print("is alive: " + str(self.__pacman.isAlive()))
 
         for entity in self.__entities:
             if not entity.isAlive() and not isinstance(entity, Pacman | Ghost):
@@ -422,6 +425,9 @@ class PlayingState(BaseState):
     def _reset_entity_pos(self) -> None:
         for entity in self.__entities:
             entity.resetPosition()
+        
+        if self.__pacman.getLives() > 0:
+            self.__pacman.respawn()
 
     def _render_maze(self) -> None:
         columns, rows = self.__actual_maze.getSize()
@@ -447,7 +453,7 @@ class PlayingState(BaseState):
         pacman_pos = self.__pacman.getPos()
 
         for entity in self.__entities:
-            if entity == self.__pacman:
+            if entity == self.__pacman or not self.__pacman.isAlive():
                 continue
             if entity.getPos() == pacman_pos:
                 if isinstance(entity, Pacgum):

@@ -56,6 +56,7 @@ class Entity(ABC):
 
     def resetPosition(self) -> None:
         self._current_cell = self._initial_cell
+        self._target_cell = self._initial_cell
 
     def isMoving(self) -> bool:
         return self._current_cell != self._target_cell

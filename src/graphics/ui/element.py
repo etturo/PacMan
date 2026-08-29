@@ -59,7 +59,7 @@ class Lives(LiveElement):
         initial_lives: int = 3
     ):
         super().__init__(position, sprite_sheet, sprite_type, size)
-        self.__lives = initial_lives
+        self.__lives = -1
         self.__size = size
         self.__text_size = size / 1.3
         self._surface = pygame.Surface((size * 3, size * 2))
@@ -67,7 +67,12 @@ class Lives(LiveElement):
         self.__sprite = pygame.transform.scale(sprite_sheet[sprite_type], (size, size))
 
     def update(self, current_lives: int) -> None:
+        if self.__lives == current_lives:
+            return
+
         self.__lives = current_lives
+
+        self._surface.fill((0, 0, 0))
 
         if self.__lives > 3:
             for i in range(3):
