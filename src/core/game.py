@@ -6,7 +6,8 @@ from src.core.game_state import (
     BaseState,
     StartingState,
     MenuState,
-    PlayingState
+    PlayingState,
+    GameOverState,
     )
 
 from src.world.maze import Maze
@@ -89,6 +90,10 @@ class Game:
 
             elif event.type == GameEvent.MODE_TO_PLAYING:
                 self.__active_state = PlayingState(self.__game_settings)
+
+            elif event.type == GameEvent.MODE_TO_GAME_OVER:
+                points = self.__active_state.getPoints()
+                self.__active_state = GameOverState(points)
 
     def _load_config_file(self) -> None:
         arg_parser = ArgumentParser(

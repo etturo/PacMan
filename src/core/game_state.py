@@ -361,6 +361,9 @@ class PlayingState(BaseState):
 
         return self.__surface
 
+    def getPoints(self) -> int:
+        return self.__points
+
     def update(self, dt: float) -> None:
         for element in self.__ui_elements:
             if isinstance(element, Lives):
@@ -369,6 +372,8 @@ class PlayingState(BaseState):
                 element.update(self.__points)
 
         self.__pacman.update(dt)
+        if self.__pacman.getLives() <= 0:
+            GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
         self._detect_collision()
 
         print("vite: " + str(self.__pacman.getLives()))
@@ -512,3 +517,29 @@ class PlayingState(BaseState):
                 if ft_small[y][x] == 1:
                     ft_cells.append((x + posx, y + posy))
         return ft_cells
+
+
+class GameOverState(BaseState):
+    def __init__(self, points: int) -> None:
+        self.__points = points
+
+        screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
+
+        self.__text = Text(
+            f"You have made {points} points!\n"
+            f"Inssert your nickname here.",
+            (screen_width, screen_height),
+            SpriteLibrary['yellow'],
+            screen_height / 10,
+            anchor='center'
+            )
+
+    def update(self, dt):
+        ...
+
+    def getSurface(self, dt):
+        return _surface
+
+    def handle_events(self, events):
+        ...
