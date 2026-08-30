@@ -1,5 +1,6 @@
 import pygame
 import random
+import json
 
 from abc import ABC, abstractmethod
 
@@ -12,7 +13,7 @@ from src.entities.ghost import Ghost, GhostMode
 
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
-from src.graphics.ui.element import Element, LiveElement, Lives, Points
+from src.graphics.ui.element import Element, LiveElement, Lives, Points, TextInput
 from src.graphics.ui.drawable import Drawable
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
@@ -376,11 +377,6 @@ class PlayingState(BaseState):
             GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
         self._detect_collision()
 
-        print("vite: " + str(self.__pacman.getLives()))
-        print("pos pacman: " + str(self.__pacman.getPos()))
-        print("pos ghost: "+ str(self.__ghost.getPos()))
-        print("is alive: " + str(self.__pacman.isAlive()))
-
         for entity in self.__entities:
             if not entity.isAlive() and not isinstance(entity, Pacman | Ghost):
                 self.__entities.remove(entity)
@@ -526,20 +522,77 @@ class GameOverState(BaseState):
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
-        self.__text = Text(
-            f"You have made {points} points!\n"
-            f"Inssert your nickname here.",
-            (screen_width, screen_height),
+        self.__game_over_txt = Text(
+            "GAME OVER",
+            (screen_width / 2, screen_height / 6),
             SpriteLibrary['yellow'],
-            screen_height / 10,
+            screen_height / 8,
+            anchor='center'
+        )
+        line_width = 25
+        line1 = "You have made".center(line_width)
+        line2 = f"{points} points!".center(line_width)
+        line3 = "Type your nickname here.".center(line_width)
+        formatted_string = f"{line1}\n{line2}\n{line3}"
+        self.__text = Text(
+            formatted_string,
+            (screen_width / 2, screen_height / 3),
+            SpriteLibrary['yellow'],
+            screen_height / 16,
             anchor='center'
             )
+        self.__name_text = TextInput(
+            (screen_width / 2, screen_height / 1.5),
+            SpriteLibrary['white'],
+            screen_height / 8,
+            10
+        )
 
-    def update(self, dt):
-        ...
+        self.__elements: list[Element] = [
+            self.__text,
+            self.__game_over_txt,
+            self.__name_text
+        ]
 
-    def getSurface(self, dt):
-        return _surface
+        self.__surface = \
+            pygame.Surface(
+                (Settings.VIRTUAL_WINDOW_WIDTH, Settings.VIRTUAL_WINDOW_HEIGHT),
+                )
 
-    def handle_events(self, events):
-        ...
+    def update(self, dt: float):
+        if self.__name_text.isFinished():
+            name = self.__name_text.get_text()
+            self._update_leadboard(name, self.__points)
+
+        for element in self.__elements:
+            if isinstance(element, LiveElement):
+                element.update()
+
+    @staticmethod
+    def _update_leadboard(new_player, new_score) -> None:
+        try:
+            with open('data/leadboard/scores.json', 'r') as file:
+                leadboard: list[tuple[str, int]] = json.load(file)
+        except (FileNotFoundError, json.decoder.JSONDecodeError):
+            leadboard = []
+
+        leadboard.append((new_player, new_score))
+
+        with open("data/leadboard/scores.json", 'w') as file:
+            json.dump(leadboard, file, indent=4)
+
+        GameEvent.post(GameEvent.MODE_TO_MENU)
+
+
+    def getSurface(self, dt: float):
+        self.__surface.fill((0, 0, 0))
+
+        for element in self.__elements:
+            element.render(self.__surface)
+
+        return self.__surface
+
+    def handle_events(self, events: list[pygame.event.Event]):
+        for element in self.__elements:
+            if isinstance(element, LiveElement):
+                element.handle_events(events)

@@ -16,9 +16,10 @@ class Element(Drawable):
         position: tuple[float, float],
         sprite_sheet: SpriteSheet,
         sprite_type: SpriteType,
-        size: int
+        size: int,
+        anchor: str = "topleft"
     ):
-        super().__init__(position, sprite_sheet, anchor="topleft")
+        super().__init__(position, sprite_sheet, anchor)
 
         self._surface = pygame.Surface((size, size))
         result = pygame.transform.scale(sprite_sheet[sprite_type], (size, size))
@@ -31,21 +32,22 @@ class LiveElement(Element, ABC):
         position: tuple[float, float],
         sprite_sheet: SpriteSheet,
         sprite_type: SpriteType,
-        size: int
+        size: int,
+        anchor: str = "topleft"
     ):
         super().__init__(
             position,
             sprite_sheet,
             sprite_type,
-            size
+            size,
+            anchor
             )
-
-        self._surface = pygame.Surface((size, size))
-        result = pygame.transform.scale(sprite_sheet[sprite_type], (size, size))
-        self._surface.blit(result, (0, 0))
 
     @abstractmethod
     def update(self) -> None:
+        pass
+
+    def handle_events(self, events) -> None:
         pass
 
 
@@ -91,6 +93,9 @@ class Lives(LiveElement):
         else:
             for i in range(self.__lives):
                 self._surface.blit(self.__sprite, (i * self.__size, 0))
+
+    def handle_events(self, events):
+        return
 
 
 class Points(LiveElement):
@@ -138,3 +143,70 @@ class Points(LiveElement):
             )
 
         self.__text.render(self._surface)
+
+    def handle_events(self, events):
+        return
+
+
+class TextInput(LiveElement):
+    def __init__(
+        self,
+        position: tuple[float, float],
+        sprite_sheet: SpriteSheet,
+        size: int,
+        max_length: int = 10
+    ):
+        super().__init__(
+            position,
+            sprite_sheet,
+            SpriteType.EMPTY_WALL,
+            size,
+            anchor="center"
+        )
+        self.__text_buffer = ""
+        self.__size = size
+        self.__max_length = max_length
+        self.__sprite_sheet = sprite_sheet
+        self._surface = pygame.Surface((size * max_length, size * 1.5), pygame.SRCALPHA)
+        self._render_text()
+        self.__is_finished = False
+
+    def _render_text(self) -> None:
+        self._surface.fill((0, 0, 0, 0))
+        display_text = self.__text_buffer if self.__text_buffer else " "
+
+        center_x = self._surface.get_width() / 2
+        center_y = self._surface.get_height() / 2
+
+        text_element = Text(
+            display_text,
+            (center_x, center_y),
+            self.__sprite_sheet,
+            self.__size,
+            anchor='center'
+        )
+
+        text_element.render(self._surface)
+
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    self.__text_buffer = self.__text_buffer[:-1]
+                    self._render_text()
+                elif event.key != pygame.K_RETURN:
+                    char = event.unicode.lower()
+                    if len(self.__text_buffer) < self.__max_length and char.isalnum():
+                        self.__text_buffer += char
+                        self._render_text()
+                elif event.key == pygame.K_RETURN:
+                    self.__is_finished = True
+
+    def get_text(self) -> str:
+        return self.__text_buffer
+
+    def isFinished(self) -> bool:
+        return self.__is_finished
+
+    def update(self) -> None:
+        return

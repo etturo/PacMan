@@ -27,6 +27,8 @@ class Text(Drawable):
         )
 
         self._surface = pygame.Surface((self.__width, self.__height))
+        # import random
+        # self._surface.fill((random.randrange(0, 255), random.randrange(0, 255), random.randrange(0, 255)))
         self.__font.render(self._surface, (0, 0), self.__text)
 
     def getSize(self) -> tuple[float, float]:

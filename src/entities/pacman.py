@@ -91,8 +91,6 @@ class Pacman(Entity):
         super().update(dt)
 
         self.__animation_timer += dt
-        print(self.__death_index)
-        print(len(self.__death_animation))
         if self.__animation_timer >= self.__animation_delay:
             self.__animation_timer = 0.0
             if self._is_alive:

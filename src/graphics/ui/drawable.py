@@ -73,6 +73,9 @@ class Drawable(ABC):
     def render(self, screen: pygame.Surface) -> None:
         screen.blit(self._surface, self._get_rect())
 
+    def moveTo(self, new_position: tuple[float, float]) -> None:
+        self._position = new_position
+
     @staticmethod
     def _calculate_text_size(
         text: str,
