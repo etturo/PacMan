@@ -25,6 +25,7 @@ class ScreenManager:
         SpriteLibrary.load()
         SpriteLibrary.add_item('title', 'white_text')
         SpriteLibrary.add_item('wall_skins', 'blue')
+        SpriteLibrary.add_item('leadboard', 'pink_black')
 
     def _apply_crt_overlay(self) -> pygame.Surface:
         overlay = pygame.Surface(

@@ -4,6 +4,7 @@ from abc import ABC, abstractmethod
 
 from src.graphics.ui.drawable import Drawable
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet, SpriteType
+from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.ui.text import Text
 
@@ -210,3 +211,115 @@ class TextInput(LiveElement):
 
     def update(self) -> None:
         return
+
+
+class Leadboard(Element):
+    def __init__(
+        self,
+        position: tuple[float, float],
+        width: int,
+        height: int,
+        sprite_sheet: SpriteSheet,
+        sprite_type: SpriteType,
+        size: int,
+        anchor: str = "topleft"
+        ):
+        super().__init__(position, sprite_sheet, sprite_type, size, anchor)
+        self.__font: SpriteFont = SpriteFont(sprite_sheet, size)
+        self.__offset = 5
+        self.__width = width
+        self.__height = height
+        self.__sprite_size = size
+
+        self._create_textbox()
+
+        title = Text(
+            "LEADBOARD",
+            (self._surface.get_width() / 2, size),
+            SpriteLibrary['white'],
+            size / 1.5,
+            anchor="mid top"
+        )
+        title.render(self._surface)
+        with open("data/leadboard/scores.json", "r") as f:
+            leadboard = json.load(f)
+
+        print(leadboard)
+
+    def _create_textbox(self) -> None:
+        text_size = self.__sprite_size
+        box_sprite_size = text_size / 2
+
+        box_width = self.__width
+        box_height = self.__height
+
+        inner_width = max(0, box_width - (box_sprite_size * 2))
+        inner_height = max(0, box_height - (box_sprite_size * 2))
+
+        y_padding = \
+            box_sprite_size + max(0, (inner_height) / 2)
+
+        v_border_lenght = max(1, box_height - (box_sprite_size * 2))
+        h_border_lenght = max(1, box_width - (box_sprite_size * 2))
+
+        horizontal_sprites = pygame.transform.scale(
+            self._sheet[SpriteType.HORIZONTAL_EDGE],
+            (h_border_lenght, box_sprite_size)
+        )
+        vertical_sprites = pygame.transform.scale(
+            self._sheet[SpriteType.VERTICAL_EDGE],
+            (box_sprite_size, v_border_lenght)
+        )
+        top_left_sprite = pygame.transform.scale(
+            self._sheet[SpriteType.TOP_LEFT],
+            (box_sprite_size, box_sprite_size)
+        )
+        top_right_sprite = pygame.transform.scale(
+            self._sheet[SpriteType.TOP_RIGHT],
+            (box_sprite_size, box_sprite_size)
+        )
+        bottom_left_sprite = pygame.transform.scale(
+            self._sheet[SpriteType.BOTTOM_LEFT],
+            (box_sprite_size, box_sprite_size)
+        )
+        bottom_right_sprite = pygame.transform.scale(
+            self._sheet[SpriteType.BOTTOM_RIGHT],
+            (box_sprite_size, box_sprite_size)
+        )
+
+        self._surface = pygame.Surface((box_width, box_height))
+        self.__secondary_surface = pygame.Surface((box_width, box_height))
+        self.__rect = self._get_rect()
+
+        # top horizontal border
+        self._surface.blit(
+            horizontal_sprites,
+            (box_sprite_size, 0))
+
+        # bottom horizontal border
+        self._surface.blit(
+            horizontal_sprites,
+            (box_sprite_size, box_height - box_sprite_size))
+
+        # left vertical border
+        self._surface.blit(
+            vertical_sprites,
+            (0, box_sprite_size))
+
+        # right vertical blit
+        self._surface.blit(
+            vertical_sprites,
+            (box_width - box_sprite_size, box_sprite_size))
+
+        self._surface.blit(
+            top_left_sprite,
+            (0, 0))
+        self._surface.blit(
+            top_right_sprite,
+            (box_width - box_sprite_size, 0))
+        self._surface.blit(
+            bottom_left_sprite,
+            (0, box_height - box_sprite_size))
+        self._surface.blit(
+            bottom_right_sprite,
+            (box_width - box_sprite_size, box_height - box_sprite_size))

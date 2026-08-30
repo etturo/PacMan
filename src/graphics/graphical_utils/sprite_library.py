@@ -35,6 +35,7 @@ class SpriteLibrary(metaclass=SpriteLibraryMeta):
                 'data/assets/sprites/white_text-sprite-sheet.png'),
             "yellow": SpriteSheet('data/assets/sprites/yellow-sprite-sheet.png'),
             "green": SpriteSheet('data/assets/sprites/green-sprite-sheet.png'),
+            "pink_black": SpriteSheet('data/assets/sprites/pink_black-sprite-sheet.png'),
         }
         cls.__original_keys = list(cls.sprites.keys())
         cls.__default_sprite = cls.sprites['b&w']

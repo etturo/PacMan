@@ -13,7 +13,7 @@ from src.entities.ghost import Ghost, GhostMode
 
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
-from src.graphics.ui.element import Element, LiveElement, Lives, Points, TextInput
+from src.graphics.ui.element import Element, LiveElement, Lives, Points, TextInput, Leadboard
 from src.graphics.ui.drawable import Drawable
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
@@ -97,6 +97,16 @@ class MenuState(BaseState):
             anchor='bottom right'
         )
 
+        leadboard = Leadboard(
+            (10, 10),
+            screen_width / 3.5,
+            screen_height - (screen_height / 10),
+            SpriteLibrary['leadboard'],
+            SpriteType.EMPTY_WALL,
+            button_size
+        )
+
+
         self.__buttons = [
             start_button,
             exit_button
@@ -107,7 +117,7 @@ class MenuState(BaseState):
             version_text,
         ]
         self.__elements = [
-            
+            leadboard
         ]
 
         self.__surface = \
