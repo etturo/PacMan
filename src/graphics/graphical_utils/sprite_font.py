@@ -7,11 +7,7 @@ from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 
 
 class SpriteFont:
-    def __init__(self, sheet: SpriteSheet, size: int = 16) -> None:
-        # note: the default size of the font is 8 because is the pixel
-        #       size of the characters sprites, so if scaling is applied
-        #       the value that is passed should be that value
-
+    def __init__(self, sheet: SpriteSheet, size: float = 16) -> None:
         self.__size = size
         self.__sheet = sheet
         self.__characters: dict[SpriteType, pygame.Surface] = {}
@@ -104,10 +100,10 @@ class SpriteFont:
                 current_x = initial_x
                 current_y += self.__size
 
-    def getSize(self) -> int:
+    def getSize(self) -> float:
         return self.__size
 
-    def setSize(self, new_size: int) -> None:
+    def setSize(self, new_size: float) -> None:
         if new_size <= 0:
             new_size = 8
         self.__size = new_size

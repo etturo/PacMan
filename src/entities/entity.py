@@ -2,13 +2,14 @@ import pygame
 
 from abc import ABC
 
-from src.world.maze import Direction
+from src.world.cell import Direction
+
 
 class Entity(ABC):
     def __init__(
         self,
         initial_position: tuple[int, int],
-        size: int,
+        size: float,
         speed: float = 4.0
     ) -> None:
         self._current_cell: tuple[int, int] = initial_position
@@ -73,7 +74,7 @@ class Entity(ABC):
             return
         if self.isMoving():
             self._lerp_progress += self._speed * dt
-            
+
             if self._lerp_progress >= 1.0:
                 self._current_cell = self._target_cell
                 self._lerp_progress = 0.0

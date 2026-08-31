@@ -1,5 +1,4 @@
 import pygame
-from pygame.surface import Surface
 
 from src.utils.settings import Settings
 
@@ -221,15 +220,24 @@ class SpriteSheet:
         self.__data[SpriteType.FRIGHTENED_GHOST_1] = self.getSprite(16, 6, 1)
         self.__data[SpriteType.FRIGHTENED_GHOST_2] = self.getSprite(16, 6, 2)
 
-        self.__data[SpriteType.PACMAN_DOWN_1] = self.getSprite(16, 5, 8)
-        self.__data[SpriteType.PACMAN_DOWN_2] = self.getSprite(16, 4, 8)
-        self.__data[SpriteType.PACMAN_RIGHT_1] = self.getSprite(16, 5, 7)
-        self.__data[SpriteType.PACMAN_RIGHT_2] = self.getSprite(16, 4, 7)
-        self.__data[SpriteType.PACMAN_UP_1] = self.getRotatedSprite(16, 5, 8, 180)
-        self.__data[SpriteType.PACMAN_UP_2] = self.getRotatedSprite(16, 4, 8, 180)
-        self.__data[SpriteType.PACMAN_LEFT_1] = self.getRotatedSprite(16, 5, 7, 180)
-        self.__data[SpriteType.PACMAN_LEFT_2] = self.getRotatedSprite(16, 4, 7, 180)
-        self.__data[SpriteType.PACMAN_FULL] = self.getSprite(16, 6, 7)
+        self.__data[SpriteType.PACMAN_DOWN_1] = \
+            self.getSprite(16, 5, 8)
+        self.__data[SpriteType.PACMAN_DOWN_2] = \
+            self.getSprite(16, 4, 8)
+        self.__data[SpriteType.PACMAN_RIGHT_1] = \
+            self.getSprite(16, 5, 7)
+        self.__data[SpriteType.PACMAN_RIGHT_2] = \
+            self.getSprite(16, 4, 7)
+        self.__data[SpriteType.PACMAN_UP_1] = \
+            self.getRotatedSprite(16, 5, 8, 180)
+        self.__data[SpriteType.PACMAN_UP_2] = \
+            self.getRotatedSprite(16, 4, 8, 180)
+        self.__data[SpriteType.PACMAN_LEFT_1] = \
+            self.getRotatedSprite(16, 5, 7, 180)
+        self.__data[SpriteType.PACMAN_LEFT_2] = \
+            self.getRotatedSprite(16, 4, 7, 180)
+        self.__data[SpriteType.PACMAN_FULL] = \
+            self.getSprite(16, 6, 7)
 
         self.__data[SpriteType.PACMAN_DEATH_1] = self.getSprite(16, 4, 1)
         self.__data[SpriteType.PACMAN_DEATH_2] = self.getSprite(16, 4, 2)
@@ -254,7 +262,6 @@ class SpriteSheet:
 
         self.__data[SpriteType.PACGUM] = self.getSprite(8, 2, 16)
         self.__data[SpriteType.SUPER_PACGUMS] = self.getSprite(8, 4, 16)
-
 
     @staticmethod
     def _combine_sprites_2x2(
@@ -286,10 +293,10 @@ class SpriteSheet:
             column: int,
             degree: int
             ) -> pygame.Surface:
-        
+
         base_surface = self.getSprite(sprite_size, row, column)
         return pygame.transform.rotate(base_surface, degree)
 
     @staticmethod
-    def scaleSprite(sprite: pygame.Surface, size: int) -> pygame.Surface:
+    def scaleSprite(sprite: pygame.Surface, size: float) -> pygame.Surface:
         return pygame.transform.scale(sprite, (size, size))

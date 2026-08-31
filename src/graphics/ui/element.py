@@ -1,15 +1,15 @@
 import pygame
 import json
+from typing import cast, Any
 
 from abc import ABC, abstractmethod
 
 from src.graphics.ui.drawable import Drawable
-from src.graphics.graphical_utils.sprite_sheet import SpriteSheet, SpriteType
+from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
+from src.graphics.graphical_utils.ui_utils import SpriteType
 from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.ui.text import Text
-
-from src.utils.settings import Settings
 
 
 class Element(Drawable):
@@ -18,13 +18,16 @@ class Element(Drawable):
         position: tuple[float, float],
         sprite_sheet: SpriteSheet,
         sprite_type: SpriteType,
-        size: int,
+        size: float,
         anchor: str = "topleft"
     ):
         super().__init__(position, sprite_sheet, anchor)
 
         self._surface = pygame.Surface((size, size))
-        result = pygame.transform.scale(sprite_sheet[sprite_type], (size, size))
+        result = pygame.transform.scale(
+            sprite_sheet[sprite_type],
+            (size, size)
+            )
         self._surface.blit(result, (0, 0))
 
 
@@ -34,7 +37,7 @@ class LiveElement(Element, ABC):
         position: tuple[float, float],
         sprite_sheet: SpriteSheet,
         sprite_type: SpriteType,
-        size: int,
+        size: float,
         anchor: str = "topleft"
     ):
         super().__init__(
@@ -46,10 +49,10 @@ class LiveElement(Element, ABC):
             )
 
     @abstractmethod
-    def update(self) -> None:
+    def update(self, value: int = 0) -> None:
         pass
 
-    def handle_events(self, events) -> None:
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
         pass
 
 
@@ -59,24 +62,26 @@ class Lives(LiveElement):
         position: tuple[float, float],
         sprite_sheet: SpriteSheet,
         sprite_type: SpriteType,
-        size: int,
+        size: float,
         initial_lives: int = 3
     ):
         super().__init__(position, sprite_sheet, sprite_type, size)
         self.__lives = -1
         self.__size = size
         self.__text_size = size / 1.3
-        self._surface = pygame.Surface((size * 3, size * 2))
+        self._surface = pygame.Surface((size * 3, size * 2), pygame.SRCALPHA)
         self.__sprite_sheet = sprite_sheet
-        self.__sprite = pygame.transform.scale(sprite_sheet[sprite_type], (size, size))
+        self.__sprite = pygame.transform.scale(
+            sprite_sheet[sprite_type],
+            (size, size)
+            )
 
-    def update(self, current_lives: int) -> None:
-        if self.__lives == current_lives:
+    def update(self, value: int = 0) -> None:
+        if self.__lives == value:
             return
 
-        self.__lives = current_lives
-
-        self._surface.fill((0, 0, 0))
+        self.__lives = value
+        self._surface.fill((0, 0, 0, 0))
 
         if self.__lives > 3:
             for i in range(3):
@@ -96,7 +101,7 @@ class Lives(LiveElement):
             for i in range(self.__lives):
                 self._surface.blit(self.__sprite, (i * self.__size, 0))
 
-    def handle_events(self, events):
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
         return
 
 
@@ -105,9 +110,9 @@ class Points(LiveElement):
         self,
         position: tuple[float, float],
         sprite_sheet: SpriteSheet,
-        size: int,
+        size: float,
         initial_points: int = 3
-        ):
+    ):
         super().__init__(
             position,
             sprite_sheet,
@@ -127,11 +132,10 @@ class Points(LiveElement):
             anchor='topleft'
             )
 
-        self._surface = pygame.Surface(self.__text.getSize())
+        self._surface = pygame.Surface(self.__text.getSize(), pygame.SRCALPHA)
 
-    def update(self, points: int) -> None:
-        self.__points = points
-
+    def update(self, value: int = 0) -> None:
+        self.__points = value
         self._surface.fill((0, 0, 0, 0))
 
         formatted_points = str(self.__points).center(5)
@@ -146,7 +150,7 @@ class Points(LiveElement):
 
         self.__text.render(self._surface)
 
-    def handle_events(self, events):
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
         return
 
 
@@ -155,7 +159,7 @@ class TextInput(LiveElement):
         self,
         position: tuple[float, float],
         sprite_sheet: SpriteSheet,
-        size: int,
+        size: float,
         max_length: int = 10
     ):
         super().__init__(
@@ -169,7 +173,10 @@ class TextInput(LiveElement):
         self.__size = size
         self.__max_length = max_length
         self.__sprite_sheet = sprite_sheet
-        self._surface = pygame.Surface((size * max_length, size * 1.5), pygame.SRCALPHA)
+        self._surface = pygame.Surface(
+            (size * max_length, size * 1.5),
+            pygame.SRCALPHA
+            )
         self._render_text()
         self.__is_finished = False
 
@@ -198,7 +205,8 @@ class TextInput(LiveElement):
                     self._render_text()
                 elif event.key != pygame.K_RETURN:
                     char = event.unicode.lower()
-                    if len(self.__text_buffer) < self.__max_length and char.isalnum():
+                    if (len(self.__text_buffer) < self.__max_length
+                            and char.isalnum()):
                         self.__text_buffer += char
                         self._render_text()
                 elif event.key == pygame.K_RETURN:
@@ -211,7 +219,7 @@ class TextInput(LiveElement):
     def isFinished(self) -> bool:
         return self.__is_finished
 
-    def update(self) -> None:
+    def update(self, value: int = 0) -> None:
         return
 
 
@@ -219,13 +227,13 @@ class Leadboard(Element):
     def __init__(
         self,
         position: tuple[float, float],
-        width: int,
-        height: int,
+        width: float,
+        height: float,
         sprite_sheet: SpriteSheet,
         sprite_type: SpriteType,
-        size: int,
+        size: float,
         anchor: str = "topleft"
-        ):
+    ):
         super().__init__(position, sprite_sheet, sprite_type, size, anchor)
         self.__font: SpriteFont = SpriteFont(sprite_sheet, size)
         self.__offset = 5
@@ -238,19 +246,23 @@ class Leadboard(Element):
         title = Text(
             "LEADBOARD",
             (self._surface.get_width() / 2, size),
-            SpriteLibrary['white'],
+            SpriteLibrary.get('white'),
             size / 1.5,
             anchor="mid top"
         )
         title.render(self._surface)
+
+        leadboard: list[list[Any]] = []
         try:
             with open("data/leadboard/scores.json", "r") as f:
-                leadboard = json.load(f)
-        except (json.decoder.JSONDecodeError, FileNotFoundError, FileExistsError):
-            print("WARNING! Failed to load the leadboard file, check json correctness.")
-            leadboard = []
+                leadboard = cast(list[list[Any]], json.load(f))
+        except (json.decoder.JSONDecodeError,
+                FileNotFoundError,
+                FileExistsError):
+            print("WARNING! Failed to load the leadboard file, "
+                  "check json correctness.")
 
-        leadboard.sort(key=lambda x: x[1], reverse=True)
+        leadboard.sort(key=lambda x: int(x[1]), reverse=True)
 
         for i in range(min(10, len(leadboard))):
             player = leadboard[i][0]
@@ -258,9 +270,9 @@ class Leadboard(Element):
             text = Text(
                 f"{i + 1}.{player}-{score}",
                 (self._surface.get_width() / 15, size * i + size * 2.5),
-                SpriteLibrary['white'],
+                SpriteLibrary.get('white'),
                 size / 3,
-                "top left"
+                anchor="topleft"
             )
             text.render(self._surface)
 
@@ -271,22 +283,16 @@ class Leadboard(Element):
         box_width = self.__width
         box_height = self.__height
 
-        inner_width = max(0, box_width - (box_sprite_size * 2))
-        inner_height = max(0, box_height - (box_sprite_size * 2))
-
-        y_padding = \
-            box_sprite_size + max(0, (inner_height) / 2)
-
-        v_border_lenght = max(1, box_height - (box_sprite_size * 2))
-        h_border_lenght = max(1, box_width - (box_sprite_size * 2))
+        v_border_length = max(1, box_height - (box_sprite_size * 2))
+        h_border_length = max(1, box_width - (box_sprite_size * 2))
 
         horizontal_sprites = pygame.transform.scale(
             self._sheet[SpriteType.HORIZONTAL_EDGE],
-            (h_border_lenght, box_sprite_size)
+            (h_border_length, box_sprite_size)
         )
         vertical_sprites = pygame.transform.scale(
             self._sheet[SpriteType.VERTICAL_EDGE],
-            (box_sprite_size, v_border_lenght)
+            (box_sprite_size, v_border_length)
         )
         top_left_sprite = pygame.transform.scale(
             self._sheet[SpriteType.TOP_LEFT],

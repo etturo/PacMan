@@ -1,19 +1,21 @@
-from typing import cast, Optional
+from typing import Optional, cast
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 
 
 class SpriteLibraryMeta(type):
     def __getitem__(cls, key: str) -> SpriteSheet:
-        sprite_map = \
-            cast(dict[str, SpriteSheet], cls.__dict__.get('sprites', {}))
-        try:
-            return sprite_map[key]
-        except KeyError:
-            return cast(
-                SpriteSheet,
-                cls.__dict__.get('_SpriteLibrary__default_sprite')
-                )
+        sprites = cast(
+            dict[str, SpriteSheet],
+            getattr(cls, 'sprites', {})
+        )
+        if key in sprites:
+            return sprites[key]
+
+        default = getattr(cls, '_SpriteLibrary__default_sprite', None)
+        if default is not None:
+            return cast(SpriteSheet, default)
+        raise KeyError(key)
 
 
 class SpriteLibrary(metaclass=SpriteLibraryMeta):
@@ -24,52 +26,60 @@ class SpriteLibrary(metaclass=SpriteLibraryMeta):
     @classmethod
     def load(cls) -> None:
         cls.sprites = {
-            "azure": SpriteSheet('data/assets/sprites/azure-sprite-sheet.png'),
-            "b&w": SpriteSheet('data/assets/sprites/b&w-sprite-sheet.png'),
-            "blue": SpriteSheet('data/assets/sprites/blue-sprite-sheet.png'),
-            "melon": SpriteSheet('data/assets/sprites/melon-sprite-sheet.png'),
-            "orange": SpriteSheet('data/assets/sprites/orange-sprite-sheet.png'),
-            "pink": SpriteSheet('data/assets/sprites/pink-sprite-sheet.png'),
-            "red": SpriteSheet('data/assets/sprites/red-sprite-sheet.png'),
+            "azure": SpriteSheet(
+                'data/assets/sprites/azure-sprite-sheet.png'
+                ),
+            "b&w": SpriteSheet(
+                'data/assets/sprites/b&w-sprite-sheet.png'
+                ),
+            "blue": SpriteSheet(
+                'data/assets/sprites/blue-sprite-sheet.png'
+                ),
+            "melon": SpriteSheet(
+                'data/assets/sprites/melon-sprite-sheet.png'
+                ),
+            "orange": SpriteSheet(
+                'data/assets/sprites/orange-sprite-sheet.png'
+                ),
+            "pink": SpriteSheet(
+                'data/assets/sprites/pink-sprite-sheet.png'
+                ),
+            "red": SpriteSheet(
+                'data/assets/sprites/red-sprite-sheet.png'
+                ),
             "white_text": SpriteSheet(
-                'data/assets/sprites/white_text-sprite-sheet.png'),
-            "yellow": SpriteSheet('data/assets/sprites/yellow-sprite-sheet.png'),
-            "green": SpriteSheet('data/assets/sprites/green-sprite-sheet.png'),
-            "pink_black": SpriteSheet('data/assets/sprites/pink_black-sprite-sheet.png'),
+                'data/assets/sprites/white_text-sprite-sheet.png'
+                ),
+            "yellow": SpriteSheet(
+                'data/assets/sprites/yellow-sprite-sheet.png'
+                ),
+            "green": SpriteSheet(
+                'data/assets/sprites/green-sprite-sheet.png'
+                ),
+            "pink_black": SpriteSheet(
+                'data/assets/sprites/pink_black-sprite-sheet.png'
+                ),
         }
         cls.__original_keys = list(cls.sprites.keys())
         cls.__default_sprite = cls.sprites['b&w']
 
     @classmethod
-    def __class_getitem__(cls, key: str) -> SpriteSheet:
-        return cls.get(key)
-
-    @classmethod
     def get(cls, key: str) -> SpriteSheet:
-        sprite_map = \
-            cast(dict[str, SpriteSheet], cls.__dict__.get('sprites', {}))
-        try:
-            return sprite_map[key]
-        except KeyError:
-            return cast(
-                SpriteSheet,
-                cls.__dict__.get('_SpriteLibrary__default_sprite')
-                )
+        if key in cls.sprites:
+            return cls.sprites[key]
+        if cls.__default_sprite is not None:
+            return cls.__default_sprite
+        raise KeyError(key)
 
     @classmethod
     def add_item(cls, new_item: str, sheet_to_link: str) -> None:
-        sprite_map = \
-            cast(dict[str, SpriteSheet], cls.__dict__.get('sprites', {}))
-        try:
-            sprite_map[new_item] = sprite_map[sheet_to_link]
-        except KeyError:
+        if sheet_to_link in cls.sprites:
+            cls.sprites[new_item] = cls.sprites[sheet_to_link]
+        else:
             print(f"WARNING! tried to link {new_item}"
                   f" to {sheet_to_link} unsuccesfully")
-            return
 
     @classmethod
     def delete_item(cls, item_to_delete: str) -> None:
-        sprite_map = \
-            cast(dict[str, SpriteSheet], cls.__dict__.get('sprites', {}))
         if item_to_delete not in cls.__original_keys:
-            sprite_map.pop(item_to_delete)
+            cls.sprites.pop(item_to_delete, None)

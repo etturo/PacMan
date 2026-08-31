@@ -79,11 +79,11 @@ class Drawable(ABC):
     @staticmethod
     def _calculate_text_size(
         text: str,
-        sprite_size: int = 0,
-        box_sprite_size: int = 0,
-        offset: int = 0,
+        sprite_size: float = 0,
+        box_sprite_size: float = 0,
+        offset: float = 0,
         include_padding: bool = False,
-    ) -> tuple[int, int]:
+    ) -> tuple[float, float]:
 
         if not text:
             if include_padding:

@@ -31,9 +31,9 @@ lint:
 			--check-untyped-defs
 
 lint-strict:
-	$(BIN)/flake8 $(SRC)
-	$(BIN)/mypy $(SRC) --strict
+	$(BIN)/flake8 $(SRC) --color=always
+	$(BIN)/mypy $(SRC) --strict --color-output
 
 c:
-	clear
-	make lint-strict
+	@clear
+	@FORCE_COLOR=1 MYPY_FORCE_COLOR=1 make -s lint-strict | head -n 10

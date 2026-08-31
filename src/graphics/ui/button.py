@@ -17,7 +17,7 @@ class Button(Drawable):
                  sprite_sheet: SpriteSheet,
                  on_click: GameEvent,
                  text: str,
-                 sprite_size: int,
+                 sprite_size: float,
                  on_click_sfx: SoundEffect | None = None,
                  anchor: str = "center",
                  secondary_sheet: None | SpriteSheet = None,
@@ -164,8 +164,8 @@ class Button(Drawable):
 
     @staticmethod
     def _calculate_text_render_size(text: str,
-                                    sprite_size: int
-                                    ) -> tuple[int, int]:
+                                    sprite_size: float
+                                    ) -> tuple[float, float]:
         if not text:
             return (0, 0)
 

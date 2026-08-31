@@ -1,24 +1,24 @@
 import pygame
 
-from src.entities.entity import Entity, Direction
+from src.entities.entity import Entity
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.ui_utils import SpriteType
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 
-from src.utils.settings import GameEvent
+from src.world.cell import Direction
 
-from src.world.maze import Maze
+from src.utils.settings import GameEvent
 
 
 class Pacman(Entity):
     def __init__(
         self,
-        initial_position: tuple[float, float],
-        size: int,
+        initial_position: tuple[int, int],
+        size: float,
         speed: float,
         initial_lives: int = 3
-        ) -> None:
+    ) -> None:
         super().__init__(initial_position, size, speed)
 
         scale = SpriteSheet.scaleSprite
@@ -82,7 +82,7 @@ class Pacman(Entity):
 
         self._surface = self.__sprite_full
         self._direction = Direction.STILL
-        self.__animation_timer = 0
+        self.__animation_timer = 0.0
         self.__animation_delay = 0.1
         self.__frame_index = 0
         self.__death_index = 0
@@ -94,7 +94,9 @@ class Pacman(Entity):
         if self.__animation_timer >= self.__animation_delay:
             self.__animation_timer = 0.0
             if self._is_alive:
-                self.__frame_index = (self.__frame_index + 1) % len(self.__sprite_animation_down)
+                self.__frame_index = \
+                    (self.__frame_index + 1) % \
+                    len(self.__sprite_animation_down)
             elif self.__death_index + 1 < len(self.__death_animation):
                 self.__death_index += 1
             elif self.__death_index + 1 >= len(self.__death_animation):

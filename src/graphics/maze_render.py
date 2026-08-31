@@ -32,7 +32,7 @@ class MazeRender:
 
     def init_maze(self,
                   maze: Maze,
-                  cell_size: int,
+                  cell_size: float,
                   sprite_sheet: SpriteSheet
                   ) -> None:
         self.__sheet = sprite_sheet
@@ -60,7 +60,8 @@ class MazeRender:
 
     def is_initialized(self) -> bool:
         try:
-            return isinstance(self.__maze, Maze) and self._cached_surface is not None
+            return (isinstance(self.__maze, Maze)
+                    and self._cached_surface is not None)
         except AttributeError:
             return False
 
@@ -119,19 +120,19 @@ class MazeRender:
         if self._cached_surface:
             screen_height = screen.get_height()
             screen_width = screen.get_width()
-            
+
             original_width = self._cached_surface.get_width()
             original_height = self._cached_surface.get_height()
-            
+
             scale_factor = screen_height / original_height
             new_width = int(original_width * scale_factor)
-            
+
             scaled_surface = pygame.transform.scale(
-                self._cached_surface, 
+                self._cached_surface,
                 (new_width, screen_height)
             )
-            
+
             center_x = (screen_width - new_width) // 2
-            center_y = 0 
-            
+            center_y = 0
+
             screen.blit(scaled_surface, (center_x, center_y))

@@ -9,7 +9,9 @@ from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.ui_utils import SpriteType
 
-from src.world.maze import Maze, Direction
+from src.world.maze import Maze
+from src.world.cell import Direction
+
 
 class GhostMode(Enum):
     CHASE = auto()
@@ -21,18 +23,28 @@ class Ghost(Entity):
     def __init__(
         self,
         init_pos: tuple[int, int],
-        size: int,
+        size: float,
         speed: float,
         sprite_sheet: SpriteSheet,
         # The strategy is a function prototyped like:
         # '''
-        # def strategy(maze: Maze, ghost_pos: tuple[int, int], pacman_pos: tuple[int, int])
+        # def strategy(
+        #   maze: Maze,
+        #   ghost_pos: tuple[int, int],
+        #   pacman_pos: tuple[int, int]
+        # )
         # '''
         # and returns the Direction the ghost should take next turn
-        strategy: Callable[[Maze, tuple[int, int], tuple[int, int]], Direction],
-        ) -> None:
+        strategy: Callable[
+            [
+                Maze,
+                tuple[int, int],
+                tuple[int, int]
+            ],
+            Direction],
+    ) -> None:
 
-        #TOREMOVE
+        # TOREMOVE
         speed = 0
 
         super().__init__(init_pos, size, speed)
@@ -43,8 +55,8 @@ class Ghost(Entity):
         self.__strategy = strategy
         self.__mode = GhostMode.CHASE
 
-        frightened_sheet_1 = SpriteLibrary['melon']
-        frightened_sheet_2 = SpriteLibrary['green']
+        frightened_sheet_1 = SpriteLibrary.get('melon')
+        frightened_sheet_2 = SpriteLibrary.get('green')
 
         self.__sprite_animation_up = [
             scale(self.__sheet[SpriteType.GHOST_EYE_UP_1], size),
@@ -74,7 +86,7 @@ class Ghost(Entity):
             scale(frightened_sheet_2[SpriteType.FRIGHTENED_GHOST_2], size),
         ]
 
-        self.__animation_timer = 0
+        self.__animation_timer = 0.0
         self.__animation_delay = 0.1
         self.__frame_index = 0
         self._surface = self.__frightened_animation[0]
@@ -99,23 +111,47 @@ class Ghost(Entity):
         if self.__mode == GhostMode.CHASE:
             if self._current_direction == Direction.NORTH:
                 self._surface = \
-                    self.__sprite_animation_up[self.__frame_index % len(self.__sprite_animation_up)]
+                    self.__sprite_animation_up[
+                        self.__frame_index % len(
+                            self.__sprite_animation_up
+                            )
+                            ]
             elif self._current_direction == Direction.SOUTH:
                 self._surface = \
-                    self.__sprite_animation_down[self.__frame_index % len(self.__sprite_animation_down)]
+                    self.__sprite_animation_down[
+                        self.__frame_index % len(
+                            self.__sprite_animation_down
+                            )
+                            ]
             elif self._current_direction == Direction.WEST:
                 self._surface = \
-                    self.__sprite_animation_left[self.__frame_index % len(self.__sprite_animation_left)]
+                    self.__sprite_animation_left[
+                        self.__frame_index % len(
+                            self.__sprite_animation_left
+                            )
+                            ]
             elif self._current_direction == Direction.EAST:
                 self._surface = \
-                    self.__sprite_animation_right[self.__frame_index % len(self.__sprite_animation_right)]
+                    self.__sprite_animation_right[
+                        self.__frame_index % len(
+                            self.__sprite_animation_right
+                            )
+                            ]
             else:
                 self._surface = \
-                    self.__sprite_animation_right[self.__frame_index % len(self.__sprite_animation_right)]
+                    self.__sprite_animation_right[
+                        self.__frame_index % len(
+                            self.__sprite_animation_right
+                            )
+                            ]
 
         elif self.__mode == GhostMode.FRIGHTENED:
             self._surface = \
-                self.__frightened_animation[self.__frame_index % len(self.__frightened_animation)]
+                self.__frightened_animation[
+                    self.__frame_index % len(
+                        self.__frightened_animation
+                        )
+                        ]
         # elif:
         #     self.__mode == GhostMode.SCATTER:
         #     ...

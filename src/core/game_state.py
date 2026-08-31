@@ -14,7 +14,13 @@ from src.entities.ghost import Ghost, GhostMode
 
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
-from src.graphics.ui.element import Element, LiveElement, Lives, Points, TextInput, Leadboard
+from src.graphics.ui.element import (
+    LiveElement,
+    Lives,
+    Points,
+    TextInput,
+    Leadboard
+    )
 from src.graphics.ui.drawable import Drawable
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
@@ -23,7 +29,6 @@ from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING, SpriteType
 from src.graphics.maze_render import MazeRender
 
 from src.world.maze_wrapper import MazeWrapper
-from src.world.maze import Maze
 from src.world.cell import Direction
 
 from src.utils.settings import Settings, GameEvent
@@ -42,6 +47,14 @@ class BaseState(ABC):
     @abstractmethod
     def update(self, dt: float) -> None:
         pass
+
+    def getPoints(self) -> int:
+        # mypy say this has to be like that... ok...
+        return 0
+
+    def getLives(self) -> int:
+        # mypy say this has to be like that... ok...
+        return 0
 
 
 class MenuState(BaseState):
@@ -66,7 +79,8 @@ class MenuState(BaseState):
             secondary_sheet=SpriteLibrary['yellow']
         )
         exit_button = Button(
-            (screen_width / 2, first_y_button + button_size * 2 + screen_height / 30),
+            (screen_width / 2,
+             first_y_button + button_size * 2 + screen_height / 30),
             SpriteLibrary['yellow'],
             GameEvent.EXIT,
             text='exit',
@@ -107,7 +121,6 @@ class MenuState(BaseState):
             button_size
         )
 
-
         self.__buttons = [
             start_button,
             exit_button
@@ -123,7 +136,8 @@ class MenuState(BaseState):
 
         self.__surface = \
             pygame.Surface(
-                (Settings.VIRTUAL_WINDOW_WIDTH, Settings.VIRTUAL_WINDOW_HEIGHT),
+                (Settings.VIRTUAL_WINDOW_WIDTH,
+                 Settings.VIRTUAL_WINDOW_HEIGHT)
                 )
 
     def getSurface(self, dt: float) -> pygame.Surface:
@@ -145,23 +159,28 @@ class StartingState(BaseState):
     def __init__(self) -> None:
         self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
-        
-        self.__surface = pygame.Surface((self.__screen_width, self.__screen_height))
-        
+
+        self.__surface = pygame.Surface(
+            (self.__screen_width, self.__screen_height)
+        )
+
         self.__starting_buffer = ""
         self.__text_size = self.__screen_height // 16
-        self.__start_font = SpriteFont(SpriteLibrary.get('title'), self.__text_size)
-        self.__end_font = SpriteFont(SpriteLibrary.get('yellow'), self.__text_size)
+        self.__start_font = SpriteFont(
+            SpriteLibrary.get('title'), self.__text_size)
+        self.__end_font = SpriteFont(
+            SpriteLibrary.get('yellow'), self.__text_size)
         self.__glyph_size = max(8, self.__start_font.getSize())
-        self.__columns: int = max(10, self.__screen_width // self.__glyph_size)
+        self.__columns = int(max(10, self.__screen_width // self.__glyph_size))
         if self.__columns % 2 == 1:
             self.__columns -= 1
-        self.__rows: int = max(8, self.__screen_height // self.__glyph_size)
+        self.__rows = int(max(8, self.__screen_height // self.__glyph_size))
         self.__chars = [char for char in CHAR_MAPPING if char != " "]
         self.__target_word = "PACMAN"
         self.__center_row = self.__rows // 2
-        self.__start_col = max(0, int((self.__columns - len(self.__target_word)) / 2 + 0.5))
-        
+        self.__start_col = \
+            max(0, int((self.__columns - len(self.__target_word)) / 2 + 0.5))
+
         self.__reveal_start = 1.5
         self.__reveal_duration = 1.5
         self.__elapsed_time = 0.0
@@ -196,15 +215,21 @@ class StartingState(BaseState):
 
             return self.__surface
 
-        reveal_progress = (self.__elapsed_time - self.__reveal_start) / self.__reveal_duration
+        reveal_progress = \
+            (self.__elapsed_time - self.__reveal_start) \
+            / self.__reveal_duration
         reveal_progress = min(1.0, max(0.0, reveal_progress))
-        
+
         char_probability = 0.9 - (reveal_progress * 1.75)
         space_probability = 1.0 - char_probability
 
         if self.__grid_timer >= self.__grid_interval:
             self.__grid_timer = 0.0
-            lines = (self.__starting_buffer.splitlines() if self.__starting_buffer else [])
+            lines = (
+                self.__starting_buffer.splitlines()
+                if self.__starting_buffer else []
+                )
+
             while len(lines) < self.__rows:
                 lines.append("")
             lines = lines[:self.__rows]
@@ -217,11 +242,18 @@ class StartingState(BaseState):
                         line[self.__start_col + offset] = char
 
                     for col_index in range(self.__columns):
-                        if random.random() < space_probability and not (
-                            self.__start_col <= col_index < self.__start_col + len(self.__target_word)
-                        ):
+                        if random.random() < space_probability and not \
+                            (self.__start_col <=
+                             col_index < self.__start_col +
+                             len(self.__target_word)
+                             ):
                             line[col_index] = " "
-                        elif not (self.__start_col <= col_index < self.__start_col + len(self.__target_word)):
+                        elif not (
+                                self.__start_col <=
+                                col_index <
+                                self.__start_col +
+                                len(self.__target_word)
+                                ):
                             line[col_index] = random.choice(self.__chars)
                 else:
                     for col_index in range(self.__columns):
@@ -238,7 +270,7 @@ class StartingState(BaseState):
             title_sheet = SpriteLibrary.get('title')
         else:
             title_sheet = SpriteLibrary.get('yellow')
-            
+
         title = Text(
             self.__starting_buffer,
             (self.__screen_width // 2, self.__screen_height // 2),
@@ -251,7 +283,8 @@ class StartingState(BaseState):
         if space_probability > 1.15:
             prompt = Text(
                 "PRESS ENTER",
-                (self.__screen_width // 2, self.__screen_height // 2 + self.__text_size + 20),
+                (self.__screen_width // 2,
+                 self.__screen_height // 2 + self.__text_size + 20),
                 SpriteLibrary.get('yellow'),
                 12,
                 anchor='center',
@@ -306,34 +339,65 @@ class PlayingState(BaseState):
 
         self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
 
-        self.__pacman: Pacman = Pacman(self.__pacman_initial_pos, self.__scaled_size * 1.6, 4.0, settings.lives)
+        self.__pacman: Pacman = Pacman(
+            self.__pacman_initial_pos,
+            self.__scaled_size * 1.6,
+            4.0,
+            settings.lives
+            )
         self.__current_direction = self.__pacman.getDir()
 
-        self.__pacgums: list[Pacgum] = []
+        self.__pacgums: list[Pacgum | SuperPacgum] = []
         self.__ft_cells = self._get_42_coord()
 
-        #================#
-        def nothing():
-            ...
-        #================#
+        # ================#
+        from src.world.maze import Maze
 
-        self.__ghost = Ghost((0, 0), self.__scaled_size * 1.6, 0, SpriteLibrary['red'], nothing)
+        def nothing(
+            maze: Maze,
+            pos: tuple[int, int],
+            target: tuple[int, int]
+        ) -> Direction:
+            return Direction.STILL
+        # ================#
+
+        self.__ghost = Ghost(
+            (0, 0),
+            self.__scaled_size * 1.6,
+            0,
+            SpriteLibrary.get('red'),
+            nothing
+        )
 
         for x in range(maze_w):
             for y in range(maze_h):
                 if (x, y) in self.__ft_cells:
                     continue
-                if ((x == 0 and y == 0) or
-                      (x == 0 and y == maze_h - 1) or
-                      (x == maze_w - 1 and y == 0) or
-                      (x == maze_w - 1 and y == maze_h - 1)):
-                    self.__pacgums.append(SuperPacgum((x, y), self.__scaled_size * 1.6, settings.points_per_super_pacgum))
+                if (
+                        (x == 0 and y == 0) or
+                        (x == 0 and y == maze_h - 1) or
+                        (x == maze_w - 1 and y == 0) or
+                        (x == maze_w - 1 and y == maze_h - 1)
+                        ):
+                    self.__pacgums.append(
+                        SuperPacgum(
+                            (x, y),
+                            self.__scaled_size * 1.6,
+                            settings.points_per_super_pacgum
+                            )
+                        )
 
                 elif (x, y) == self.__pacman_initial_pos:
                     continue
 
                 else:
-                    self.__pacgums.append(Pacgum((x, y), self.__scaled_size, settings.points_per_pacgum))
+                    self.__pacgums.append(
+                        Pacgum(
+                            (x, y),
+                            self.__scaled_size,
+                            settings.points_per_pacgum
+                            )
+                        )
 
         lives = Lives(
             (0, 0),
@@ -364,7 +428,7 @@ class PlayingState(BaseState):
             element.render(self.__surface)
 
         for entity in self.__entities:
-            if self.__pacman.isAlive() == False and isinstance(entity, Ghost):
+            if self.__pacman.isAlive() is False and isinstance(entity, Ghost):
                 continue
             e_x, e_y = entity.get_visual_pos()
             screen_x, screen_y = self._get_entity_screen_pos(e_x, e_y)
@@ -403,19 +467,30 @@ class PlayingState(BaseState):
                 queued_dir = entity.getQueuedDirection()
                 current_dir = entity.getCurrentDirection()
 
-                if (queued_dir != Direction.STILL and not
-                    self.__actual_maze[current_cell].hasWall(queued_dir) and
-                    (queued_dir != current_dir.opposite() or isinstance(entity, Pacman))
-                    ):
+                if (
+                    queued_dir != Direction.STILL
+                    and not
+                    self.__actual_maze[current_cell].hasWall(queued_dir)
+                    and
+                    (queued_dir != current_dir.opposite()
+                     or
+                     isinstance(entity, Pacman))
+                ):
                     d_x, d_y = queued_dir.vector()
-                    target_cell = (current_cell[0] + d_x, current_cell[1] + d_y)
+                    target_cell = (
+                        current_cell[0] + d_x,
+                        current_cell[1] + d_y
+                        )
                     entity.moveTo(target_cell, queued_dir)
 
                 elif (current_dir != Direction.STILL and not
                       self.__actual_maze[current_cell].hasWall(current_dir)
                       ):
                     d_x, d_y = current_dir.vector()
-                    target_cell = (current_cell[0] + d_x, current_cell[1] + d_y)
+                    target_cell = (
+                        current_cell[0] + d_x,
+                        current_cell[1] + d_y
+                        )
                     entity.moveTo(target_cell, current_dir)
 
                 else:
@@ -440,7 +515,7 @@ class PlayingState(BaseState):
     def _reset_entity_pos(self) -> None:
         for entity in self.__entities:
             entity.resetPosition()
-        
+
         if self.__pacman.getLives() > 0:
             self.__pacman.respawn()
 
@@ -477,7 +552,10 @@ class PlayingState(BaseState):
                 if isinstance(entity, SuperPacgum):
                     entity.die()
                     self.__points += self.__settings.points_per_super_pacgum
-                if isinstance(entity, Ghost) and entity.getMode() != GhostMode.FRIGHTENED:
+                if (
+                    isinstance(entity, Ghost)
+                    and entity.getMode() != GhostMode.FRIGHTENED
+                ):
                     self.__pacman.die()
 
     def _get_entity_screen_pos(
@@ -486,27 +564,27 @@ class PlayingState(BaseState):
             logical_y: float
             ) -> tuple[float, float]:
         maze_columns, maze_rows = self.__actual_maze.getSize()
-        
+
         v_maze_width = maze_columns * 2 + 1
         v_maze_height = maze_rows * 2 + 1
-        
+
         original_maze_height = v_maze_height * self.__cell_size
         original_maze_width = v_maze_width * self.__cell_size
-        
+
         scale_factor = self.__screen_height / original_maze_height
-        
+
         scaled_cell_size = self.__cell_size * scale_factor
         scaled_maze_width = original_maze_width * scale_factor
-        
+
         offset_x = (self.__screen_width - scaled_maze_width) / 2
         offset_y = 0
-        
+
         v_x = logical_x * 2 + 1
         v_y = logical_y * 2 + 1
-        
+
         pixel_x = offset_x + (v_x + 0.5) * scaled_cell_size
         pixel_y = offset_y + (v_y + 0.5) * scaled_cell_size
-        
+
         return pixel_x, pixel_y
 
     def _get_42_coord(self) -> list[tuple[int, int]]:
@@ -517,7 +595,7 @@ class PlayingState(BaseState):
                     [0, 0, 1, 0, 1, 1, 1]
                     ]
         maze_w, maze_h = self.__actual_maze.getSize()
-        ft_cells = []
+        ft_cells: list[tuple[int, int]] = []
         if len(ft_small)*2 > maze_h or len(ft_small[0])*2 > maze_w:
             return ft_cells
         posy = int((maze_h - len(ft_small)) / 2)
@@ -562,7 +640,7 @@ class GameOverState(BaseState):
             10
         )
 
-        self.__elements: list[Element] = [
+        self.__elements: list[Text | TextInput] = [
             self.__text,
             self.__game_over_txt,
             self.__name_text
@@ -570,10 +648,11 @@ class GameOverState(BaseState):
 
         self.__surface = \
             pygame.Surface(
-                (Settings.VIRTUAL_WINDOW_WIDTH, Settings.VIRTUAL_WINDOW_HEIGHT),
+                (Settings.VIRTUAL_WINDOW_WIDTH,
+                 Settings.VIRTUAL_WINDOW_HEIGHT),
                 )
 
-    def update(self, dt: float):
+    def update(self, dt: float) -> None:
         if self.__name_text.isFinished():
             name = self.__name_text.get_text()
             self._update_leadboard(name, self.__points)
@@ -583,7 +662,7 @@ class GameOverState(BaseState):
                 element.update()
 
     @staticmethod
-    def _update_leadboard(new_player, new_score) -> None:
+    def _update_leadboard(new_player: str, new_score: int) -> None:
         try:
             with open('data/leadboard/scores.json', 'r') as file:
                 leadboard: list[tuple[str, int]] = json.load(file)
@@ -604,8 +683,7 @@ class GameOverState(BaseState):
 
         GameEvent.post(GameEvent.MODE_TO_MENU)
 
-
-    def getSurface(self, dt: float):
+    def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
 
         for element in self.__elements:
@@ -613,7 +691,7 @@ class GameOverState(BaseState):
 
         return self.__surface
 
-    def handle_events(self, events: list[pygame.event.Event]):
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
         for element in self.__elements:
             if isinstance(element, LiveElement):
                 element.handle_events(events)
