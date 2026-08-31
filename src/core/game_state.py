@@ -3,6 +3,7 @@ import random
 import json
 
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from src import __version__, __authors__
 
@@ -591,8 +592,15 @@ class GameOverState(BaseState):
 
         leadboard.append((new_player, new_score))
 
-        with open("data/leadboard/scores.json", 'w') as file:
-            json.dump(leadboard, file, indent=4)
+        Path("data/leadboard/").mkdir(parents=True, exist_ok=True)
+        path = Path("data/leadboard/scores.json")
+
+        if path.exists():
+            with open("data/leadboard/scores.json", 'w') as file:
+                json.dump(leadboard, file, indent=4)
+        else:
+            with open("data/leadboard/scores.json", 'x') as file:
+                json.dump(leadboard, file, indent=4)
 
         GameEvent.post(GameEvent.MODE_TO_MENU)
 

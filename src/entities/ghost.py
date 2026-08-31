@@ -41,7 +41,7 @@ class Ghost(Entity):
 
         self.__sheet = sprite_sheet
         self.__strategy = strategy
-        self.__mode = GhostMode.FRIGHTENED
+        self.__mode = GhostMode.CHASE
 
         frightened_sheet_1 = SpriteLibrary['melon']
         frightened_sheet_2 = SpriteLibrary['green']
@@ -120,9 +120,9 @@ class Ghost(Entity):
                 self._surface = self.__sprite_animation_right[self.__frame_index]
             elif self._current_direction == Direction.STILL:
                 self._surface = self.__sprite_animation_right[self.__frame_index]
-        elif:
-            self.__mode == GhostMode.FRIGHTENED:
-        elif:
-            self.__mode == GhostMode.SCATTER:
-            ...
+        # elif:
+        #     self.__mode == GhostMode.FRIGHTENED:
+        # elif:
+        #     self.__mode == GhostMode.SCATTER:
+        #     ...
         super().render(screen, screen_pos, dt)
