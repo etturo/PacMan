@@ -88,6 +88,7 @@ class SpriteType(Enum):
     GHOST_EYE_DOWN_2 = auto()
     GHOST_EYE_UP_1 = auto()
     GHOST_EYE_UP_2 = auto()
+
     FRIGHTENED_GHOST_1 = auto()
     FRIGHTENED_GHOST_2 = auto()
 

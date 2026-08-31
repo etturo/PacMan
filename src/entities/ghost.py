@@ -63,35 +63,21 @@ class Ghost(Entity):
             scale(self.__sheet[SpriteType.GHOST_EYE_RIGHT_2], size),
         ]
 
-        self.__frightened_animation_up = [
-            scale(frightened_sheet_1[SpriteType.GHOST_EYE_UP_1], size),
-            scale(frightened_sheet_2[SpriteType.GHOST_EYE_UP_1], size),
-            scale(frightened_sheet_1[SpriteType.GHOST_EYE_UP_2], size),
-            scale(frightened_sheet_2[SpriteType.GHOST_EYE_UP_2], size),
-        ]
-        self.__frightened_animation_down = [
-            scale(frightened_sheet_1[SpriteType.GHOST_EYE_DOWN_1], size),
-            scale(frightened_sheet_2[SpriteType.GHOST_EYE_DOWN_1], size),
-            scale(frightened_sheet_1[SpriteType.GHOST_EYE_DOWN_2], size),
-            scale(frightened_sheet_2[SpriteType.GHOST_EYE_DOWN_2], size),
-        ]
-        self.__frightened_animation_left = [
-            scale(frightened_sheet_1[SpriteType.GHOST_EYE_LEFT_1], size),
-            scale(frightened_sheet_2[SpriteType.GHOST_EYE_LEFT_1], size),
-            scale(frightened_sheet_1[SpriteType.GHOST_EYE_LEFT_2], size),
-            scale(frightened_sheet_2[SpriteType.GHOST_EYE_LEFT_2], size),
-        ]
-        self.__frightened_animation_right = [
-            scale(frightened_sheet_1[SpriteType.GHOST_EYE_RIGHT_1], size),
-            scale(frightened_sheet_2[SpriteType.GHOST_EYE_RIGHT_1], size),
-            scale(frightened_sheet_1[SpriteType.GHOST_EYE_RIGHT_2], size),
-            scale(frightened_sheet_2[SpriteType.GHOST_EYE_RIGHT_2], size),
+        self.__frightened_animation = [
+            scale(frightened_sheet_1[SpriteType.FRIGHTENED_GHOST_1], size),
+            scale(frightened_sheet_1[SpriteType.FRIGHTENED_GHOST_2], size),
+            scale(frightened_sheet_1[SpriteType.FRIGHTENED_GHOST_1], size),
+            scale(frightened_sheet_1[SpriteType.FRIGHTENED_GHOST_2], size),
+            scale(frightened_sheet_2[SpriteType.FRIGHTENED_GHOST_1], size),
+            scale(frightened_sheet_2[SpriteType.FRIGHTENED_GHOST_2], size),
+            scale(frightened_sheet_2[SpriteType.FRIGHTENED_GHOST_1], size),
+            scale(frightened_sheet_2[SpriteType.FRIGHTENED_GHOST_2], size),
         ]
 
         self.__animation_timer = 0
         self.__animation_delay = 0.1
         self.__frame_index = 0
-        self._surface = self.__frightened_animation_left[0]
+        self._surface = self.__frightened_animation[0]
 
     def getMode(self) -> GhostMode:
         return self.__mode
@@ -102,26 +88,34 @@ class Ghost(Entity):
         self.__animation_timer += dt
         if self.__animation_timer >= self.__animation_delay:
             self.__animation_timer = 0.0
-            self.__frame_index = (self.__frame_index + 1) % len(self.__sprite_animation_down)
+            self.__frame_index += 1
 
     def render(self,
                screen: pygame.Surface,
                screen_pos: tuple[float, float],
                dt: float,
                ) -> None:
+
         if self.__mode == GhostMode.CHASE:
             if self._current_direction == Direction.NORTH:
-                self._surface = self.__sprite_animation_up[self.__frame_index]
+                self._surface = \
+                    self.__sprite_animation_up[self.__frame_index % len(self.__sprite_animation_up)]
             elif self._current_direction == Direction.SOUTH:
-                self._surface = self.__sprite_animation_down[self.__frame_index]
+                self._surface = \
+                    self.__sprite_animation_down[self.__frame_index % len(self.__sprite_animation_down)]
             elif self._current_direction == Direction.WEST:
-                self._surface = self.__sprite_animation_left[self.__frame_index]
+                self._surface = \
+                    self.__sprite_animation_left[self.__frame_index % len(self.__sprite_animation_left)]
             elif self._current_direction == Direction.EAST:
-                self._surface = self.__sprite_animation_right[self.__frame_index]
-            elif self._current_direction == Direction.STILL:
-                self._surface = self.__sprite_animation_right[self.__frame_index]
-        # elif:
-        #     self.__mode == GhostMode.FRIGHTENED:
+                self._surface = \
+                    self.__sprite_animation_right[self.__frame_index % len(self.__sprite_animation_right)]
+            else:
+                self._surface = \
+                    self.__sprite_animation_right[self.__frame_index % len(self.__sprite_animation_right)]
+
+        elif self.__mode == GhostMode.FRIGHTENED:
+            self._surface = \
+                self.__frightened_animation[self.__frame_index % len(self.__frightened_animation)]
         # elif:
         #     self.__mode == GhostMode.SCATTER:
         #     ...

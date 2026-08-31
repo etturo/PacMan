@@ -218,6 +218,9 @@ class SpriteSheet:
         self.__data[SpriteType.GHOST_EYE_UP_1] = self.getSprite(16, 1, 7)
         self.__data[SpriteType.GHOST_EYE_UP_2] = self.getSprite(16, 1, 8)
 
+        self.__data[SpriteType.FRIGHTENED_GHOST_1] = self.getSprite(16, 6, 1)
+        self.__data[SpriteType.FRIGHTENED_GHOST_2] = self.getSprite(16, 6, 2)
+
         self.__data[SpriteType.PACMAN_DOWN_1] = self.getSprite(16, 5, 8)
         self.__data[SpriteType.PACMAN_DOWN_2] = self.getSprite(16, 4, 8)
         self.__data[SpriteType.PACMAN_RIGHT_1] = self.getSprite(16, 5, 7)
