@@ -375,6 +375,9 @@ class PlayingState(BaseState):
     def getPoints(self) -> int:
         return self.__points
 
+    def getLives(self) -> int:
+        return self.__pacman.getLives()
+
     def update(self, dt: float) -> None:
         for element in self.__ui_elements:
             if isinstance(element, Lives):
@@ -526,14 +529,14 @@ class PlayingState(BaseState):
 
 
 class GameOverState(BaseState):
-    def __init__(self, points: int) -> None:
+    def __init__(self, points: int, lives: int) -> None:
         self.__points = points
 
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
         self.__game_over_txt = Text(
-            "GAME OVER",
+            "GAME OVER" if lives <= 0 else "YOU WON",
             (screen_width / 2, screen_height / 6),
             SpriteLibrary['yellow'],
             screen_height / 8,

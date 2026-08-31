@@ -1,4 +1,5 @@
 import pygame
+import json
 
 from abc import ABC, abstractmethod
 
@@ -201,7 +202,8 @@ class TextInput(LiveElement):
                         self.__text_buffer += char
                         self._render_text()
                 elif event.key == pygame.K_RETURN:
-                    self.__is_finished = True
+                    if len(self.__text_buffer) > 0:
+                        self.__is_finished = True
 
     def get_text(self) -> str:
         return self.__text_buffer
@@ -241,10 +243,26 @@ class Leadboard(Element):
             anchor="mid top"
         )
         title.render(self._surface)
-        with open("data/leadboard/scores.json", "r") as f:
-            leadboard = json.load(f)
+        try:
+            with open("data/leadboard/scores.json", "r") as f:
+                leadboard = json.load(f)
+        except (json.decoder.JSONDecodeError, FileNotFoundError, FileExistsError):
+            print("WARNING! Failed to load the leadboard file, check json correctness.")
+            leadboard = []
 
-        print(leadboard)
+        leadboard.sort(key=lambda x: x[1], reverse=True)
+
+        for i in range(min(10, len(leadboard))):
+            player = leadboard[i][0]
+            score = leadboard[i][1]
+            text = Text(
+                f"{i + 1}.{player}-{score}",
+                (self._surface.get_width() / 15, size * i + size * 2.5),
+                SpriteLibrary['white'],
+                size / 3,
+                "top left"
+            )
+            text.render(self._surface)
 
     def _create_textbox(self) -> None:
         text_size = self.__sprite_size

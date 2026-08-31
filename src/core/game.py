@@ -93,7 +93,8 @@ class Game:
 
             elif event.type == GameEvent.MODE_TO_GAME_OVER:
                 points = self.__active_state.getPoints()
-                self.__active_state = GameOverState(points)
+                lives = self.__active_state.getLives()
+                self.__active_state = GameOverState(points, lives)
 
     def _load_config_file(self) -> None:
         arg_parser = ArgumentParser(
