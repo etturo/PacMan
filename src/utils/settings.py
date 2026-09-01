@@ -24,10 +24,11 @@ class GameEvent(IntEnum):
     MODE_TO_MENU = pygame.USEREVENT + 2
     MODE_TO_PLAYING = pygame.USEREVENT + 3
     MODE_TO_GAME_OVER = pygame.USEREVENT + 4
+    MODE_TO_SETTINGS = pygame.USEREVENT + 5
 
-    EXIT = pygame.USEREVENT + 5
+    EXIT = pygame.USEREVENT + 6
 
-    RESET_POSITIONS = pygame.USEREVENT + 6
+    RESET_POSITIONS = pygame.USEREVENT + 7
 
     @staticmethod
     def post(mode: 'GameEvent') -> None:

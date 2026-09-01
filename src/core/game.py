@@ -8,6 +8,7 @@ from src.core.game_state import (
     MenuState,
     PlayingState,
     GameOverState,
+    SettingState,
     )
 
 from src.world.maze import Maze
@@ -37,7 +38,7 @@ class Game:
 
         # SIMULATION UTILS
         self.__quit_buttons: list[int] = [
-            pygame.K_q,
+            pygame.K_ESCAPE,
             pygame.QUIT
         ]
 
@@ -90,6 +91,9 @@ class Game:
 
             elif event.type == GameEvent.MODE_TO_PLAYING:
                 self.__active_state = PlayingState(self.__game_settings)
+
+            elif event.type == GameEvent.MODE_TO_SETTINGS:
+                self.__active_state = SettingState()
 
             elif event.type == GameEvent.MODE_TO_GAME_OVER:
                 points = self.__active_state.getPoints()

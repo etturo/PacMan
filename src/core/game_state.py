@@ -12,14 +12,15 @@ from src.entities.entity import Entity
 from src.entities.pacgums import Pacgum, SuperPacgum
 from src.entities.ghost import Ghost, GhostMode
 
-from src.graphics.ui.button import Button
+from src.graphics.ui.button import Button, ToggleButton
 from src.graphics.ui.text import Text
 from src.graphics.ui.element import (
     LiveElement,
     Lives,
     Points,
     TextInput,
-    Leadboard
+    Leadboard,
+    Box,
     )
 from src.graphics.ui.drawable import Drawable
 
@@ -49,11 +50,11 @@ class BaseState(ABC):
         pass
 
     def getPoints(self) -> int:
-        # mypy say this has to be like that... ok...
+        # mypy says this has to be like that... ok...
         return 0
 
     def getLives(self) -> int:
-        # mypy say this has to be like that... ok...
+        # mypy says this has to be like that... ok...
         return 0
 
 
@@ -66,7 +67,7 @@ class MenuState(BaseState):
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
         button_size = screen_height / 15
-        first_y_button = screen_height / 2
+        first_y_button = screen_height / 3
 
         # List of buttons
         start_button = Button(
@@ -78,9 +79,19 @@ class MenuState(BaseState):
             sprite_size=button_size,
             secondary_sheet=SpriteLibrary['yellow']
         )
-        exit_button = Button(
+        settings_button = Button(
             (screen_width / 2,
              first_y_button + button_size * 2 + screen_height / 30),
+            SpriteLibrary['yellow'],
+            GameEvent.MODE_TO_SETTINGS,
+            text='settings',
+            anchor='center',
+            sprite_size=button_size,
+            secondary_sheet=SpriteLibrary['yellow']
+        )
+        exit_button = Button(
+            (screen_width / 2,
+             first_y_button + button_size * 4 + screen_height / 15),
             SpriteLibrary['yellow'],
             GameEvent.EXIT,
             text='exit',
@@ -123,7 +134,8 @@ class MenuState(BaseState):
 
         self.__buttons = [
             start_button,
-            exit_button
+            exit_button,
+            settings_button,
         ]
         self.__texts = [
             title_txt,
@@ -695,3 +707,56 @@ class GameOverState(BaseState):
         for element in self.__elements:
             if isinstance(element, LiveElement):
                 element.handle_events(events)
+
+
+class SettingState(BaseState):
+    def __init__(self) -> None:
+        self.__buttons: list[Button] = []
+        self.__texts: list[Text] = []
+        self.__elements: list[Element] = []
+
+        screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
+
+        button_size = screen_height / 30
+
+        title = Text(
+            text='settings',
+            position=(screen_width / 2, screen_height / 8),
+            sprite_sheet=SpriteLibrary['yellow'],
+            text_size=screen_height / 10,
+        )
+        cheat_box = Box(
+            title='cheat',
+            position=(screen_width / 8, screen_height / 4),
+            width=300,
+            height=300,
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=screen_height / 10,
+        )
+
+        self.__texts = [
+            title,
+        ]
+        self.__elements = [
+            cheat_box
+        ]
+        self.__buttons = [
+        ]
+
+        self.__surface = pygame.Surface((screen_width, screen_height))
+
+    def getSurface(self, dt: float) -> pygame.Surface:
+        self.__surface.fill((0, 0, 0))
+        for element in self.__buttons + self.__texts + self.__elements:
+            element.render(self.__surface)
+        return self.__surface
+
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            for button in self.__buttons:
+                button.handle_event(event)
+
+    def update(self, dt: float) -> None:
+        pass

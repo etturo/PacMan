@@ -23,58 +23,58 @@ class Button(Drawable):
                  secondary_sheet: None | SpriteSheet = None,
                  ) -> None:
         super().__init__(position, sprite_sheet, anchor)
-        self.__text: str = text.upper()
-        self.__on_click: GameEvent = on_click
-        self.__on_click_sfx: SoundEffect | None = on_click_sfx
-        self.__is_hovered: bool = False
-        self.__font: SpriteFont = SpriteFont(sprite_sheet, sprite_size)
+        self._text: str = text.upper()
+        self._on_click: GameEvent = on_click
+        self._on_click_sfx: SoundEffect | None = on_click_sfx
+        self._is_hovered: bool = False
+        self._font: SpriteFont = SpriteFont(sprite_sheet, sprite_size)
         # Offset in pixel
-        self.__offset = 5
-        self.__sprite_size = sprite_size
+        self._offset = 5
+        self._sprite_size = sprite_size
 
-        self.__secondary_surface: pygame.Surface
-        self.__secondary_font = self.__font
+        self._secondary_surface: pygame.Surface
+        self._secondary_font = self._font
         if secondary_sheet is not None:
-            self.__secondary_font = \
+            self._secondary_font = \
                 SpriteFont(secondary_sheet, sprite_size)
 
-        self.__is_pressed: bool = False
+        self._is_pressed: bool = False
 
         self._create_textbox()
 
-        self.__primary_surface: pygame.Surface = self._surface
+        self._primary_surface: pygame.Surface = self._surface
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEMOTION:
-            self.__rect = self._get_rect()
-            self.__is_hovered = self.__rect.collidepoint(event.pos)
+            self._rect = self._get_rect()
+            self._is_hovered = self._rect.collidepoint(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and self.__is_hovered:
-                if self.__on_click_sfx:
-                    self.__on_click_sfx.play()
-                GameEvent.post(self.__on_click)
+            if event.button == 1 and self._is_hovered:
+                if self._on_click_sfx:
+                    self._on_click_sfx.play()
+                GameEvent.post(self._on_click)
 
-        if self.__is_hovered:
-            self._surface = self.__primary_surface
+        if self._is_hovered:
+            self._surface = self._primary_surface
         else:
-            self._surface = self.__secondary_surface
+            self._surface = self._secondary_surface
 
     def _create_textbox(self) -> None:
-        text_size = self.__sprite_size
+        text_size = self._sprite_size
         box_sprite_size = text_size / 2
 
         box_width, box_height = self._calculate_text_size(
-            text=self.__text,
+            text=self._text,
             sprite_size=text_size,
             box_sprite_size=int(box_sprite_size),
-            offset=self.__offset,
+            offset=self._offset,
             include_padding=True,
         )
 
-        text_lines = self.__text.split("\n") or [""]
+        text_lines = self._text.split("\n") or [""]
         _, text_height = self._calculate_text_render_size(
-            self.__text,
-            self.__sprite_size
+            self._text,
+            self._sprite_size
         )
 
         inner_width = max(0, box_width - (box_sprite_size * 2))
@@ -112,8 +112,8 @@ class Button(Drawable):
         )
 
         self._surface = pygame.Surface((box_width, box_height))
-        self.__secondary_surface = pygame.Surface((box_width, box_height))
-        self.__rect = self._get_rect()
+        self._secondary_surface = pygame.Surface((box_width, box_height))
+        self._rect = self._get_rect()
 
         # top horizontal border
         self._surface.blit(
@@ -158,9 +158,9 @@ class Button(Drawable):
             x_padding = \
                 box_sprite_size + max(0, (inner_width - line_width) / 2)
             line_y = y_padding + (line_index * text_size)
-            self.__secondary_font.render(
-                self.__secondary_surface, (x_padding, line_y), line)
-            self.__font.render(self._surface, (x_padding, line_y), line)
+            self._secondary_font.render(
+                self._secondary_surface, (x_padding, line_y), line)
+            self._font.render(self._surface, (x_padding, line_y), line)
 
     @staticmethod
     def _calculate_text_render_size(text: str,
@@ -182,3 +182,53 @@ class Button(Drawable):
         text_height = len(text_lines) * sprite_size
 
         return (text_width, text_height)
+
+
+class ToggleButton(Button):
+    def __init__(self,
+                 position: tuple[float, float],
+                 sprite_sheet: SpriteSheet,
+                 on_click: GameEvent,
+                 text: str,
+                 sprite_size: float,
+                 on_click_sfx: SoundEffect | None = None,
+                 anchor: str = "center",
+                 secondary_sheet: None | SpriteSheet = None,
+                 ) -> None:
+
+        self.__toggled: bool = False
+        self.__title_text = text
+        self.__status_text = str(self.__toggled)
+        self._text = f"{self.__title_text}\n{self.__status_text}"
+
+        super().__init__(
+            position,
+            sprite_sheet,
+            on_click,
+            self._text,
+            sprite_size,
+            on_click_sfx,
+            anchor,
+            secondary_sheet
+        )
+
+    def handle_event(self, event: pygame.event.Event) -> None:
+        if event.type == pygame.MOUSEMOTION:
+            self._rect = self._get_rect()
+            self._is_hovered = self._rect.collidepoint(event.pos)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1 and self._is_hovered:
+                if self._on_click_sfx:
+                    self._on_click_sfx.play()
+                GameEvent.post(self._on_click)
+                self.__toggled = not self.__toggled
+                self.__status_text = str(self.__toggled)
+                self._text = \
+                    f"{self.__title_text}\n{self.__status_text}".upper()
+                self._create_textbox()
+                self._primary_surface: pygame.Surface = self._surface
+
+        if self._is_hovered:
+            self._surface = self._primary_surface
+        else:
+            self._surface = self._secondary_surface
