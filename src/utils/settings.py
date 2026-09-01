@@ -30,6 +30,9 @@ class GameEvent(IntEnum):
 
     RESET_POSITIONS = pygame.USEREVENT + 7
 
+    TOGGLE_FRIGHTENED = pygame.USEREVENT + 8
+    TOGGLE_DOUBLE_SPEED = pygame.USEREVENT + 9
+
     @staticmethod
     def post(mode: 'GameEvent') -> None:
         pygame.event.post(pygame.event.Event(mode))

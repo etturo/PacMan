@@ -194,7 +194,7 @@ class ToggleButton(Button):
                  on_click_sfx: SoundEffect | None = None,
                  anchor: str = "center",
                  secondary_sheet: None | SpriteSheet = None,
-                 ) -> None:
+        ) -> None:
 
         self.__toggled: bool = False
         self.__title_text = text

@@ -21,6 +21,7 @@ from src.graphics.ui.element import (
     TextInput,
     Leadboard,
     Box,
+    Element,
     )
 from src.graphics.ui.drawable import Drawable
 
@@ -728,28 +729,56 @@ class SettingState(BaseState):
         )
         cheat_box = Box(
             title='cheat',
-            position=(screen_width / 8, screen_height / 4),
-            width=300,
-            height=300,
+            position=(screen_width / 50, screen_height / 5),
+            width=screen_width / 3,
+            height=screen_height / 1.3,
             sprite_sheet=SpriteLibrary['white'],
             sprite_type=SpriteType.EMPTY_WALL,
-            size=screen_height / 10,
+            size=screen_height / 15,
+            anchor='top left'
+        )
+        go_back_button = Button(
+            position=(screen_width / 50, screen_height / 50),
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.MODE_TO_MENU,
+            text="go back",
+            sprite_size=screen_height / 30,
+            anchor='top left'
+        )
+        ghost_freeze_button = ToggleButton(
+            position=(screen_width / 25, screen_height / 3),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_FRIGHTENED,
+            text="ghost freeze",
+            sprite_size=screen_height / 30,
+            anchor='top left'
+        )
+        double_speed_button = ToggleButton(
+            position=(screen_width / 25, screen_height / 2),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_DOUBLE_SPEED,
+            text="double speed",
+            sprite_size=screen_height / 30,
+            anchor='top left'
         )
 
         self.__texts = [
             title,
         ]
         self.__elements = [
-            cheat_box
+            cheat_box,
         ]
         self.__buttons = [
+            ghost_freeze_button,
+            double_speed_button,
+            go_back_button,
         ]
 
         self.__surface = pygame.Surface((screen_width, screen_height))
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
-        for element in self.__buttons + self.__texts + self.__elements:
+        for element in self.__elements + self.__buttons + self.__texts:
             element.render(self.__surface)
         return self.__surface
 

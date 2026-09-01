@@ -20,6 +20,11 @@ the remaining time is in silence, but sticazzi
 
 
 # REMEMBER
- - In the menu there are two blank space at the edges, in the left i would like to print the character/nickname menu, and in the right the scores
+ - [X] In the menu there are two blank space at the edges, in the left i would like to print the character/nickname menu, and in the right the scores
 
- Next to do is to make the movement from a cell to another and lerping the animation between
+ - [X] Next to do is to make the movement from a cell to another and lerping the animation between
+
+
+# pipi
+ - Frightened ghost animation added but it wont activate. TODO -> make the super pac gusm post the GhostModeToFrightened and make the ghost edible.
+ 
