@@ -49,7 +49,7 @@ class LiveElement(Element, ABC):
             )
 
     @abstractmethod
-    def update(self, value: int = 0) -> None:
+    def update(self, value: Any) -> None:
         pass
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
@@ -484,12 +484,10 @@ class Timer(LiveElement):
 
         self.__font = SpriteFont(sprite_sheet, size)
 
-
         self.__start_time: float = time
         self.__time_elapsed: float = time
         self.__time_to_show: float = time
 
-        
         minutes = int(self.__time_elapsed // 60)
         seconds = int(self.__time_elapsed % 60)
         minutes_total = int(self.__max_time_seconds // 60)
@@ -505,7 +503,7 @@ class Timer(LiveElement):
         self._surface.fill((0, 0, 0))
         self.__font.render(self._surface, (0, 0), self.__text)
 
-    def update(self, dt: float) -> None:
+    def update(self, dt: float = 0.0) -> None:
         if self.__is_going:
             self.__time_elapsed += dt
             self.__time_to_show = self.__time_elapsed - self.__start_time
@@ -518,7 +516,8 @@ class Timer(LiveElement):
             first_line = "time".center(5)
             second_line = "left".center(5)
             third_line = "-----"
-            fourth_line = f"{minutes_result:02d}:{seconds_result:02d}".center(5)
+            fourth_line = \
+                f"{minutes_result:02d}:{seconds_result:02d}".center(5)
             self.__text = \
                 f"{first_line}\n{second_line}\n{third_line}\n{fourth_line}"
         self._surface.fill((0, 0, 0))
@@ -532,4 +531,3 @@ class Timer(LiveElement):
 
     def getIsGoing(self) -> bool:
         return self.__is_going
-

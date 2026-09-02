@@ -24,7 +24,6 @@ from src.graphics.ui.element import (
     Element,
     Timer
     )
-from src.graphics.ui.drawable import Drawable
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.sprite_font import SpriteFont
