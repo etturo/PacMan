@@ -12,7 +12,7 @@ from src.entities.entity import Entity
 from src.entities.pacgums import Pacgum, SuperPacgum
 from src.entities.ghost import Ghost, GhostMode
 
-from src.graphics.ui.button import Button, ToggleButton
+from src.graphics.ui.button import Button, ToggleButton, SlideButton
 from src.graphics.ui.text import Text
 from src.graphics.ui.element import (
     LiveElement,
@@ -711,7 +711,7 @@ class GameOverState(BaseState):
 
 
 class SettingState(BaseState):
-    def __init__(self) -> None:
+    def __init__(self, settings: GameSettings) -> None:
         self.__buttons: list[Button] = []
         self.__texts: list[Text] = []
         self.__elements: list[Element] = []
@@ -748,18 +748,77 @@ class SettingState(BaseState):
         ghost_freeze_button = ToggleButton(
             position=(screen_width / 25, screen_height / 3),
             sprite_sheet=SpriteLibrary['white'],
-            on_click=GameEvent.TOGGLE_FRIGHTENED,
+            on_click=GameEvent.TOGGLE_FREEZE,
             text="ghost freeze",
+            initial_value=settings.ghost_freezed,
             sprite_size=screen_height / 30,
-            anchor='top left'
+            anchor='top left',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white'],
+        )
+        invincibility_button = ToggleButton(
+            position=(screen_width / 5.5, screen_height / 1.5),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_INVINCIBILITY,
+            text="shield",
+            initial_value=settings.invincibility,
+            sprite_size=screen_height / 30,
+            anchor='top left',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white'],
         )
         double_speed_button = ToggleButton(
             position=(screen_width / 25, screen_height / 2),
             sprite_sheet=SpriteLibrary['white'],
             on_click=GameEvent.TOGGLE_DOUBLE_SPEED,
             text="double speed",
+            initial_value=settings.double_speeded,
             sprite_size=screen_height / 30,
+            anchor='top left',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        lives_button = SlideButton(
+            position=(screen_width / 25, screen_height / 1.5),
+            sprite_sheet=SpriteLibrary['white'],
+            increment_on_click=GameEvent.ADD_A_LIFE,
+            decrement_on_click=GameEvent.SUB_A_LIFE,
+            initial_value=settings.lives,
+            text="lives",
+            sprite_size=screen_height / 30,
+            anchor=' top left',
+        )
+        graphics_box =  Box(
+            title='graphics',
+            position=(screen_width / 2.8, screen_height / 5),
+            width=screen_width / 2,
+            height=screen_height / 1.3,
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=screen_height / 15,
             anchor='top left'
+        )
+        toggle_fullscreen = ToggleButton(
+            position=(screen_width / 2.5, screen_height / 3),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_FULLSCREEN,
+            text="toggle fullscreen",
+            sprite_size=screen_height / 30,
+            initial_value=pygame.display.is_fullscreen(),
+            anchor='top left',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        fps_slider = SlideButton(
+            position=(screen_width / 2.5, screen_height / 2),
+            sprite_sheet=SpriteLibrary['white'],
+            increment_on_click=GameEvent.ADD_10_FPS,
+            decrement_on_click=GameEvent.SUB_10_FPS,
+            initial_value=settings.fps,
+            text="  fps  ",
+            sprite_size=screen_height / 30,
+            anchor=' top left',
+            step_value=10
         )
 
         self.__texts = [
@@ -767,11 +826,16 @@ class SettingState(BaseState):
         ]
         self.__elements = [
             cheat_box,
+            graphics_box,
         ]
         self.__buttons = [
             ghost_freeze_button,
             double_speed_button,
             go_back_button,
+            lives_button,
+            invincibility_button,
+            toggle_fullscreen,
+            fps_slider,
         ]
 
         self.__surface = pygame.Surface((screen_width, screen_height))

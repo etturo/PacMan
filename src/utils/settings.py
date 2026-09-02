@@ -30,8 +30,20 @@ class GameEvent(IntEnum):
 
     RESET_POSITIONS = pygame.USEREVENT + 7
 
-    TOGGLE_FRIGHTENED = pygame.USEREVENT + 8
+    TOGGLE_FREEZE = pygame.USEREVENT + 8
     TOGGLE_DOUBLE_SPEED = pygame.USEREVENT + 9
+    ADD_A_LIFE = pygame.USEREVENT + 10
+    SUB_A_LIFE = pygame.USEREVENT + 11
+    TOGGLE_INVINCIBILITY = pygame.USEREVENT + 12
+
+    TOGGLE_FULLSCREEN = pygame.USEREVENT + 13
+    ADD_10_FPS = pygame.USEREVENT + 14
+    SUB_10_FPS = pygame.USEREVENT + 15
+    TOGGLE_CRT_EFFECT = pygame.USEREVENT + 16
+    TOGGLE_FLICKER_EFFECT = pygame.USEREVENT + 17
+    TOGGLE_GLOW_EFFECT = pygame.USEREVENT + 18
+    TOGGLE_GLITCH_EFFECT = pygame.USEREVENT + 19
+    TOGGLE_ROLLING_EFFECT = pygame.USEREVENT + 20
 
     @staticmethod
     def post(mode: 'GameEvent') -> None:

@@ -72,6 +72,11 @@ class SpriteFont:
         self.__characters[SpriteType.CH_SPACE] = \
             self.__sheet.getSprite(8, 8, 11)
 
+        self.__characters[SpriteType.LEFT_ARROW] = \
+            self.__sheet.getRotatedSprite(16, 5, 2, 90)
+        self.__characters[SpriteType.RIGHT_ARROW] = \
+            self.__sheet.getRotatedSprite(16, 5, 2, 270)
+
         self.__original_char = self.__characters.copy()
         self.setSize(size)
 

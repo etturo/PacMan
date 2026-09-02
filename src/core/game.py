@@ -93,12 +93,30 @@ class Game:
                 self.__active_state = PlayingState(self.__game_settings)
 
             elif event.type == GameEvent.MODE_TO_SETTINGS:
-                self.__active_state = SettingState()
+                self.__active_state = SettingState(self.__game_settings)
 
             elif event.type == GameEvent.MODE_TO_GAME_OVER:
                 points = self.__active_state.getPoints()
                 lives = self.__active_state.getLives()
                 self.__active_state = GameOverState(points, lives)
+
+            elif event.type == GameEvent.ADD_A_LIFE and self.__game_settings.lives < 9:
+                self.__game_settings.lives += 1
+            elif event.type == GameEvent.SUB_A_LIFE and self.__game_settings.lives > 1:
+                self.__game_settings.lives -= 1
+
+            elif event.type == GameEvent.TOGGLE_FREEZE:
+                self.__game_settings.ghost_freezed = \
+                    not self.__game_settings.ghost_freezed
+            elif event.type == GameEvent.TOGGLE_DOUBLE_SPEED:
+                self.__game_settings.double_speeded = \
+                    not self.__game_settings.double_speeded
+            elif event.type == GameEvent.TOGGLE_INVINCIBILITY:
+                self.__game_settings.invincibility = \
+                    not self.__game_settings.invincibility
+
+            elif event.type == GameEvent.TOGGLE_FULLSCREEN:
+                pygame.display.toggle_fullscreen()
 
     def _load_config_file(self) -> None:
         arg_parser = ArgumentParser(

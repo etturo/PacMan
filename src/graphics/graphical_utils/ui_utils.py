@@ -79,6 +79,9 @@ class SpriteType(Enum):
     # # EDGES
     HORIZONTAL_EDGE = HORIZONTAL_WALL
     VERTICAL_EDGE = VERTICAL_WALL
+    # # SELECTING ARROWS
+    LEFT_ARROW = auto()
+    RIGHT_ARROW = auto()
 
     GHOST_EYE_RIGHT_1 = auto()
     GHOST_EYE_RIGHT_2 = auto()
@@ -165,4 +168,6 @@ CHAR_MAPPING: dict[str, SpriteType] = {
     '.': SpriteType.CH_DOT,
     "\"": SpriteType.CH_QUOTE,
     " ": SpriteType.CH_SPACE,
+    ">": SpriteType.RIGHT_ARROW,
+    "<": SpriteType.LEFT_ARROW,
 }

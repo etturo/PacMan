@@ -38,3 +38,8 @@ class Text(Drawable):
 
     def getSize(self) -> tuple[float, float]:
         return (self.__width, self.__height)
+
+    def setText(self, text: str) -> None:
+        self.__text = text
+        self._surface.fill((0, 0, 0))
+        self.__font.render(self._surface, (0, 0), self.__text)
