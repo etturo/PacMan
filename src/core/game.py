@@ -107,9 +107,15 @@ class Game:
                 lives = self.__active_state.getLives()
                 self.__active_state = GameOverState(points, lives)
 
-            elif event.type == GameEvent.ADD_A_LIFE and self.__game_settings.lives < 9:
+            elif (
+                event.type == GameEvent.ADD_A_LIFE and
+                self.__game_settings.lives < 9
+            ):
                 self.__game_settings.lives += 1
-            elif event.type == GameEvent.SUB_A_LIFE and self.__game_settings.lives > 1:
+            elif (
+                event.type == GameEvent.SUB_A_LIFE and
+                self.__game_settings.lives > 1
+            ):
                 self.__game_settings.lives -= 1
 
             elif event.type == GameEvent.TOGGLE_FREEZE:

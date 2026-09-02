@@ -5,7 +5,7 @@ from src.graphics.graphical_utils.ui_utils import SpriteType
 from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 from src.graphics.ui.drawable import Drawable
-from src.graphics.ui.element import Text
+from src.graphics.ui.text import Text
 
 from src.sounds.sound_effects import SoundEffect
 
@@ -186,25 +186,26 @@ class Button(Drawable):
 
 
 class ToggleButton(Button):
-    def __init__(self,
-                 position: tuple[float, float],
-                 sprite_sheet: SpriteSheet,
-                 on_click: GameEvent,
-                 text: str,
-                 sprite_size: float,
-                 initial_value: bool,
-                 on_click_sfx: SoundEffect | None = None,
-                 anchor: str = "center",
-                 secondary_sheet: None | SpriteSheet = None,
-                 active_sheet: None | SpriteSheet = None,
-                 secondary_active_sheet: None | SpriteSheet = None,
-        ) -> None:
+    def __init__(
+        self,
+        position: tuple[float, float],
+        sprite_sheet: SpriteSheet,
+        on_click: GameEvent,
+        text: str,
+        sprite_size: float,
+        initial_value: bool,
+        on_click_sfx: SoundEffect | None = None,
+        anchor: str = "center",
+        secondary_sheet: None | SpriteSheet = None,
+        active_sheet: None | SpriteSheet = None,
+        secondary_active_sheet: None | SpriteSheet = None,
+    ) -> None:
 
         self.__toggled: bool = initial_value
         self.__title_text = text
         self.__status_text = str(self.__toggled)
         self._text = f"{self.__title_text}\n{self.__status_text}"
-        
+
         self.__base_sheet = sprite_sheet
         self.__base_secondary_sheet = secondary_sheet
         self.__active_sheet = active_sheet
@@ -226,25 +227,24 @@ class ToggleButton(Button):
                 self._sheet = self.__active_sheet
             if self.__secondary_active_sheet:
                 self._secondary_font = SpriteFont(
-                    self.__secondary_active_sheet, 
+                    self.__secondary_active_sheet,
                     self._sprite_size
                 )
         else:
             self._sheet = self.__base_sheet
             if self.__base_secondary_sheet:
                 self._secondary_font = SpriteFont(
-                    self.__base_secondary_sheet, 
+                    self.__base_secondary_sheet,
                     self._sprite_size
                 )
 
         self._create_textbox()
         self._primary_surface = self._surface
 
-        if self.__toggled:
-            self._surface = self.__active_sheet
-        else:
-            self._surface = self._secondary_surface
-
+        if self.__toggled and self.__active_sheet:
+            self._sheet = self.__active_sheet
+            self._create_textbox()
+            self._surface = self._primary_surface
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEMOTION:
@@ -257,21 +257,22 @@ class ToggleButton(Button):
                 GameEvent.post(self._on_click)
                 self.__toggled = not self.__toggled
                 self.__status_text = str(self.__toggled)
-                self._text = f"{self.__title_text}\n{self.__status_text}".upper()
+                self._text = \
+                    f"{self.__title_text}\n{self.__status_text}".upper()
 
                 if self.__toggled:
                     if self.__active_sheet:
                         self._sheet = self.__active_sheet
                     if self.__secondary_active_sheet:
                         self._secondary_font = SpriteFont(
-                            self.__secondary_active_sheet, 
+                            self.__secondary_active_sheet,
                             self._sprite_size
                         )
                 else:
                     self._sheet = self.__base_sheet
                     if self.__base_secondary_sheet:
                         self._secondary_font = SpriteFont(
-                            self.__base_secondary_sheet, 
+                            self.__base_secondary_sheet,
                             self._sprite_size
                         )
 
@@ -285,21 +286,22 @@ class ToggleButton(Button):
 
 
 class SlideButton(Button):
-    def __init__(self,
-                 position: tuple[float, float],
-                 sprite_sheet: SpriteSheet,
-                 increment_on_click: GameEvent,
-                 decrement_on_click: GameEvent,
-                 initial_value: int,
-                 text: str,
-                 sprite_size: float,
-                 max_value: int,
-                 min_value: int,
-                 step_value: int = 1,
-                 on_click_sfx: SoundEffect | None = None,
-                 anchor: str = "center",
-                 secondary_sheet: None | SpriteSheet = None,
-        ) -> None:
+    def __init__(
+        self,
+        position: tuple[float, float],
+        sprite_sheet: SpriteSheet,
+        increment_on_click: GameEvent,
+        decrement_on_click: GameEvent,
+        initial_value: int,
+        text: str,
+        sprite_size: float,
+        max_value: int,
+        min_value: int,
+        step_value: int = 1,
+        on_click_sfx: SoundEffect | None = None,
+        anchor: str = "center",
+        secondary_sheet: None | SpriteSheet = None,
+    ) -> None:
         super(Button, self).__init__(position, sprite_sheet, anchor)
         self._text: str = f"{text}\n\n"
         self.__increment_on_click: GameEvent = increment_on_click
@@ -339,7 +341,9 @@ class SlideButton(Button):
         )
 
         self.__right_arrow = Button(
-            position=(self._clean_primary.get_width(), self._clean_primary.get_height()),
+            position=(
+                self._clean_primary.get_width(),
+                self._clean_primary.get_height()),
             sprite_sheet=sprite_sheet,
             on_click=increment_on_click,
             text=">",
@@ -355,7 +359,9 @@ class SlideButton(Button):
             formatted_text = f"{str(self.__value)} "
         self.__value_count = Text(
             text=formatted_text,
-            position=(self._surface.get_width() / 2, self._surface.get_height() / 1.15),
+            position=(
+                self._surface.get_width() / 2,
+                self._surface.get_height() / 1.15),
             sprite_sheet=sprite_sheet,
             text_size=sprite_size,
             anchor="mid bottom"
@@ -366,7 +372,10 @@ class SlideButton(Button):
             self._rect = self._get_rect()
             self._is_hovered = self._rect.collidepoint(event.pos)
 
-            local_pos = (event.pos[0] - self._rect.left, event.pos[1] - self._rect.top)
+            local_pos = (
+                event.pos[0] - self._rect.left,
+                event.pos[1] - self._rect.top
+                )
 
             event_dict = {'pos': local_pos}
             if hasattr(event, 'button'):

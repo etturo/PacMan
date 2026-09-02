@@ -263,8 +263,10 @@ class SpriteSheet:
         self.__data[SpriteType.PACGUM] = self.getSprite(8, 2, 16)
         self.__data[SpriteType.SUPER_PACGUMS] = self.getSprite(8, 4, 16)
 
-        self.__data[SpriteType.LEFT_ARROW] = self.getRotatedSprite(16, 5, 2, 90)
-        self.__data[SpriteType.RIGHT_ARROW] = self.getRotatedSprite(16, 5, 2, 270)
+        self.__data[SpriteType.LEFT_ARROW] = \
+            self.getRotatedSprite(16, 5, 2, 90)
+        self.__data[SpriteType.RIGHT_ARROW] = \
+            self.getRotatedSprite(16, 5, 2, 270)
 
     @staticmethod
     def _combine_sprites_2x2(

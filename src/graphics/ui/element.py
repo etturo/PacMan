@@ -366,17 +366,18 @@ class Box(Element):
         self.__width = width
         self.__height = height
         self.__sprite_size = size
+        self.__title = title
 
         self._create_textbox()
 
-        title = Text(
-            title,
+        title_box = Text(
+            self.__title,
             (self._surface.get_width() / 2, size),
             SpriteLibrary.get('white'),
             size / 1.5,
             anchor="mid top"
         )
-        title.render(self._surface)
+        title_box.render(self._surface)
 
     def _create_textbox(self) -> None:
         text_size = self.__sprite_size
