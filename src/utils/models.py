@@ -21,7 +21,6 @@ class GameSettings(BaseModel):
     seed: int = Field(default=42, ge=0)
     level_max_time: int = Field(default=90, gt=0)
     # CUSTOM
-    fps: int = 60
     ghost_freezed: bool = False
     double_speeded: bool = False
     invincibility: bool = False

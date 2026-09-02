@@ -787,6 +787,8 @@ class SettingState(BaseState):
             text="lives",
             sprite_size=screen_height / 30,
             anchor=' top left',
+            max_value=9,
+            min_value=1,
         )
         graphics_box =  Box(
             title='graphics',
@@ -802,7 +804,7 @@ class SettingState(BaseState):
             position=(screen_width / 2.5, screen_height / 3),
             sprite_sheet=SpriteLibrary['white'],
             on_click=GameEvent.TOGGLE_FULLSCREEN,
-            text="toggle fullscreen",
+            text="toggle\nfullscreen",
             sprite_size=screen_height / 30,
             initial_value=pygame.display.is_fullscreen(),
             anchor='top left',
@@ -810,15 +812,61 @@ class SettingState(BaseState):
             secondary_active_sheet=SpriteLibrary['white']
         )
         fps_slider = SlideButton(
-            position=(screen_width / 2.5, screen_height / 2),
+            position=(screen_width / 1.55, screen_height / 3),
             sprite_sheet=SpriteLibrary['white'],
             increment_on_click=GameEvent.ADD_10_FPS,
             decrement_on_click=GameEvent.SUB_10_FPS,
-            initial_value=settings.fps,
+            initial_value=pygame.display.get_desktop_refresh_rates()[0],
             text="  fps  ",
             sprite_size=screen_height / 30,
             anchor=' top left',
-            step_value=10
+            step_value=10,
+            max_value=200,
+            min_value=10,
+        )
+        toggle_crt = ToggleButton(
+            position=(screen_width / 1.67, screen_height / 2.05),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_CRT_EFFECT,
+            text="set crt effect",
+            sprite_size=screen_height / 30,
+            initial_value=True,
+            anchor='mid top',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        toggle_glitch = ToggleButton(
+            position=(screen_width / 1.67, screen_height / 1.67),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_GLITCH_EFFECT,
+            text="set glitch vfx",
+            sprite_size=screen_height / 30,
+            initial_value=True,
+            anchor='mid top',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        toggle_glow = ToggleButton(
+            position=(screen_width / 1.67, screen_height / 1.41),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_GLOW_EFFECT,
+            text="set glow vfx",
+            sprite_size=screen_height / 30,
+            initial_value=True,
+            anchor='mid top',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        toggle_rolling = ToggleButton(
+            position=(screen_width / 1.67, screen_height / 1.22),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_ROLLING_EFFECT,
+            text="set rolling vfx",
+            sprite_size=screen_height / 30,
+            initial_value=True,
+            anchor='mid top',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
         )
 
         self.__texts = [
@@ -836,6 +884,10 @@ class SettingState(BaseState):
             invincibility_button,
             toggle_fullscreen,
             fps_slider,
+            toggle_crt,
+            toggle_glitch,
+            toggle_glow,
+            toggle_rolling,
         ]
 
         self.__surface = pygame.Surface((screen_width, screen_height))

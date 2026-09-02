@@ -293,6 +293,8 @@ class SlideButton(Button):
                  initial_value: int,
                  text: str,
                  sprite_size: float,
+                 max_value: int,
+                 min_value: int,
                  step_value: int = 1,
                  on_click_sfx: SoundEffect | None = None,
                  anchor: str = "center",
@@ -307,6 +309,8 @@ class SlideButton(Button):
         self._font: SpriteFont = SpriteFont(sprite_sheet, sprite_size)
         self.__value: int = initial_value
         self.__step_value = step_value
+        self.__max_value = max_value
+        self.__min_value = min_value
 
         self._offset = 5
         self._sprite_size = sprite_size
@@ -345,8 +349,12 @@ class SlideButton(Button):
             secondary_sheet=secondary_sheet
         )
 
+        if len(str(self.__value)) == 3:
+            formatted_text = f"{str(self.__value)}"
+        else:
+            formatted_text = f"{str(self.__value)} "
         self.__value_count = Text(
-            text=str(self.__value),
+            text=formatted_text,
             position=(self._surface.get_width() / 2, self._surface.get_height() / 1.15),
             sprite_sheet=sprite_sheet,
             text_size=sprite_size,
@@ -368,12 +376,22 @@ class SlideButton(Button):
             self.__left_arrow.handle_event(local_event)
             self.__right_arrow.handle_event(local_event)
 
-        if event.type == self.__increment_on_click:
+        if (
+            event.type == self.__increment_on_click and
+            self.__value + self.__step_value <= self.__max_value
+        ):
             self.__value += self.__step_value
-        elif event.type == self.__decrement_on_click:
+        elif (
+            event.type == self.__decrement_on_click and
+            self.__value - self.__step_value >= self.__min_value
+        ):
             self.__value -= self.__step_value
 
         self.__value_count.setText(str(self.__value))
+
+        mid_x = self._clean_secondary.get_width() / 2
+        bottom_y = self._clean_secondary.get_height() / 1.15
+        self.__value_count.moveTo((mid_x, bottom_y))
 
         base_bg = self._clean_secondary
         self._surface = base_bg.copy()

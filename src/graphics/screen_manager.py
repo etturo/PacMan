@@ -133,15 +133,6 @@ class ScreenManager:
             special_flags=pygame.BLEND_ADD
             )
 
-    def _generate_flicker_overlay(self) -> None:
-        if random.randint(0, 20) == 0:
-            flicker = pygame.Surface(
-                (self.__virtual_screen_width, self.__virtual_screen_height),
-                pygame.SRCALPHA
-                )
-            flicker.fill((255, 255, 255, 5))
-            self.__screen.blit(flicker, (0, 0))
-
     def getScreen(self) -> pygame.Surface:
         return self.__screen
 
@@ -149,7 +140,6 @@ class ScreenManager:
             self,
             surface: pygame.Surface,
             crt: bool = True,
-            flicker: bool = True,
             glow: bool = True,
             glitch: bool = True,
             rolling: bool = True,
@@ -161,8 +151,6 @@ class ScreenManager:
             self._add_glitch_effect()
         if rolling:
             self._add_rolling_static()
-        if flicker:
-            self._generate_flicker_overlay()
         if glow:
             self._apply_glow()
         if crt:

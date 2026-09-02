@@ -40,10 +40,9 @@ class GameEvent(IntEnum):
     ADD_10_FPS = pygame.USEREVENT + 14
     SUB_10_FPS = pygame.USEREVENT + 15
     TOGGLE_CRT_EFFECT = pygame.USEREVENT + 16
-    TOGGLE_FLICKER_EFFECT = pygame.USEREVENT + 17
-    TOGGLE_GLOW_EFFECT = pygame.USEREVENT + 18
-    TOGGLE_GLITCH_EFFECT = pygame.USEREVENT + 19
-    TOGGLE_ROLLING_EFFECT = pygame.USEREVENT + 20
+    TOGGLE_GLOW_EFFECT = pygame.USEREVENT + 17
+    TOGGLE_GLITCH_EFFECT = pygame.USEREVENT + 18
+    TOGGLE_ROLLING_EFFECT = pygame.USEREVENT + 19
 
     @staticmethod
     def post(mode: 'GameEvent') -> None:
