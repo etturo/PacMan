@@ -144,7 +144,7 @@ class Points(LiveElement):
             self.__str,
             (0, 0),
             self.__sprite_sheet,
-            self.__size / 1.2,
+            self.__size,
             anchor='topleft'
             )
 
@@ -366,6 +366,10 @@ class Box(Element):
         self.__width = width
         self.__height = height
         self.__sprite_size = size
+
+        self._surface = pygame.Surface(
+            (self.__width, self.__height), pygame.SRCALPHA
+        )
         self.__title = title
 
         self._create_textbox()
@@ -450,3 +454,82 @@ class Box(Element):
         self._surface.blit(
             bottom_right_sprite,
             (box_width - box_sprite_size, box_height - box_sprite_size))
+
+
+class Timer(LiveElement):
+    def __init__(
+        self,
+        position: tuple[float, float],
+        width: float,
+        height: float,
+        sprite_sheet: SpriteSheet,
+        sprite_type: SpriteType,
+        size: float,
+        time: float,
+        max_time_seconds: int,
+        anchor: str = "topleft",
+    ):
+        super().__init__(position, sprite_sheet, sprite_type, size, anchor)
+        self.__offset = 5
+        self.__width = width
+        self.__height = height
+        self.__sprite_size = size
+        self._surface = pygame.Surface(
+            (self.__width, self.__height), pygame.SRCALPHA
+        )
+
+        self.__max_time_seconds = max_time_seconds
+
+        self.__is_going = False
+
+        self.__font = SpriteFont(sprite_sheet, size)
+
+
+        self.__start_time: float = time
+        self.__time_elapsed: float = time
+        self.__time_to_show: float = time
+
+        
+        minutes = int(self.__time_elapsed // 60)
+        seconds = int(self.__time_elapsed % 60)
+        minutes_total = int(self.__max_time_seconds // 60)
+        seconds_total = int(self.__max_time_seconds % 60)
+        minutes_result = minutes_total - minutes
+        seconds_result = seconds_total - seconds
+        first_line = "time".center(5)
+        second_line = "left".center(5)
+        third_line = "-----"
+        fourth_line = f"{minutes_result:02d}:{seconds_result:02d}".center(5)
+        self.__text = \
+            f"{first_line}\n{second_line}\n{third_line}\n{fourth_line}"
+        self._surface.fill((0, 0, 0))
+        self.__font.render(self._surface, (0, 0), self.__text)
+
+    def update(self, dt: float) -> None:
+        if self.__is_going:
+            self.__time_elapsed += dt
+            self.__time_to_show = self.__time_elapsed - self.__start_time
+            minutes = int(self.__time_elapsed // 60)
+            seconds = int(self.__time_elapsed % 60)
+            minutes_total = int(self.__max_time_seconds // 60)
+            seconds_total = int(self.__max_time_seconds % 60)
+            minutes_result = minutes_total - minutes
+            seconds_result = seconds_total - seconds
+            first_line = "time".center(5)
+            second_line = "left".center(5)
+            third_line = "-----"
+            fourth_line = f"{minutes_result:02d}:{seconds_result:02d}".center(5)
+            self.__text = \
+                f"{first_line}\n{second_line}\n{third_line}\n{fourth_line}"
+        self._surface.fill((0, 0, 0))
+        self.__font.render(self._surface, (0, 0), self.__text)
+
+    def start(self) -> None:
+        self.__is_going = True
+
+    def pause(self) -> None:
+        self.__is_going = False
+
+    def getIsGoing(self) -> bool:
+        return self.__is_going
+

@@ -31,3 +31,5 @@ the remaining time is in silence, but sticazzi
 
 # popo
  - BUG FOUND: in map size: even width mazes, the pacman spawn in the 42 logo, TODO: hardcode the positions to not spawn.
+ - BUG FOUND: in big maps the pacgums are very big
+ - BUG FOUND: the screen when one dies for the time it says that you won but you loose

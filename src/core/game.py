@@ -57,12 +57,12 @@ class Game:
     def run(self) -> None:
         try:
             while self.__is_running:
-                dt = self.__clock.tick(self.__fps) / 1000.0
+                self.__dt = self.__clock.tick(self.__fps) / 1000.0
                 events = pygame.event.get()
                 self._catch_events(events)
                 self.__active_state.handle_events(events)
-                self.__active_state.update(dt)
-                self._render(dt)
+                self.__active_state.update(self.__dt)
+                self._render(self.__dt)
         except KeyboardInterrupt:
             exit("\nProgram ended by the user")
             pygame.quit()
@@ -86,6 +86,7 @@ class Game:
                     event.type == pygame.KEYDOWN and
                     event.key in self.__quit_buttons):
                 self.__is_running = False
+                exit()
 
             elif (event.type == pygame.KEYDOWN and event.key == pygame.K_F11):
                 pygame.display.toggle_fullscreen()

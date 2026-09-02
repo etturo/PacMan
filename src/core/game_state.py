@@ -22,6 +22,7 @@ from src.graphics.ui.element import (
     Leadboard,
     Box,
     Element,
+    Timer
     )
 from src.graphics.ui.drawable import Drawable
 
@@ -110,14 +111,14 @@ class MenuState(BaseState):
             anchor='center',
         )
         credits_text = Text(
-            f"authors - {__authors__}",
+            f"authors: {__authors__}",
             (0, screen_height),
             SpriteLibrary['white_text'],
             screen_height / 30,
             anchor='bottom left'
         )
         version_text = Text(
-            f"version - {__version__}",
+            f"version: {__version__}",
             (screen_width, screen_height),
             SpriteLibrary['white_text'],
             screen_height / 30,
@@ -324,6 +325,8 @@ class PlayingState(BaseState):
 
         self.__settings = settings
         self.__points: int = 0
+        self.__max_seconds = settings.level_max_time
+        self.__time_elapsed = 0.0
 
         self.__actual_level = 0
         size = (
@@ -362,6 +365,8 @@ class PlayingState(BaseState):
 
         self.__pacgums: list[Pacgum | SuperPacgum] = []
         self.__ft_cells = self._get_42_coord()
+
+        self.__is_started = False
 
         # ================#
         from src.world.maze import Maze
@@ -413,21 +418,36 @@ class PlayingState(BaseState):
                         )
 
         lives = Lives(
-            (0, 0),
-            SpriteLibrary['yellow'],
-            SpriteType.LIVES_SPRITE,
-            self.__text_size * 1.5
+            position=(0, 0),
+            sprite_sheet=SpriteLibrary['yellow'],
+            sprite_type=SpriteType.LIVES_SPRITE,
+            size=self.__text_size * 1.5,
+            initial_lives=settings.lives
             )
         points = Points(
-            (Settings.VIRTUAL_WINDOW_WIDTH - 220, 10),
-            SpriteLibrary['white'],
-            self.__text_size,
-            self.__points
+            position=(Settings.VIRTUAL_WINDOW_WIDTH - 220, 10),
+            sprite_sheet=SpriteLibrary['white'],
+            size=self.__text_size / 1.2,
+            initial_points=self.__points,
             )
+        self.__timer = Timer(
+            position=(
+                Settings.VIRTUAL_WINDOW_WIDTH,
+                Settings.VIRTUAL_WINDOW_HEIGHT),
+            anchor="bottom right",
+            width=self.__text_size * 5,
+            height=self.__text_size * 4,
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=self.__text_size / 1.2,
+            time=self.__time_elapsed,
+            max_time_seconds=self.__settings.level_max_time
+        )
 
-        self.__ui_elements: list[Drawable] = [
+        self.__ui_elements: list[LiveElement] = [
             lives,
             points,
+            self.__timer,
         ]
         self.__entities.extend(self.__pacgums)
         self.__entities.append(self.__pacman)
@@ -457,16 +477,26 @@ class PlayingState(BaseState):
         return self.__pacman.getLives()
 
     def update(self, dt: float) -> None:
+        self.__time_elapsed += dt
+
         for element in self.__ui_elements:
             if isinstance(element, Lives):
                 element.update(self.__pacman.getLives())
             elif isinstance(element, Points):
                 element.update(self.__points)
+            elif isinstance(element, Timer):
+                element.update(dt)
+
+        if self.__time_elapsed > self.__settings.level_max_time + 1:
+            GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
 
         self.__pacman.update(dt)
         if self.__pacman.getLives() <= 0:
             GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
         self._detect_collision()
+
+        if not self.__is_started:
+            return
 
         for entity in self.__entities:
             if not entity.isAlive() and not isinstance(entity, Pacman | Ghost):
@@ -516,14 +546,22 @@ class PlayingState(BaseState):
                 self._reset_entity_pos()
 
             if event.type == pygame.KEYDOWN:
+
+                if not self.__is_started:
+                    self.__is_started = True
+                    self.__timer.start()
+
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
                     self.__pacman.setQueueDirection(Direction.NORTH)
-                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
                     self.__pacman.setQueueDirection(Direction.WEST)
-                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     self.__pacman.setQueueDirection(Direction.EAST)
-                if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
                     self.__pacman.setQueueDirection(Direction.SOUTH)
+
+                else:
+                    self.__is_started = False
 
     def _reset_entity_pos(self) -> None:
         for entity in self.__entities:

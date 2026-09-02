@@ -7,3 +7,10 @@
  - [X] **Fix Config Field Name Mismatch (Pydantic <-> JSON):** Rename `pacgum` to `pacgums` and `points_per_pacgum` to `points_per_pacgums` in `config.json` (or use validation aliases in `src/utils/models.py`) so configuration changes are not silently ignored.
  - [ ] **Relocate Sound Assets:** Move `pac-man-startup.mp3` from `temp/` to a permanent assets subdirectory (e.g., `data/assets/sounds/`) and reference it cleanly.
  - [ ] **Implement Movement, Collision, and AI Systems:** Complete the empty `Entity`, `Pacman`, and `Ghost` stubs using grid-to-screen coordinate mapping and standard Pac-man ghost behaviors.
+
+
+
+# MANDATORY FEATURES
+ - [ ] Instruction in the main menu.
+ - [ ] Current level in the playing menu.
+ - [ ] Pause Menu.

@@ -104,105 +104,105 @@ class SpriteSheet:
         return pygame.transform.scale_by(surface, Settings.DEFAULT_SCALE)
 
     def _load_skins(self) -> None:
-        self.__data[SpriteType.EMPTY_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.EMPTY_WALL] = self.combineSprite2x2(
             self.getSprite(8, 8, 3),
             self.getSprite(8, 8, 3),
             self.getSprite(8, 8, 3),
             self.getSprite(8, 8, 3)
         )
-        self.__data[SpriteType.UP_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.UP_WALL] = self.combineSprite2x2(
             self.getSprite(8, 2, 17),
             self.getSprite(8, 2, 19),
             self.getSprite(8, 3, 17),
             self.getSprite(8, 3, 19)
         )
-        self.__data[SpriteType.RIGHT_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.RIGHT_WALL] = self.combineSprite2x2(
             self.getSprite(8, 1, 17),
             self.getSprite(8, 1, 18),
             self.getSprite(8, 3, 17),
             self.getSprite(8, 3, 18)
         )
-        self.__data[SpriteType.UP_RIGHT_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.UP_RIGHT_WALL] = self.combineSprite2x2(
             self.getSprite(8, 2, 17),
             self.getSprite(8, 5, 19),
             self.getSprite(8, 3, 17),
             self.getSprite(8, 3, 18)
         )
-        self.__data[SpriteType.DOWN_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.DOWN_WALL] = self.combineSprite2x2(
             self.getSprite(8, 1, 17),
             self.getSprite(8, 1, 19),
             self.getSprite(8, 2, 17),
             self.getSprite(8, 2, 19)
         )
-        self.__data[SpriteType.VERTICAL_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.VERTICAL_WALL] = self.combineSprite2x2(
             self.getSprite(8, 2, 17),
             self.getSprite(8, 2, 19),
             self.getSprite(8, 2, 17),
             self.getSprite(8, 2, 19)
         )
-        self.__data[SpriteType.DOWN_RIGHT_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.DOWN_RIGHT_WALL] = self.combineSprite2x2(
             self.getSprite(8, 1, 17),
             self.getSprite(8, 1, 18),
             self.getSprite(8, 2, 17),
             self.getSprite(8, 6, 19)
         )
         self.__data[SpriteType.VERTICAL_RIGHT_WALL] = \
-            self._combine_sprites_2x2(
+            self.combineSprite2x2(
                 self.getSprite(8, 2, 17),
                 self.getSprite(8, 5, 19),
                 self.getSprite(8, 2, 17),
                 self.getSprite(8, 6, 19)
         )
-        self.__data[SpriteType.LEFT_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.LEFT_WALL] = self.combineSprite2x2(
             self.getSprite(8, 1, 18),
             self.getSprite(8, 1, 19),
             self.getSprite(8, 3, 18),
             self.getSprite(8, 3, 19)
         )
-        self.__data[SpriteType.UP_LEFT_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.UP_LEFT_WALL] = self.combineSprite2x2(
             self.getSprite(8, 5, 18),
             self.getSprite(8, 2, 19),
             self.getSprite(8, 3, 18),
             self.getSprite(8, 3, 19)
         )
-        self.__data[SpriteType.HORIZONTAL_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.HORIZONTAL_WALL] = self.combineSprite2x2(
             self.getSprite(8, 1, 18),
             self.getSprite(8, 1, 18),
             self.getSprite(8, 3, 18),
             self.getSprite(8, 3, 18)
         )
-        self.__data[SpriteType.HORIZONTAL_UP_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.HORIZONTAL_UP_WALL] = self.combineSprite2x2(
             self.getSprite(8, 5, 18),
             self.getSprite(8, 5, 19),
             self.getSprite(8, 3, 18),
             self.getSprite(8, 3, 18)
         )
-        self.__data[SpriteType.DOWN_LEFT_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.DOWN_LEFT_WALL] = self.combineSprite2x2(
             self.getSprite(8, 1, 18),
             self.getSprite(8, 1, 19),
             self.getSprite(8, 6, 18),
             self.getSprite(8, 2, 19)
         )
-        self.__data[SpriteType.VERTICAL_LEFT_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.VERTICAL_LEFT_WALL] = self.combineSprite2x2(
             self.getSprite(8, 5, 18),
             self.getSprite(8, 2, 19),
             self.getSprite(8, 6, 18),
             self.getSprite(8, 2, 19)
         )
         self.__data[SpriteType.HORIZONTAL_DOWN_WALL] = \
-            self._combine_sprites_2x2(
+            self.combineSprite2x2(
                 self.getSprite(8, 1, 18),
                 self.getSprite(8, 1, 18),
                 self.getSprite(8, 6, 18),
                 self.getSprite(8, 6, 19)
         )
-        self.__data[SpriteType.CROSS_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.CROSS_WALL] = self.combineSprite2x2(
             self.getSprite(8, 5, 18),
             self.getSprite(8, 5, 19),
             self.getSprite(8, 6, 18),
             self.getSprite(8, 6, 19)
         )
-        self.__data[SpriteType.FULL_WALL] = self._combine_sprites_2x2(
+        self.__data[SpriteType.FULL_WALL] = self.combineSprite2x2(
             self.getSprite(8, 4, 17),
             self.getSprite(8, 4, 20),
             self.getSprite(8, 7, 17),
@@ -253,7 +253,7 @@ class SpriteSheet:
         self.__data[SpriteType.PACMAN_DEATH_11] = self.getSprite(16, 5, 5)
         self.__data[SpriteType.PACMAN_DEATH_12] = self.getSprite(16, 5, 6)
 
-        self.__data[SpriteType.LIVES_SPRITE] = self._combine_sprites_2x2(
+        self.__data[SpriteType.LIVES_SPRITE] = self.combineSprite2x2(
             self.getSprite(8, 8, 1),
             self.getSprite(8, 8, 2),
             self.getSprite(8, 9, 1),
@@ -269,7 +269,7 @@ class SpriteSheet:
             self.getRotatedSprite(16, 5, 2, 270)
 
     @staticmethod
-    def _combine_sprites_2x2(
+    def combineSprite2x2(
             top_left: pygame.Surface,
             top_right: pygame.Surface,
             bottom_left: pygame.Surface,
