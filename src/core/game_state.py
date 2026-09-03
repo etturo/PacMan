@@ -381,13 +381,16 @@ class PlayingState(BaseState):
             return Direction.STILL
         # ================#
 
-        self.__ghost = Ghost(
+        ghost = Ghost(
             (0, 0),
             self.__scaled_size * 1.6,
             0,
             SpriteLibrary.get('red'),
             nothing
         )
+        self.__ghosts = [
+            ghost
+        ]
 
         for x in range(maze_w):
             for y in range(maze_h):
@@ -453,7 +456,7 @@ class PlayingState(BaseState):
         ]
         self.__entities.extend(self.__pacgums)
         self.__entities.append(self.__pacman)
-        self.__entities.append(self.__ghost)
+        self.__entities.extend(self.__ghosts)
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
@@ -480,6 +483,11 @@ class PlayingState(BaseState):
 
     def getRemainingTime(self) -> float:
         return self.__timer.getRemainingTime()
+
+    @staticmethod
+    def __update_ghost_mode(ghosts: list[Ghost], new_mode: GhostMode) -> None:
+        for ghost in ghosts:
+            ghost.setMode(new_mode)
 
     def update(self, dt: float) -> None:
         for element in self.__ui_elements:
@@ -612,6 +620,7 @@ class PlayingState(BaseState):
                     self.__points += self.__settings.points_per_pacgum
                 if isinstance(entity, SuperPacgum):
                     entity.die()
+                    self.__update_ghost_mode(self.__ghosts, GhostMode.FRIGHTENED)
                     self.__points += self.__settings.points_per_super_pacgum
                 if (
                     isinstance(entity, Ghost)
