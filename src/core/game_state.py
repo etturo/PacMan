@@ -58,6 +58,10 @@ class BaseState(ABC):
         # mypy says this has to be like that... ok...
         return 0
 
+    def getRemainingTime(self) -> float:
+        # mypy says this has to be like that... ok...
+        return 0.0
+
 
 class MenuState(BaseState):
     def __init__(self) -> None:
@@ -556,19 +560,18 @@ class PlayingState(BaseState):
                 elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
                     self.__pacman.setQueueDirection(Direction.WEST)
                     if not self.__is_started:
-                            self.__is_started = True
-                            self.__timer.start()
+                        self.__is_started = True
+                        self.__timer.start()
                 elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     self.__pacman.setQueueDirection(Direction.EAST)
                     if not self.__is_started:
-                            self.__is_started = True
-                            self.__timer.start()
+                        self.__is_started = True
+                        self.__timer.start()
                 elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
                     self.__pacman.setQueueDirection(Direction.SOUTH)
                     if not self.__is_started:
-                            self.__is_started = True
-                            self.__timer.start()
-
+                        self.__is_started = True
+                        self.__timer.start()
 
     def _reset_entity_pos(self) -> None:
         for entity in self.__entities:
