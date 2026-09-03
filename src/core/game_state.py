@@ -344,15 +344,14 @@ class PlayingState(BaseState):
         self._render_maze()
 
         maze_w, maze_h = self.__actual_maze.getSize()
-        v_maze_height = maze_w * 2 + 1
-        original_maze_height = v_maze_height * self.__cell_size
-        scale_factor = self.__screen_height / original_maze_height
-
-        self.__scaled_size = self.__cell_size * scale_factor
+        self.__scaled_size = self.__screen_height / (maze_h * 2 + 1) / 1.1
 
         self.__text_size = self.__screen_width / 30
 
-        self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
+        if (maze_w % 2 != 0):
+            self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
+        else:
+            self.__pacman_initial_pos = ((maze_w // 2) - 1, maze_h // 2)
 
         self.__pacman: Pacman = Pacman(
             self.__pacman_initial_pos,
@@ -399,7 +398,7 @@ class PlayingState(BaseState):
                     self.__pacgums.append(
                         SuperPacgum(
                             (x, y),
-                            self.__scaled_size * 1.6,
+                            self.__scaled_size,
                             settings.points_per_super_pacgum
                             )
                         )
@@ -475,9 +474,10 @@ class PlayingState(BaseState):
     def getLives(self) -> int:
         return self.__pacman.getLives()
 
-    def update(self, dt: float) -> None:
-        self.__time_elapsed += dt
+    def getRemainingTime(self) -> float:
+        return self.__timer.getRemainingTime()
 
+    def update(self, dt: float) -> None:
         for element in self.__ui_elements:
             if isinstance(element, Lives):
                 element.update(self.__pacman.getLives())
@@ -486,16 +486,18 @@ class PlayingState(BaseState):
             elif isinstance(element, Timer):
                 element.update(dt)
 
-        if self.__time_elapsed > self.__settings.level_max_time + 1:
+        if not self.__is_started:
+            return
+
+        self.__time_elapsed = self.getRemainingTime()
+
+        if self.__time_elapsed <= 0:
             GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
 
         self.__pacman.update(dt)
         if self.__pacman.getLives() <= 0:
             GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
         self._detect_collision()
-
-        if not self.__is_started:
-            return
 
         for entity in self.__entities:
             if not entity.isAlive() and not isinstance(entity, Pacman | Ghost):
@@ -546,21 +548,27 @@ class PlayingState(BaseState):
 
             if event.type == pygame.KEYDOWN:
 
-                if not self.__is_started:
-                    self.__is_started = True
-                    self.__timer.start()
-
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
                     self.__pacman.setQueueDirection(Direction.NORTH)
+                    if not self.__is_started:
+                        self.__is_started = True
+                        self.__timer.start()
                 elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
                     self.__pacman.setQueueDirection(Direction.WEST)
+                    if not self.__is_started:
+                            self.__is_started = True
+                            self.__timer.start()
                 elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     self.__pacman.setQueueDirection(Direction.EAST)
+                    if not self.__is_started:
+                            self.__is_started = True
+                            self.__timer.start()
                 elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
                     self.__pacman.setQueueDirection(Direction.SOUTH)
+                    if not self.__is_started:
+                            self.__is_started = True
+                            self.__timer.start()
 
-                else:
-                    self.__is_started = False
 
     def _reset_entity_pos(self) -> None:
         for entity in self.__entities:
@@ -658,14 +666,20 @@ class PlayingState(BaseState):
 
 
 class GameOverState(BaseState):
-    def __init__(self, points: int, lives: int) -> None:
+    def __init__(self, points: int, lives: int, time: float) -> None:
         self.__points = points
 
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
+        title = ""
+        if lives <= 0 or time <= 0:
+            title = "GAME OVER"
+        else:
+            title = "YOU WON"
+
         self.__game_over_txt = Text(
-            "GAME OVER" if lives <= 0 else "YOU WON",
+            title,
             (screen_width / 2, screen_height / 6),
             SpriteLibrary['yellow'],
             screen_height / 8,

@@ -488,16 +488,14 @@ class Timer(LiveElement):
         self.__time_elapsed: float = time
         self.__time_to_show: float = time
 
-        minutes = int(self.__time_elapsed // 60)
-        seconds = int(self.__time_elapsed % 60)
-        minutes_total = int(self.__max_time_seconds // 60)
-        seconds_total = int(self.__max_time_seconds % 60)
-        minutes_result = minutes_total - minutes
-        seconds_result = seconds_total - seconds
+        remaining_seconds = self.__max_time_seconds - self.__time_elapsed
+        minutes = int(remaining_seconds // 60)
+        seconds = int(remaining_seconds % 60)
         first_line = "time".center(5)
         second_line = "left".center(5)
         third_line = "-----"
-        fourth_line = f"{minutes_result:02d}:{seconds_result:02d}".center(5)
+        fourth_line = \
+            f"{minutes:02d}:{seconds:02d}".center(5)
         self.__text = \
             f"{first_line}\n{second_line}\n{third_line}\n{fourth_line}"
         self._surface.fill((0, 0, 0))
@@ -506,22 +504,24 @@ class Timer(LiveElement):
     def update(self, dt: float = 0.0) -> None:
         if self.__is_going:
             self.__time_elapsed += dt
-            self.__time_to_show = self.__time_elapsed - self.__start_time
-            minutes = int(self.__time_elapsed // 60)
-            seconds = int(self.__time_elapsed % 60)
-            minutes_total = int(self.__max_time_seconds // 60)
-            seconds_total = int(self.__max_time_seconds % 60)
-            minutes_result = minutes_total - minutes
-            seconds_result = seconds_total - seconds
+            remaining_seconds = self.__max_time_seconds - self.__time_elapsed
+            minutes = int(remaining_seconds // 60)
+            seconds = int(remaining_seconds % 60)
             first_line = "time".center(5)
             second_line = "left".center(5)
             third_line = "-----"
-            fourth_line = \
-                f"{minutes_result:02d}:{seconds_result:02d}".center(5)
+            if remaining_seconds <= 0:
+                fourth_line = "00:00"
+            else:
+                fourth_line = \
+                    f"{minutes:02d}:{seconds:02d}".center(5)
             self.__text = \
                 f"{first_line}\n{second_line}\n{third_line}\n{fourth_line}"
         self._surface.fill((0, 0, 0))
         self.__font.render(self._surface, (0, 0), self.__text)
+
+    def getRemainingTime(self) -> float:
+        return self.__max_time_seconds - self.__time_elapsed
 
     def start(self) -> None:
         self.__is_going = True
