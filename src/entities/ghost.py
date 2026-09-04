@@ -1,9 +1,13 @@
 import pygame
 
-from typing import Callable, TYPE_CHECKING
-from enum import Enum, auto
+from typing import Callable
 
 from src.entities.entity import Entity
+from src.entities.ghost_intelligence import (
+    GhostContext,
+    GhostMode,
+    choose_direction,
+)
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
@@ -11,16 +15,7 @@ from src.graphics.graphical_utils.ui_utils import SpriteType
 
 from src.world.cell import Direction
 
-# Only for the annotations: ghost_intelligence imports GhostMode from
-# here, so importing it back at runtime would be a circular import.
-if TYPE_CHECKING:
-    from src.entities.ghost_intelligence import GhostContext
-
-
-class GhostMode(Enum):
-    CHASE = auto()
-    SCATTER = auto()
-    FRIGHTENED = auto()
+__all__ = ['Ghost', 'GhostMode']
 
 
 class Ghost(Entity):
@@ -39,7 +34,7 @@ class Ghost(Entity):
         # for the four of them, so decideNextMove() does it once.
         strategy: Callable[
             [
-                'GhostContext'
+                GhostContext
             ],
             tuple[int, int]],
     ) -> None:
@@ -99,15 +94,19 @@ class Ghost(Entity):
             self.__frightened_timer = 0.0
         self.__mode = new_mode
 
-    def decideNextMove(self, context: 'GhostContext') -> None:
+    def decideNextMove(self, context: GhostContext) -> None:
         """Queue the direction that walks towards the strategy's target."""
         target = self.__strategy(context)
 
-        # STEP 2: choose_direction() goes here, so that a target further
-        # away than one cell can be reached too.
-        d_x = target[0] - context.ghost_pos[0]
-        d_y = target[1] - context.ghost_pos[1]
-        next_dir = Direction.vecToDir((d_x, d_y))
+        # The target can be any cell of the maze, not just a neighbour,
+        # so choose_direction() is the one that turns it into the single
+        # step to take next.
+        next_dir = choose_direction(
+            context.maze,
+            context.ghost_pos,
+            self._current_direction,
+            target,
+        )
 
         if next_dir == self._current_direction.opposite():
             # A queued u-turn is thrown away by the anti-reversal filter
