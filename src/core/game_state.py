@@ -11,6 +11,7 @@ from src.entities.pacman import Pacman
 from src.entities.entity import Entity
 from src.entities.pacgums import Pacgum, SuperPacgum
 from src.entities.ghost import Ghost, GhostMode
+from src.entities.ghost_intelligence import GhostContext, random_target
 
 from src.graphics.ui.button import Button
 from src.graphics.ui.text import Text
@@ -337,6 +338,7 @@ class PlayingState(BaseState):
 
         self.__text_size = self.__screen_width / 30
 
+        # TODO: controllare che non sia dentro il 42
         self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
 
         self.__pacman: Pacman = Pacman(
@@ -350,23 +352,12 @@ class PlayingState(BaseState):
         self.__pacgums: list[Pacgum | SuperPacgum] = []
         self.__ft_cells = self._get_42_coord()
 
-        # ================#
-        from src.world.maze import Maze
-
-        def nothing(
-            maze: Maze,
-            pos: tuple[int, int],
-            target: tuple[int, int]
-        ) -> Direction:
-            return Direction.STILL
-        # ================#
-
         self.__ghost = Ghost(
             (0, 0),
             self.__scaled_size * 1.6,
-            0,
+            4.0,
             SpriteLibrary.get('red'),
-            nothing
+            random_target
         )
 
         for x in range(maze_w):
@@ -464,6 +455,10 @@ class PlayingState(BaseState):
 
             if not entity.isMoving():
                 current_cell = entity.getCurrentCell()
+
+                if isinstance(entity, Ghost):
+                    entity.decideNextMove(self._build_ghost_context(entity))
+
                 queued_dir = entity.getQueuedDirection()
                 current_dir = entity.getCurrentDirection()
 
@@ -495,6 +490,23 @@ class PlayingState(BaseState):
 
                 else:
                     entity.moveTo(current_cell, current_dir)
+
+    def _build_ghost_context(self, ghost: Ghost) -> GhostContext:
+        """Snapshot of the world as a ghost strategy gets to see it."""
+        maze_w, _ = self.__actual_maze.getSize()
+
+        return GhostContext(
+            maze=self.__actual_maze,
+            ghost_pos=ghost.getCurrentCell(),
+            ghost_dir=ghost.getCurrentDirection(),
+            pacman_pos=self.__pacman.getCurrentCell(),
+            pacman_dir=self.__pacman.getCurrentDirection(),
+            # STEP 4: the red one stops being the only ghost around and
+            # every ghost gets its own corner.
+            blinky_pos=self.__ghost.getCurrentCell(),
+            scatter_corner=(maze_w - 1, 0),
+            mode=ghost.getMode(),
+            )
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
         for event in events:

@@ -1,6 +1,6 @@
 import pygame
 
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 from enum import Enum, auto
 
 from src.entities.entity import Entity
@@ -9,8 +9,12 @@ from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.ui_utils import SpriteType
 
-from src.world.maze import Maze
 from src.world.cell import Direction
+
+# Only for the annotations: ghost_intelligence imports GhostMode from
+# here, so importing it back at runtime would be a circular import.
+if TYPE_CHECKING:
+    from src.entities.ghost_intelligence import GhostContext
 
 
 class GhostMode(Enum):
@@ -28,24 +32,17 @@ class Ghost(Entity):
         sprite_sheet: SpriteSheet,
         # The strategy is a function prototyped like:
         # '''
-        # def strategy(
-        #   maze: Maze,
-        #   ghost_pos: tuple[int, int],
-        #   pacman_pos: tuple[int, int]
-        # )
+        # def strategy(context: GhostContext)
         # '''
-        # and returns the Direction the ghost should take next turn
+        # and returns the cell the ghost wants to reach, not the
+        # Direction to get there: picking the direction is the same job
+        # for the four of them, so decideNextMove() does it once.
         strategy: Callable[
             [
-                Maze,
-                tuple[int, int],
-                tuple[int, int]
+                'GhostContext'
             ],
-            Direction],
+            tuple[int, int]],
     ) -> None:
-
-        # TOREMOVE
-        speed = 0
 
         super().__init__(init_pos, size, speed)
 
@@ -93,6 +90,27 @@ class Ghost(Entity):
 
     def getMode(self) -> GhostMode:
         return self.__mode
+
+    def decideNextMove(self, context: 'GhostContext') -> None:
+        """Queue the direction that walks towards the strategy's target."""
+        target = self.__strategy(context)
+
+        # STEP 2: choose_direction() goes here, so that a target further
+        # away than one cell can be reached too.
+        d_x = target[0] - context.ghost_pos[0]
+        d_y = target[1] - context.ghost_pos[1]
+        next_dir = Direction.vecToDir((d_x, d_y))
+
+        if next_dir == self._current_direction.opposite():
+            # A queued u-turn is thrown away by the anti-reversal filter
+            # in PlayingState.update(), so it has to be written straight
+            # into the current direction. Only happens in a dead end,
+            # where turning back is the one legal move.
+            self._current_direction = next_dir
+            self.setQueueDirection(Direction.STILL)
+            return
+
+        self.setQueueDirection(next_dir)
 
     def update(self, dt: float) -> None:
         super().update(dt)
