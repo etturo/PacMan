@@ -77,29 +77,29 @@ class MenuState(BaseState):
 
         # List of buttons
         start_button = Button(
-            (screen_width / 2, first_y_button),
-            SpriteLibrary['yellow'],
-            GameEvent.MODE_TO_PLAYING,
+            position=(screen_width / 2, first_y_button),
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.MODE_TO_PLAYING,
             text='play',
             anchor='center',
             sprite_size=button_size,
             secondary_sheet=SpriteLibrary['yellow']
         )
         settings_button = Button(
-            (screen_width / 2,
+            position=(screen_width / 2,
              first_y_button + button_size * 2 + screen_height / 30),
-            SpriteLibrary['yellow'],
-            GameEvent.MODE_TO_SETTINGS,
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.MODE_TO_SETTINGS,
             text='settings',
             anchor='center',
             sprite_size=button_size,
             secondary_sheet=SpriteLibrary['yellow']
         )
         exit_button = Button(
-            (screen_width / 2,
+            position=(screen_width / 2,
              first_y_button + button_size * 4 + screen_height / 15),
-            SpriteLibrary['yellow'],
-            GameEvent.EXIT,
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.EXIT,
             text='exit',
             anchor='center',
             sprite_size=button_size,
@@ -108,34 +108,64 @@ class MenuState(BaseState):
 
         # List of text boxes
         title_txt = Text(
-            "pacman",
-            (screen_width / 2, screen_height / 8),
-            SpriteLibrary['yellow'],
-            screen_height / 10,
+            text="pacman",
+            position=(screen_width / 2, screen_height / 8),
+            sprite_sheet=SpriteLibrary['yellow'],
+            text_size=screen_height / 10,
             anchor='center',
         )
         credits_text = Text(
-            f"authors: {__authors__}",
-            (0, screen_height),
-            SpriteLibrary['white_text'],
-            screen_height / 30,
+            text=f"authors: {__authors__}",
+            position=(0, screen_height),
+            sprite_sheet=SpriteLibrary['white_text'],
+            text_size=screen_height / 30,
             anchor='bottom left'
         )
         version_text = Text(
-            f"version: {__version__}",
-            (screen_width, screen_height),
-            SpriteLibrary['white_text'],
-            screen_height / 30,
+            text=f"version: {__version__}",
+            position=(screen_width, screen_height),
+            sprite_sheet=SpriteLibrary['white_text'],
+            text_size=screen_height / 30,
             anchor='bottom right'
+        )
+        commands = Text(
+            text=(
+                "arrows/WASD\nto move\n\n"
+                "esc to exit\n\n"
+                "f11 to toggle\nfullscreen\n\n"
+                "take all the\ngums to win\n\n"
+                "run away\nfrom ghosts\n\n"
+                "have fun!!!\n\n"),
+            position=(
+                screen_width - screen_width / 3.75,
+                10 + button_size * 3
+            ),
+            sprite_sheet=SpriteLibrary['white_text'],
+            text_size=screen_height / 30,
+            anchor='top left'
+        )
+
+        instruction_box = Box(
+            position=(
+                screen_width - 10,
+                10
+            ),
+            width=screen_width / 3.5,
+            height=screen_height - (screen_height / 10),
+            sprite_sheet=SpriteLibrary['leadboard'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=button_size,
+            title="commands\nand rules",
+            anchor="top right"
         )
 
         leadboard = Leadboard(
-            (10, 10),
-            screen_width / 3.5,
-            screen_height - (screen_height / 10),
-            SpriteLibrary['leadboard'],
-            SpriteType.EMPTY_WALL,
-            button_size
+            position=(10, 10),
+            width=screen_width / 3.5,
+            height=screen_height - (screen_height / 10),
+            sprite_sheet=SpriteLibrary['leadboard'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=button_size
         )
 
         self.__buttons = [
@@ -147,9 +177,11 @@ class MenuState(BaseState):
             title_txt,
             credits_text,
             version_text,
+            commands,
         ]
         self.__elements = [
-            leadboard
+            leadboard,
+            instruction_box,
         ]
 
         self.__surface = \
@@ -160,7 +192,7 @@ class MenuState(BaseState):
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
-        for element in self.__buttons + self.__texts + self.__elements:
+        for element in self.__buttons + self.__elements + self.__texts:
             element.render(self.__surface)
         return self.__surface
 
