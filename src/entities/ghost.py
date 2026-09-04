@@ -94,8 +94,9 @@ class Ghost(Entity):
         return self.__mode
 
     def setMode(self, new_mode: GhostMode) -> None:
-        if new_mode == GhostMode.FRIGHTENED and self.__mode == new_mode:
-            self.__frightened_timer -= self.__time_frightened
+        # Eating another super pacgum restarts the countdown
+        if new_mode == GhostMode.FRIGHTENED:
+            self.__frightened_timer = 0.0
         self.__mode = new_mode
 
     def decideNextMove(self, context: 'GhostContext') -> None:

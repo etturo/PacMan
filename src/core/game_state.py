@@ -371,19 +371,7 @@ class PlayingState(BaseState):
 
         self.__is_started = False
 
-        # ================#
-        from src.world.maze import Maze
-
-        def nothing(
-            maze: Maze,
-            pos: tuple[int, int],
-            target: tuple[int, int]
-        ) -> Direction:
-            return Direction.STILL
-        # ================#
-
         ghost = Ghost(
-        self.__ghost = Ghost(
             (0, 0),
             self.__scaled_size * 1.6,
             4.0,
@@ -570,7 +558,7 @@ class PlayingState(BaseState):
             pacman_dir=self.__pacman.getCurrentDirection(),
             # STEP 4: the red one stops being the only ghost around and
             # every ghost gets its own corner.
-            blinky_pos=self.__ghost.getCurrentCell(),
+            blinky_pos=self.__ghosts[0].getCurrentCell(),
             scatter_corner=(maze_w - 1, 0),
             mode=ghost.getMode(),
             )
@@ -643,13 +631,16 @@ class PlayingState(BaseState):
                     self.__points += self.__settings.points_per_pacgum
                 if isinstance(entity, SuperPacgum):
                     entity.die()
-                    self.__update_ghost_mode(self.__ghosts, GhostMode.FRIGHTENED)
+                    self.__update_ghost_mode(
+                        self.__ghosts, GhostMode.FRIGHTENED)
                     self.__points += self.__settings.points_per_super_pacgum
-                if (
-                    isinstance(entity, Ghost)
-                    and entity.getMode() != GhostMode.FRIGHTENED
-                ):
-                    self.__pacman.die()
+                if isinstance(entity, Ghost):
+                    if entity.getMode() == GhostMode.FRIGHTENED:
+                        entity.resetPosition()
+                        entity.setMode(GhostMode.CHASE)
+                        self.__points += self.__settings.points_per_ghost
+                    else:
+                        self.__pacman.die()
 
     def _get_entity_screen_pos(
             self,
