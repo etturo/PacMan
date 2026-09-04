@@ -11,7 +11,7 @@ from src.entities.pacman import Pacman
 from src.entities.entity import Entity
 from src.entities.pacgums import Pacgum, SuperPacgum
 from src.entities.ghost import Ghost, GhostMode
-from src.entities.ghost_intelligence import GhostContext, random_target
+from src.entities.ghost_intelligence import GhostContext, blinky_strategy
 
 from src.graphics.ui.button import Button, ToggleButton, SlideButton
 from src.graphics.ui.text import Text
@@ -408,7 +408,7 @@ class PlayingState(BaseState):
             self.__scaled_size * 1.6,
             4.0,
             SpriteLibrary.get('red'),
-            random_target
+            blinky_strategy()
         )
         self.__ghosts = [
             ghost
