@@ -408,7 +408,7 @@ class PlayingState(BaseState):
             self.__scaled_size * 1.6,
             4.0,
             SpriteLibrary.get('red'),
-            blinky_strategy()
+            blinky_strategy
         )
         self.__ghosts = [
             ghost
