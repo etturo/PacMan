@@ -10,6 +10,7 @@ dependencies = [
     "mypy",
     "mazegenerator",
     "pydantic>=2.13.4",
+    "pyinstaller>=6.22.2",
 ]
 
 [tool.uv.sources]

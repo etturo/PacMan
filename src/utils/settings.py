@@ -44,6 +44,9 @@ class GameEvent(IntEnum):
     TOGGLE_GLITCH_EFFECT = pygame.USEREVENT + 18
     TOGGLE_ROLLING_EFFECT = pygame.USEREVENT + 19
 
+    MODE_TO_PAUSE = pygame.USEREVENT + 20
+    BACK_TO_GAME = pygame.USEREVENT + 21
+
     @staticmethod
     def post(mode: 'GameEvent') -> None:
         pygame.event.post(pygame.event.Event(mode))

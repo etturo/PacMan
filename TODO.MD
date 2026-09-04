@@ -11,6 +11,6 @@
 
 
 # MANDATORY FEATURES
- - [ ] Instruction in the main menu.
+ - [X] Instruction in the main menu.
  - [ ] Current level in the playing menu.
- - [ ] Pause Menu.
+ - [X] Pause Menu.

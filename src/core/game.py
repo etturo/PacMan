@@ -9,6 +9,7 @@ from src.core.game_state import (
     PlayingState,
     GameOverState,
     SettingState,
+    PauseState,
     )
 
 from src.world.maze import Maze
@@ -96,6 +97,13 @@ class Game:
 
             elif event.type == GameEvent.MODE_TO_MENU:
                 self.__active_state = MenuState()
+
+            elif event.type == GameEvent.MODE_TO_PAUSE:
+                self.__freeze_state = self.__active_state
+                self.__active_state = PauseState()
+
+            elif event.type == GameEvent.BACK_TO_GAME:
+                self.__active_state = self.__freeze_state
 
             elif event.type == GameEvent.MODE_TO_PLAYING:
                 self.__active_state = PlayingState(self.__game_settings)

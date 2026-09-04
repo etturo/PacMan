@@ -133,9 +133,10 @@ class MenuState(BaseState):
                 "arrows/WASD\nto move\n\n"
                 "esc to exit\n\n"
                 "f11 to toggle\nfullscreen\n\n"
+                "press p to\npause \nthe game\n\n"
                 "take all the\ngums to win\n\n"
                 "run away\nfrom ghosts\n\n"
-                "have fun!!!\n\n"),
+                ),
             position=(
                 screen_width - screen_width / 3.75,
                 10 + button_size * 3
@@ -406,7 +407,7 @@ class PlayingState(BaseState):
         ghost = Ghost(
             (0, 0),
             self.__scaled_size * 1.6,
-            4.0,
+            3,
             SpriteLibrary.get('red'),
             blinky_strategy
         )
@@ -623,6 +624,8 @@ class PlayingState(BaseState):
                     if not self.__is_started:
                         self.__is_started = True
                         self.__timer.start()
+                elif event.key == pygame.K_p:
+                    GameEvent.post(GameEvent.MODE_TO_PAUSE)
 
     def _reset_entity_pos(self) -> None:
         for entity in self.__entities:
@@ -1000,6 +1003,78 @@ class SettingState(BaseState):
         ]
 
         self.__surface = pygame.Surface((screen_width, screen_height))
+
+    def getSurface(self, dt: float) -> pygame.Surface:
+        self.__surface.fill((0, 0, 0))
+        for element in self.__elements + self.__buttons + self.__texts:
+            element.render(self.__surface)
+        return self.__surface
+
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            for button in self.__buttons:
+                button.handle_event(event)
+
+    def update(self, dt: float) -> None:
+        pass
+
+
+class PauseState(BaseState):
+    def __init__(self) -> None:
+        screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
+        screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+
+        button_size = screen_height / 15
+
+        title = Box(
+            position=(0, 0),
+            width=screen_width,
+            height=screen_height,
+            sprite_sheet=SpriteLibrary['leadboard'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=button_size,
+            title="PAUSE",
+            anchor="top left")
+
+        resume_button = Button(
+            position=(
+                screen_width / 2,
+                screen_height / 2 - screen_height / 10
+            ),
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.BACK_TO_GAME,
+            text="resume",
+            sprite_size=button_size,
+            anchor="center",
+            secondary_sheet=SpriteLibrary['yellow']
+        )
+        exit_button = Button(
+            position=(
+                screen_width / 2,
+                screen_height / 2 + screen_height / 10
+            ),
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.MODE_TO_MENU,
+            text="BACK TO\nMENU",
+            sprite_size=button_size,
+            anchor="center",
+            secondary_sheet=SpriteLibrary['yellow']
+        )
+
+        self.__surface = \
+            pygame.Surface(
+                (Settings.VIRTUAL_WINDOW_WIDTH,
+                 Settings.VIRTUAL_WINDOW_HEIGHT)
+                )
+
+        self.__buttons: list[Button] = [
+            resume_button,
+            exit_button,
+        ]
+        self.__texts: list[Text] = []
+        self.__elements: list[Element] = [
+            title,
+        ]
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
