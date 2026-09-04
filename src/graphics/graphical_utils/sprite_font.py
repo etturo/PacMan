@@ -71,6 +71,15 @@ class SpriteFont:
             self.__sheet.getSprite(8, 3, 13)
         self.__characters[SpriteType.CH_SPACE] = \
             self.__sheet.getSprite(8, 8, 11)
+        sheet1 = self.__sheet.getSprite(8, 2, 13)
+        sheet2 = self.__sheet.getSprite(8, 2, 21)
+        self.__characters[SpriteType.CH_COLON] = \
+            self.__sheet.combineSprite2x2(sheet2, sheet1, sheet2, sheet1)
+
+        self.__characters[SpriteType.LEFT_ARROW] = \
+            self.__sheet.getRotatedSprite(16, 5, 2, 90)
+        self.__characters[SpriteType.RIGHT_ARROW] = \
+            self.__sheet.getRotatedSprite(16, 5, 2, 270)
 
         self.__original_char = self.__characters.copy()
         self.setSize(size)

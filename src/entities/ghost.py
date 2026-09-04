@@ -86,10 +86,17 @@ class Ghost(Entity):
         self.__animation_timer = 0.0
         self.__animation_delay = 0.1
         self.__frame_index = 0
+        self.__frightened_timer = 0.0
+        self.__time_frightened = 6.0
         self._surface = self.__frightened_animation[0]
 
     def getMode(self) -> GhostMode:
         return self.__mode
+
+    def setMode(self, new_mode: GhostMode) -> None:
+        if new_mode == GhostMode.FRIGHTENED and self.__mode == new_mode:
+            self.__frightened_timer -= self.__time_frightened
+        self.__mode = new_mode
 
     def decideNextMove(self, context: 'GhostContext') -> None:
         """Queue the direction that walks towards the strategy's target."""
@@ -114,6 +121,12 @@ class Ghost(Entity):
 
     def update(self, dt: float) -> None:
         super().update(dt)
+
+        if self.__mode == GhostMode.FRIGHTENED:
+            self.__frightened_timer += dt
+            if self.__frightened_timer >= self.__time_frightened:
+                self.__mode = GhostMode.CHASE
+                self.__frightened_timer = 0.0
 
         self.__animation_timer += dt
         if self.__animation_timer >= self.__animation_delay:

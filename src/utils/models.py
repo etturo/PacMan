@@ -20,6 +20,10 @@ class GameSettings(BaseModel):
     points_per_ghost: int = Field(default=200, gt=0)
     seed: int = Field(default=42, ge=0)
     level_max_time: int = Field(default=90, gt=0)
+    # CUSTOM
+    ghost_freezed: bool = False
+    double_speeded: bool = False
+    invincibility: bool = False
 
     @model_validator(mode="after")
     def validate_scores(self) -> 'GameSettings':

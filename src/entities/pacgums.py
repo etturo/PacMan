@@ -3,6 +3,7 @@ import pygame
 from src.entities.entity import Entity
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
+from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.ui_utils import SpriteType
 
 
@@ -19,8 +20,10 @@ class Pacgum(Entity):
             0
         )
         sprite_sheet = SpriteLibrary.get('blue')
-        sprite = sprite_sheet[SpriteType.PACGUM]
-        self._surface.blit(sprite, (0, 0))
+        self._surface = SpriteSheet.scaleSprite(
+            sprite_sheet[SpriteType.PACGUM],
+            size
+        )
 
 
 class SuperPacgum(Entity):
@@ -36,9 +39,13 @@ class SuperPacgum(Entity):
             0
         )
         sprite_sheet = SpriteLibrary.get('blue')
-        self.__sprite = sprite_sheet[SpriteType.SUPER_PACGUMS]
-        self.__animation = [self.__sprite, sprite_sheet[SpriteType.EMPTY_WALL]]
-        self._surface.blit(self.__sprite, (0, 0))
+        scale = SpriteSheet.scaleSprite
+        self.__sprite = scale(sprite_sheet[SpriteType.SUPER_PACGUMS], size)
+        self.__animation = [
+            self.__sprite,
+            scale(sprite_sheet[SpriteType.EMPTY_WALL], size)
+        ]
+        self._surface = self.__sprite
         self.__animation_timer = 0.0
         self.__animation_delay = 0.1
         self.__frame_index = 0

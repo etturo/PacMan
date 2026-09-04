@@ -13,16 +13,18 @@ from src.entities.pacgums import Pacgum, SuperPacgum
 from src.entities.ghost import Ghost, GhostMode
 from src.entities.ghost_intelligence import GhostContext, random_target
 
-from src.graphics.ui.button import Button
+from src.graphics.ui.button import Button, ToggleButton, SlideButton
 from src.graphics.ui.text import Text
 from src.graphics.ui.element import (
     LiveElement,
     Lives,
     Points,
     TextInput,
-    Leadboard
+    Leadboard,
+    Box,
+    Element,
+    Timer
     )
-from src.graphics.ui.drawable import Drawable
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.sprite_font import SpriteFont
@@ -50,12 +52,16 @@ class BaseState(ABC):
         pass
 
     def getPoints(self) -> int:
-        # mypy say this has to be like that... ok...
+        # mypy says this has to be like that... ok...
         return 0
 
     def getLives(self) -> int:
-        # mypy say this has to be like that... ok...
+        # mypy says this has to be like that... ok...
         return 0
+
+    def getRemainingTime(self) -> float:
+        # mypy says this has to be like that... ok...
+        return 0.0
 
 
 class MenuState(BaseState):
@@ -67,7 +73,7 @@ class MenuState(BaseState):
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
         button_size = screen_height / 15
-        first_y_button = screen_height / 2
+        first_y_button = screen_height / 3
 
         # List of buttons
         start_button = Button(
@@ -79,9 +85,19 @@ class MenuState(BaseState):
             sprite_size=button_size,
             secondary_sheet=SpriteLibrary['yellow']
         )
-        exit_button = Button(
+        settings_button = Button(
             (screen_width / 2,
              first_y_button + button_size * 2 + screen_height / 30),
+            SpriteLibrary['yellow'],
+            GameEvent.MODE_TO_SETTINGS,
+            text='settings',
+            anchor='center',
+            sprite_size=button_size,
+            secondary_sheet=SpriteLibrary['yellow']
+        )
+        exit_button = Button(
+            (screen_width / 2,
+             first_y_button + button_size * 4 + screen_height / 15),
             SpriteLibrary['yellow'],
             GameEvent.EXIT,
             text='exit',
@@ -99,14 +115,14 @@ class MenuState(BaseState):
             anchor='center',
         )
         credits_text = Text(
-            f"authors - {__authors__}",
+            f"authors: {__authors__}",
             (0, screen_height),
             SpriteLibrary['white_text'],
             screen_height / 30,
             anchor='bottom left'
         )
         version_text = Text(
-            f"version - {__version__}",
+            f"version: {__version__}",
             (screen_width, screen_height),
             SpriteLibrary['white_text'],
             screen_height / 30,
@@ -124,7 +140,8 @@ class MenuState(BaseState):
 
         self.__buttons = [
             start_button,
-            exit_button
+            exit_button,
+            settings_button,
         ]
         self.__texts = [
             title_txt,
@@ -312,6 +329,8 @@ class PlayingState(BaseState):
 
         self.__settings = settings
         self.__points: int = 0
+        self.__max_seconds = settings.level_max_time
+        self.__time_elapsed = 0.0
 
         self.__actual_level = 0
         size = (
@@ -330,16 +349,14 @@ class PlayingState(BaseState):
         self._render_maze()
 
         maze_w, maze_h = self.__actual_maze.getSize()
-        v_maze_height = maze_w * 2 + 1
-        original_maze_height = v_maze_height * self.__cell_size
-        scale_factor = self.__screen_height / original_maze_height
-
-        self.__scaled_size = self.__cell_size * scale_factor
+        self.__scaled_size = self.__screen_height / (maze_h * 2 + 1) / 1.1
 
         self.__text_size = self.__screen_width / 30
 
-        # TODO: controllare che non sia dentro il 42
-        self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
+        if (maze_w % 2 != 0):
+            self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
+        else:
+            self.__pacman_initial_pos = ((maze_w // 2) - 1, maze_h // 2)
 
         self.__pacman: Pacman = Pacman(
             self.__pacman_initial_pos,
@@ -352,6 +369,20 @@ class PlayingState(BaseState):
         self.__pacgums: list[Pacgum | SuperPacgum] = []
         self.__ft_cells = self._get_42_coord()
 
+        self.__is_started = False
+
+        # ================#
+        from src.world.maze import Maze
+
+        def nothing(
+            maze: Maze,
+            pos: tuple[int, int],
+            target: tuple[int, int]
+        ) -> Direction:
+            return Direction.STILL
+        # ================#
+
+        ghost = Ghost(
         self.__ghost = Ghost(
             (0, 0),
             self.__scaled_size * 1.6,
@@ -359,6 +390,9 @@ class PlayingState(BaseState):
             SpriteLibrary.get('red'),
             random_target
         )
+        self.__ghosts = [
+            ghost
+        ]
 
         for x in range(maze_w):
             for y in range(maze_h):
@@ -373,7 +407,7 @@ class PlayingState(BaseState):
                     self.__pacgums.append(
                         SuperPacgum(
                             (x, y),
-                            self.__scaled_size * 1.6,
+                            self.__scaled_size,
                             settings.points_per_super_pacgum
                             )
                         )
@@ -391,25 +425,40 @@ class PlayingState(BaseState):
                         )
 
         lives = Lives(
-            (0, 0),
-            SpriteLibrary['yellow'],
-            SpriteType.LIVES_SPRITE,
-            self.__text_size * 1.5
+            position=(0, 0),
+            sprite_sheet=SpriteLibrary['yellow'],
+            sprite_type=SpriteType.LIVES_SPRITE,
+            size=self.__text_size * 1.5,
+            initial_lives=settings.lives
             )
         points = Points(
-            (Settings.VIRTUAL_WINDOW_WIDTH - 220, 10),
-            SpriteLibrary['white'],
-            self.__text_size,
-            self.__points
+            position=(Settings.VIRTUAL_WINDOW_WIDTH - 220, 10),
+            sprite_sheet=SpriteLibrary['white'],
+            size=self.__text_size / 1.2,
+            initial_points=self.__points,
             )
+        self.__timer = Timer(
+            position=(
+                Settings.VIRTUAL_WINDOW_WIDTH,
+                Settings.VIRTUAL_WINDOW_HEIGHT),
+            anchor="bottom right",
+            width=self.__text_size * 5,
+            height=self.__text_size * 4,
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=self.__text_size / 1.2,
+            time=self.__time_elapsed,
+            max_time_seconds=self.__settings.level_max_time
+        )
 
-        self.__ui_elements: list[Drawable] = [
+        self.__ui_elements: list[LiveElement] = [
             lives,
             points,
+            self.__timer,
         ]
         self.__entities.extend(self.__pacgums)
         self.__entities.append(self.__pacman)
-        self.__entities.append(self.__ghost)
+        self.__entities.extend(self.__ghosts)
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
@@ -434,12 +483,30 @@ class PlayingState(BaseState):
     def getLives(self) -> int:
         return self.__pacman.getLives()
 
+    def getRemainingTime(self) -> float:
+        return self.__timer.getRemainingTime()
+
+    @staticmethod
+    def __update_ghost_mode(ghosts: list[Ghost], new_mode: GhostMode) -> None:
+        for ghost in ghosts:
+            ghost.setMode(new_mode)
+
     def update(self, dt: float) -> None:
         for element in self.__ui_elements:
             if isinstance(element, Lives):
                 element.update(self.__pacman.getLives())
             elif isinstance(element, Points):
                 element.update(self.__points)
+            elif isinstance(element, Timer):
+                element.update(dt)
+
+        if not self.__is_started:
+            return
+
+        self.__time_elapsed = self.getRemainingTime()
+
+        if self.__time_elapsed <= 0:
+            GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
 
         self.__pacman.update(dt)
         if self.__pacman.getLives() <= 0:
@@ -515,14 +582,27 @@ class PlayingState(BaseState):
                 self._reset_entity_pos()
 
             if event.type == pygame.KEYDOWN:
+
                 if event.key == pygame.K_w or event.key == pygame.K_UP:
                     self.__pacman.setQueueDirection(Direction.NORTH)
-                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    if not self.__is_started:
+                        self.__is_started = True
+                        self.__timer.start()
+                elif event.key == pygame.K_a or event.key == pygame.K_LEFT:
                     self.__pacman.setQueueDirection(Direction.WEST)
-                if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    if not self.__is_started:
+                        self.__is_started = True
+                        self.__timer.start()
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     self.__pacman.setQueueDirection(Direction.EAST)
-                if event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    if not self.__is_started:
+                        self.__is_started = True
+                        self.__timer.start()
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
                     self.__pacman.setQueueDirection(Direction.SOUTH)
+                    if not self.__is_started:
+                        self.__is_started = True
+                        self.__timer.start()
 
     def _reset_entity_pos(self) -> None:
         for entity in self.__entities:
@@ -563,6 +643,7 @@ class PlayingState(BaseState):
                     self.__points += self.__settings.points_per_pacgum
                 if isinstance(entity, SuperPacgum):
                     entity.die()
+                    self.__update_ghost_mode(self.__ghosts, GhostMode.FRIGHTENED)
                     self.__points += self.__settings.points_per_super_pacgum
                 if (
                     isinstance(entity, Ghost)
@@ -620,14 +701,20 @@ class PlayingState(BaseState):
 
 
 class GameOverState(BaseState):
-    def __init__(self, points: int, lives: int) -> None:
+    def __init__(self, points: int, lives: int, time: float) -> None:
         self.__points = points
 
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
+        title = ""
+        if lives <= 0 or time <= 0:
+            title = "GAME OVER"
+        else:
+            title = "YOU WON"
+
         self.__game_over_txt = Text(
-            "GAME OVER" if lives <= 0 else "YOU WON",
+            title,
             (screen_width / 2, screen_height / 6),
             SpriteLibrary['yellow'],
             screen_height / 8,
@@ -707,3 +794,200 @@ class GameOverState(BaseState):
         for element in self.__elements:
             if isinstance(element, LiveElement):
                 element.handle_events(events)
+
+
+class SettingState(BaseState):
+    def __init__(self, settings: GameSettings) -> None:
+        self.__buttons: list[Button] = []
+        self.__texts: list[Text] = []
+        self.__elements: list[Element] = []
+
+        screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
+
+        button_size = screen_height / 30
+
+        title = Text(
+            text='settings',
+            position=(screen_width / 2, screen_height / 8),
+            sprite_sheet=SpriteLibrary['yellow'],
+            text_size=screen_height / 10,
+        )
+        cheat_box = Box(
+            title='cheat',
+            position=(screen_width / 50, screen_height / 5),
+            width=screen_width / 3,
+            height=screen_height / 1.3,
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=screen_height / 15,
+            anchor='top left'
+        )
+        go_back_button = Button(
+            position=(screen_width / 50, screen_height / 50),
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.MODE_TO_MENU,
+            text="go back",
+            sprite_size=button_size,
+            anchor='top left'
+        )
+        ghost_freeze_button = ToggleButton(
+            position=(screen_width / 25, screen_height / 3),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_FREEZE,
+            text="ghost freeze",
+            initial_value=settings.ghost_freezed,
+            sprite_size=button_size,
+            anchor='top left',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white'],
+        )
+        invincibility_button = ToggleButton(
+            position=(screen_width / 5.5, screen_height / 1.5),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_INVINCIBILITY,
+            text="shield",
+            initial_value=settings.invincibility,
+            sprite_size=button_size,
+            anchor='top left',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white'],
+        )
+        double_speed_button = ToggleButton(
+            position=(screen_width / 25, screen_height / 2),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_DOUBLE_SPEED,
+            text="double speed",
+            initial_value=settings.double_speeded,
+            sprite_size=button_size,
+            anchor='top left',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        lives_button = SlideButton(
+            position=(screen_width / 25, screen_height / 1.5),
+            sprite_sheet=SpriteLibrary['white'],
+            increment_on_click=GameEvent.ADD_A_LIFE,
+            decrement_on_click=GameEvent.SUB_A_LIFE,
+            initial_value=settings.lives,
+            text="lives",
+            sprite_size=button_size,
+            anchor=' top left',
+            max_value=9,
+            min_value=1,
+        )
+        graphics_box = Box(
+            title='graphics',
+            position=(screen_width / 2.8, screen_height / 5),
+            width=screen_width / 2,
+            height=screen_height / 1.3,
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=screen_height / 15,
+            anchor='top left'
+        )
+        toggle_fullscreen = ToggleButton(
+            position=(screen_width / 2.5, screen_height / 3),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_FULLSCREEN,
+            text="toggle\nfullscreen",
+            sprite_size=button_size,
+            initial_value=pygame.display.is_fullscreen(),
+            anchor='top left',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        fps_slider = SlideButton(
+            position=(screen_width / 1.55, screen_height / 3),
+            sprite_sheet=SpriteLibrary['white'],
+            increment_on_click=GameEvent.ADD_10_FPS,
+            decrement_on_click=GameEvent.SUB_10_FPS,
+            initial_value=pygame.display.get_desktop_refresh_rates()[0],
+            text="  fps  ",
+            sprite_size=button_size,
+            anchor=' top left',
+            step_value=10,
+            max_value=200,
+            min_value=10,
+        )
+        toggle_crt = ToggleButton(
+            position=(screen_width / 1.67, screen_height / 2.05),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_CRT_EFFECT,
+            text="set crt effect",
+            sprite_size=button_size,
+            initial_value=True,
+            anchor='mid top',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        toggle_glitch = ToggleButton(
+            position=(screen_width / 1.67, screen_height / 1.67),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_GLITCH_EFFECT,
+            text="set glitch vfx",
+            sprite_size=button_size,
+            initial_value=True,
+            anchor='mid top',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        toggle_glow = ToggleButton(
+            position=(screen_width / 1.67, screen_height / 1.41),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_GLOW_EFFECT,
+            text="set glow vfx",
+            sprite_size=button_size,
+            initial_value=True,
+            anchor='mid top',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+        toggle_rolling = ToggleButton(
+            position=(screen_width / 1.67, screen_height / 1.22),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.TOGGLE_ROLLING_EFFECT,
+            text="set rolling vfx",
+            sprite_size=button_size,
+            initial_value=True,
+            anchor='mid top',
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white']
+        )
+
+        self.__texts = [
+            title,
+        ]
+        self.__elements = [
+            cheat_box,
+            graphics_box,
+        ]
+        self.__buttons = [
+            ghost_freeze_button,
+            double_speed_button,
+            go_back_button,
+            lives_button,
+            invincibility_button,
+            toggle_fullscreen,
+            fps_slider,
+            toggle_crt,
+            toggle_glitch,
+            toggle_glow,
+            toggle_rolling,
+        ]
+
+        self.__surface = pygame.Surface((screen_width, screen_height))
+
+    def getSurface(self, dt: float) -> pygame.Surface:
+        self.__surface.fill((0, 0, 0))
+        for element in self.__elements + self.__buttons + self.__texts:
+            element.render(self.__surface)
+        return self.__surface
+
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            for button in self.__buttons:
+                button.handle_event(event)
+
+    def update(self, dt: float) -> None:
+        pass

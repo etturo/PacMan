@@ -49,7 +49,7 @@ class LiveElement(Element, ABC):
             )
 
     @abstractmethod
-    def update(self, value: int = 0) -> None:
+    def update(self, value: Any) -> None:
         pass
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
@@ -144,7 +144,7 @@ class Points(LiveElement):
             self.__str,
             (0, 0),
             self.__sprite_sheet,
-            self.__size / 1.2,
+            self.__size,
             anchor='topleft'
             )
 
@@ -347,3 +347,187 @@ class Leadboard(Element):
         self._surface.blit(
             bottom_right_sprite,
             (box_width - box_sprite_size, box_height - box_sprite_size))
+
+
+class Box(Element):
+    def __init__(
+        self,
+        position: tuple[float, float],
+        width: float,
+        height: float,
+        sprite_sheet: SpriteSheet,
+        sprite_type: SpriteType,
+        size: float,
+        title: str = "",
+        anchor: str = "topleft",
+    ):
+        super().__init__(position, sprite_sheet, sprite_type, size, anchor)
+        self.__offset = 5
+        self.__width = width
+        self.__height = height
+        self.__sprite_size = size
+
+        self._surface = pygame.Surface(
+            (self.__width, self.__height), pygame.SRCALPHA
+        )
+        self.__title = title
+
+        self._create_textbox()
+
+        title_box = Text(
+            self.__title,
+            (self._surface.get_width() / 2, size),
+            SpriteLibrary.get('white'),
+            size / 1.5,
+            anchor="mid top"
+        )
+        title_box.render(self._surface)
+
+    def _create_textbox(self) -> None:
+        text_size = self.__sprite_size
+        box_sprite_size = text_size / 2
+
+        box_width = self.__width
+        box_height = self.__height
+
+        v_border_length = max(1, box_height - (box_sprite_size * 2))
+        h_border_length = max(1, box_width - (box_sprite_size * 2))
+
+        horizontal_sprites = pygame.transform.scale(
+            self._sheet[SpriteType.HORIZONTAL_EDGE],
+            (h_border_length, box_sprite_size)
+        )
+        vertical_sprites = pygame.transform.scale(
+            self._sheet[SpriteType.VERTICAL_EDGE],
+            (box_sprite_size, v_border_length)
+        )
+        top_left_sprite = pygame.transform.scale(
+            self._sheet[SpriteType.TOP_LEFT],
+            (box_sprite_size, box_sprite_size)
+        )
+        top_right_sprite = pygame.transform.scale(
+            self._sheet[SpriteType.TOP_RIGHT],
+            (box_sprite_size, box_sprite_size)
+        )
+        bottom_left_sprite = pygame.transform.scale(
+            self._sheet[SpriteType.BOTTOM_LEFT],
+            (box_sprite_size, box_sprite_size)
+        )
+        bottom_right_sprite = pygame.transform.scale(
+            self._sheet[SpriteType.BOTTOM_RIGHT],
+            (box_sprite_size, box_sprite_size)
+        )
+
+        self._surface = pygame.Surface((box_width, box_height))
+        self.__secondary_surface = pygame.Surface((box_width, box_height))
+        self.__rect = self._get_rect()
+
+        # top horizontal border
+        self._surface.blit(
+            horizontal_sprites,
+            (box_sprite_size, 0))
+
+        # bottom horizontal border
+        self._surface.blit(
+            horizontal_sprites,
+            (box_sprite_size, box_height - box_sprite_size))
+
+        # left vertical border
+        self._surface.blit(
+            vertical_sprites,
+            (0, box_sprite_size))
+
+        # right vertical blit
+        self._surface.blit(
+            vertical_sprites,
+            (box_width - box_sprite_size, box_sprite_size))
+
+        self._surface.blit(
+            top_left_sprite,
+            (0, 0))
+        self._surface.blit(
+            top_right_sprite,
+            (box_width - box_sprite_size, 0))
+        self._surface.blit(
+            bottom_left_sprite,
+            (0, box_height - box_sprite_size))
+        self._surface.blit(
+            bottom_right_sprite,
+            (box_width - box_sprite_size, box_height - box_sprite_size))
+
+
+class Timer(LiveElement):
+    def __init__(
+        self,
+        position: tuple[float, float],
+        width: float,
+        height: float,
+        sprite_sheet: SpriteSheet,
+        sprite_type: SpriteType,
+        size: float,
+        time: float,
+        max_time_seconds: int,
+        anchor: str = "topleft",
+    ):
+        super().__init__(position, sprite_sheet, sprite_type, size, anchor)
+        self.__offset = 5
+        self.__width = width
+        self.__height = height
+        self.__sprite_size = size
+        self._surface = pygame.Surface(
+            (self.__width, self.__height), pygame.SRCALPHA
+        )
+
+        self.__max_time_seconds = max_time_seconds
+
+        self.__is_going = False
+
+        self.__font = SpriteFont(sprite_sheet, size)
+
+        self.__start_time: float = time
+        self.__time_elapsed: float = time
+        self.__time_to_show: float = time
+
+        remaining_seconds = self.__max_time_seconds - self.__time_elapsed
+        minutes = int(remaining_seconds // 60)
+        seconds = int(remaining_seconds % 60)
+        first_line = "time".center(5)
+        second_line = "left".center(5)
+        third_line = "-----"
+        fourth_line = \
+            f"{minutes:02d}:{seconds:02d}".center(5)
+        self.__text = \
+            f"{first_line}\n{second_line}\n{third_line}\n{fourth_line}"
+        self._surface.fill((0, 0, 0))
+        self.__font.render(self._surface, (0, 0), self.__text)
+
+    def update(self, dt: float = 0.0) -> None:
+        if self.__is_going:
+            self.__time_elapsed += dt
+            remaining_seconds = self.__max_time_seconds - self.__time_elapsed
+            minutes = int(remaining_seconds // 60)
+            seconds = int(remaining_seconds % 60)
+            first_line = "time".center(5)
+            second_line = "left".center(5)
+            third_line = "-----"
+            if remaining_seconds <= 0:
+                fourth_line = "00:00"
+            else:
+                fourth_line = \
+                    f"{minutes:02d}:{seconds:02d}".center(5)
+            self.__text = \
+                f"{first_line}\n{second_line}\n{third_line}\n{fourth_line}"
+        self._surface.fill((0, 0, 0))
+        self.__font.render(self._surface, (0, 0), self.__text)
+
+    def getRemainingTime(self) -> float:
+        return self.__max_time_seconds - self.__time_elapsed
+
+    def start(self) -> None:
+        self.__is_going = True
+
+    def pause(self) -> None:
+        self.__is_going = False
+
+    def getIsGoing(self) -> bool:
+        return self.__is_going
