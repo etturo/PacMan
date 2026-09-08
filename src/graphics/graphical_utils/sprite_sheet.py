@@ -268,6 +268,11 @@ class SpriteSheet:
         self.__data[SpriteType.RIGHT_ARROW] = \
             self.getRotatedSprite(16, 5, 2, 270)
 
+        self.__data[SpriteType.TWO_HUND_POINTS] = self.getSprite(16, 6, 3)
+        self.__data[SpriteType.FOUR_HUND_POINTS] = self.getSprite(16, 6, 4)
+        self.__data[SpriteType.EIGHT_HUND_POINTS] = self.getSprite(16, 6, 5)
+        self.__data[SpriteType.SIXTEEN_HUND_POINTS] = self.getSprite(16, 6, 6)
+
     @staticmethod
     def combineSprite2x2(
             top_left: pygame.Surface,

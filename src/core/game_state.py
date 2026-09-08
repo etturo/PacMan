@@ -362,6 +362,8 @@ class PlayingState(BaseState):
 
         self.__settings = settings
         self.__points: int = 0
+        self.__final_points: int = 0
+        self.__ghost_combo = 0
         self.__max_seconds = settings.level_max_time
         self.__time_elapsed = 0.0
 
@@ -403,6 +405,7 @@ class PlayingState(BaseState):
         self.__ft_cells = self._get_42_coord()
 
         self.__is_started = False
+        self.__is_frightened = False
 
         ghost = Ghost(
             (0, 0),
@@ -499,7 +502,7 @@ class PlayingState(BaseState):
         return self.__surface
 
     def getPoints(self) -> int:
-        return self.__points
+        return self.__final_points if self.__final_points > 0 else self.__points
 
     def getLives(self) -> int:
         return self.__pacman.getLives()
@@ -507,10 +510,131 @@ class PlayingState(BaseState):
     def getRemainingTime(self) -> float:
         return self.__timer.getRemainingTime()
 
-    @staticmethod
-    def __update_ghost_mode(ghosts: list[Ghost], new_mode: GhostMode) -> None:
+    def __update_ghost_mode(
+        self,
+        ghosts: list[Ghost],
+        new_mode: GhostMode
+    ) -> None:
+        if new_mode == GhostMode.FRIGHTENED:
+            self.__is_frightened = True
+            self.__ghost_combo = 200
         for ghost in ghosts:
             ghost.setMode(new_mode)
+
+    def __handle_level_clear(self) -> None:
+        """Advance to the next level, or finish the game if it was the last."""
+        if self.__actual_level + 1 >= len(self.__settings.levels):
+            self.__final_points = self.__points
+            GameEvent.post(GameEvent.MODE_TO_WIN)
+            return
+
+        self.build_next_level()
+
+    def build_next_level(self) -> None:
+        """Rebuild the maze, entities and timer for the next level."""
+        self.__actual_level += 1
+        self.__ghost_combo = 0
+        self.__is_frightened = False
+        self.__is_started = False
+        self.__time_elapsed = 0.0
+
+        size = (
+            self.__settings.levels[self.__actual_level].width,
+            self.__settings.levels[self.__actual_level].height,
+        )
+        self.__maze_wrapper = MazeWrapper()
+        self.__maze_wrapper.generate(size=size, seed=self.__settings.seed)
+        self.__actual_maze = self.__maze_wrapper.maze
+        self.__maze_renderer = MazeRender()
+        self._render_maze()
+
+        maze_w, maze_h = self.__actual_maze.getSize()
+        self.__scaled_size = self.__screen_height / (maze_h * 2 + 1) / 1.1
+        self.__text_size = self.__screen_width / 30
+
+        if maze_w % 2 != 0:
+            self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
+        else:
+            self.__pacman_initial_pos = ((maze_w // 2) - 1, maze_h // 2)
+
+        self.__pacman = Pacman(
+            self.__pacman_initial_pos,
+            self.__scaled_size * 1.6,
+            4.0,
+            self.__settings.lives,
+        )
+        self.__current_direction = self.__pacman.getDir()
+        self.__pacman.setQueueDirection(Direction.STILL)
+        self.__pacman.moveTo(self.__pacman_initial_pos, Direction.STILL)
+
+        self.__pacgums = []
+        self.__ft_cells = self._get_42_coord()
+
+        ghost = Ghost(
+            (0, 0),
+            self.__scaled_size * 1.6,
+            3,
+            SpriteLibrary.get('red'),
+            blinky_strategy,
+        )
+        ghost.setQueueDirection(Direction.STILL)
+        ghost.moveTo((0, 0), Direction.STILL)
+        self.__ghosts = [ghost]
+
+        for x in range(maze_w):
+            for y in range(maze_h):
+                if (x, y) in self.__ft_cells:
+                    continue
+                if (
+                    (x == 0 and y == 0)
+                    or (x == 0 and y == maze_h - 1)
+                    or (x == maze_w - 1 and y == 0)
+                    or (x == maze_w - 1 and y == maze_h - 1)
+                ):
+                    self.__pacgums.append(
+                        SuperPacgum(
+                            (x, y),
+                            self.__scaled_size,
+                            self.__settings.points_per_super_pacgum,
+                        )
+                    )
+                elif (x, y) == self.__pacman_initial_pos:
+                    continue
+                else:
+                    self.__pacgums.append(
+                        Pacgum(
+                            (x, y),
+                            self.__scaled_size,
+                            self.__settings.points_per_pacgum,
+                        )
+                    )
+
+        self.__entities = []
+        self.__entities.extend(self.__pacgums)
+        self.__entities.append(self.__pacman)
+        self.__entities.extend(self.__ghosts)
+
+        self.__timer = Timer(
+            position=(
+                Settings.VIRTUAL_WINDOW_WIDTH,
+                Settings.VIRTUAL_WINDOW_HEIGHT,
+            ),
+            anchor="bottom right",
+            width=self.__text_size * 5,
+            height=self.__text_size * 4,
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=self.__text_size / 1.2,
+            time=0.0,
+            max_time_seconds=self.__settings.level_max_time,
+        )
+        self.__timer.pause()
+
+        self.__ui_elements = [
+            self.__ui_elements[0],
+            self.__ui_elements[1],
+            self.__timer,
+        ]
 
     def update(self, dt: float) -> None:
         for element in self.__ui_elements:
@@ -527,7 +651,8 @@ class PlayingState(BaseState):
         self.__time_elapsed = self.getRemainingTime()
 
         if self.__time_elapsed <= 0:
-            GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
+            self.__handle_level_clear()
+            return
 
         self.__pacman.update(dt)
         if self.__pacman.getLives() <= 0:
@@ -578,6 +703,16 @@ class PlayingState(BaseState):
 
                 else:
                     entity.moveTo(current_cell, current_dir)
+
+        remaining_pacgums = [
+            entity for entity in self.__entities
+            if isinstance(entity, (Pacgum, SuperPacgum))
+            and entity.isAlive()
+        ]
+        if not remaining_pacgums and self.__pacman.isAlive():
+            self.__handle_level_clear()
+            return
+
 
     def _build_ghost_context(self, ghost: Ghost) -> GhostContext:
         """Snapshot of the world as a ghost strategy gets to see it."""
@@ -660,6 +795,8 @@ class PlayingState(BaseState):
         for entity in self.__entities:
             if entity == self.__pacman or not self.__pacman.isAlive():
                 continue
+            if not entity.isAlive():
+                continue
             if entity.getPos() == pacman_pos:
                 if isinstance(entity, Pacgum):
                     entity.die()
@@ -671,8 +808,10 @@ class PlayingState(BaseState):
                     self.__points += self.__settings.points_per_super_pacgum
                 if isinstance(entity, Ghost):
                     if entity.getMode() == GhostMode.FRIGHTENED:
-                        entity.resetPosition()
-                        entity.setMode(GhostMode.CHASE)
+                        entity.die(self.__ghost_combo)
+                        self.__ghost_combo = \
+                            (self.__ghost_combo * 2
+                            if self.__ghost_combo * 2 <= 1600 else 1600)
                         self.__points += self.__settings.points_per_ghost
                     else:
                         self.__pacman.die()
@@ -727,14 +866,14 @@ class PlayingState(BaseState):
 
 
 class GameOverState(BaseState):
-    def __init__(self, points: int, lives: int, time: float) -> None:
+    def __init__(self, points: int, has_won: bool) -> None:
         self.__points = points
 
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
         title = ""
-        if lives <= 0 or time <= 0:
+        if not has_won:
             title = "GAME OVER"
         else:
             title = "YOU WON"

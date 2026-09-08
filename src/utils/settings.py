@@ -47,6 +47,8 @@ class GameEvent(IntEnum):
     MODE_TO_PAUSE = pygame.USEREVENT + 20
     BACK_TO_GAME = pygame.USEREVENT + 21
 
+    MODE_TO_WIN = pygame.USEREVENT + 22
+
     @staticmethod
     def post(mode: 'GameEvent') -> None:
         pygame.event.post(pygame.event.Event(mode))

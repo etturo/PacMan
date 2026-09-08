@@ -27,6 +27,7 @@ the remaining time is in silence, but sticazzi
 
 # pipi
  - Frightened ghost animation added but it wont activate. TODO -> make the super pac gusm post the GhostModeToFrightened and make the ghost edible.
+ - Make the Game go to the next level if the time goes to 0 or the gums are finished
  
 
 # popo

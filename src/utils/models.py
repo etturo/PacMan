@@ -17,7 +17,7 @@ class GameSettings(BaseModel):
     pacgums: int = Field(default=42, ge=0)
     points_per_pacgum: int = Field(default=10, gt=0)
     points_per_super_pacgum: int = Field(default=50, gt=0)
-    points_per_ghost: int = Field(default=200, gt=0)
+    points_per_ghost: int = 200
     seed: int = Field(default=42, ge=0)
     level_max_time: int = Field(default=90, gt=0)
     # CUSTOM

@@ -124,6 +124,11 @@ class SpriteType(Enum):
     PACGUM = auto()
     SUPER_PACGUMS = auto()
 
+    TWO_HUND_POINTS = auto()
+    FOUR_HUND_POINTS = auto()
+    EIGHT_HUND_POINTS = auto()
+    SIXTEEN_HUND_POINTS = auto()
+
 
 CHAR_MAPPING: dict[str, SpriteType] = {
     'A': SpriteType.L_A,

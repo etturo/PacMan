@@ -113,9 +113,10 @@ class Game:
 
             elif event.type == GameEvent.MODE_TO_GAME_OVER:
                 points = self.__active_state.getPoints()
-                lives = self.__active_state.getLives()
-                time = self.__active_state.getRemainingTime()
-                self.__active_state = GameOverState(points, lives, time)
+                self.__active_state = GameOverState(points, False)
+            elif event.type == GameEvent.MODE_TO_WIN:
+                points = self.__active_state.getPoints()
+                self.__active_state = GameOverState(points, True)
 
             elif (
                 event.type == GameEvent.ADD_A_LIFE and
