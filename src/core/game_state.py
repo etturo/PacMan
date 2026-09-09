@@ -23,7 +23,8 @@ from src.graphics.ui.element import (
     Leadboard,
     Box,
     Element,
-    Timer
+    Timer,
+    Level,
     )
 
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
@@ -463,6 +464,15 @@ class PlayingState(BaseState):
             size=self.__text_size / 1.2,
             initial_points=self.__points,
             )
+        level_ui = Level(
+            position=(
+                self.__text_size * 1.3,
+                Settings.VIRTUAL_WINDOW_HEIGHT - self.__text_size * 2),
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=self.__text_size / 1.2,
+            anchor='bottom left',
+        )
         self.__timer = Timer(
             position=(
                 Settings.VIRTUAL_WINDOW_WIDTH,
@@ -481,7 +491,9 @@ class PlayingState(BaseState):
             lives,
             points,
             self.__timer,
+            level_ui,
         ]
+
         self.__entities.extend(self.__pacgums)
         self.__entities.append(self.__pacman)
         self.__entities.extend(self.__ghosts)
@@ -496,7 +508,7 @@ class PlayingState(BaseState):
         for entity in self.__entities:
             if self.__pacman.isAlive() is False and isinstance(entity, Ghost):
                 continue
-            e_x, e_y = entity.get_visual_pos()
+            e_x, e_y = entity.getVisualPos()
             screen_x, screen_y = self._get_entity_screen_pos(e_x, e_y)
 
             entity.render(self.__surface, (screen_x, screen_y), dt)
@@ -516,7 +528,7 @@ class PlayingState(BaseState):
         self,
         ghosts: list[Ghost],
         new_mode: GhostMode
-    ) -> None:
+        ) -> None:
         if new_mode == GhostMode.FRIGHTENED:
             self.__is_frightened = True
             self.__ghost_combo = 200
@@ -638,6 +650,7 @@ class PlayingState(BaseState):
             self.__ui_elements[0],
             self.__ui_elements[1],
             self.__timer,
+            self.__ui_elements[3],
         ]
 
     def update(self, dt: float) -> None:
@@ -652,6 +665,8 @@ class PlayingState(BaseState):
                 element.update(self.__points)
             elif isinstance(element, Timer):
                 element.update(dt)
+            elif isinstance(element, Level):
+                element.update(self.__actual_level + 1)
 
         if not self.__is_started:
             return
@@ -720,7 +735,6 @@ class PlayingState(BaseState):
         if not remaining_pacgums and self.__pacman.isAlive():
             self.__handle_level_clear()
             return
-
 
     def _build_ghost_context(self, ghost: Ghost) -> GhostContext:
         """Snapshot of the world as a ghost strategy gets to see it."""

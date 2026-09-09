@@ -531,3 +531,50 @@ class Timer(LiveElement):
 
     def getIsGoing(self) -> bool:
         return self.__is_going
+
+
+class Level(LiveElement):
+    def __init__(
+        self,
+        position: tuple[float, float],
+        sprite_sheet: SpriteSheet,
+        sprite_type: SpriteType,
+        size: float,
+        anchor: str = "topleft",
+    ):
+        super().__init__(
+            position,
+            sprite_sheet,
+            SpriteType.EMPTY_WALL,
+            size
+            )
+        self.__size = size
+        self.__sprite_sheet = sprite_sheet
+        formatted_level = str(1).center(5)
+        self.__str = f"{'level'.center(5)}\n{formatted_level}"
+        self.__text = Text(
+            self.__str,
+            (0, 0),
+            self.__sprite_sheet,
+            self.__size,
+            anchor='topleft'
+            )
+
+        self._surface = pygame.Surface(self.__text.getSize(), pygame.SRCALPHA)
+
+    def update(self, value: int) -> None:
+        self.__level = value
+
+        self._surface.fill((0, 0, 0))
+
+        formatted_level = str(self.__level).center(5)
+        self.__str = f"{'level'.center(5)}\n{formatted_level}"
+        self.__text = Text(
+            self.__str,
+            (0, 0),
+            self.__sprite_sheet,
+            self.__size,
+            anchor='topleft'
+            )
+
+        self.__text.render(self._surface)

@@ -25,7 +25,7 @@ class Entity(ABC):
     def getCurrentCell(self) -> tuple[int, int]:
         return self._current_cell
 
-    def get_visual_pos(self) -> tuple[float, float]:
+    def getVisualPos(self) -> tuple[float, float]:
         c_x, c_y = self._current_cell
         t_x, t_y = self._target_cell
 

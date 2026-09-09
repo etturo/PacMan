@@ -40,6 +40,7 @@ class Ghost(Entity):
     ) -> None:
 
         super().__init__(init_pos, size, speed)
+        self.__initial_speed = speed
 
         scale = SpriteSheet.scaleSprite
 
@@ -133,9 +134,14 @@ class Ghost(Entity):
         return self.__mode
 
     def setMode(self, new_mode: GhostMode) -> None:
-        # Eating another super pacgum restarts the countdown
         if new_mode == GhostMode.FRIGHTENED:
+            # Eating another super pacgum restarts the countdown
             self.__frightened_timer = 0.0
+            # and slows the ghosts
+            self._speed = self.__initial_speed / 1.5
+        else:
+            self._speed = self.__initial_speed
+
         self.__mode = new_mode
 
     def decideNextMove(self, context: GhostContext) -> None:
@@ -179,6 +185,7 @@ class Ghost(Entity):
         }[self.__current_points]
         self.__frame_index = 0
         self._is_alive = False
+        self._speed = self.__initial_speed
 
     def update(self, dt: float) -> None:
         super().update(dt)
