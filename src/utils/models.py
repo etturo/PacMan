@@ -12,7 +12,13 @@ class LevelConfig(BaseModel):
 
 class GameSettings(BaseModel):
     highscore_filename: str = Field(default="config.json")
-    levels: list[LevelConfig]
+    levels: list[LevelConfig] = Field(
+        default=[
+            {"width": 5, "height": 5},
+            {"width": 15, "height": 15},
+            {"width": 28, "height": 36}
+        ]
+    )
     lives: int = Field(default=3, gt=0, le=99)
     pacgums: int = Field(default=42, ge=0)
     points_per_pacgum: int = Field(default=10, gt=0)

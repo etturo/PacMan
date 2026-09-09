@@ -1,4 +1,4 @@
-.PHONY: install run debug clean lint lint-strict
+.PHONY: install run debug clean lint lint-strict build
 
 PYTHON = $(BIN)/python3
 SRC = src
@@ -17,11 +17,20 @@ run:
 debug:
 	$(PYTHON) -m pdb -m $(SRC) $(CONFIG_FILE)
 
+build:
+# 	For linux
+	pyinstaller --noconsole --onefile -n "BarkMan" --add-data "data:data" src/__main__.py
+# 	For windows
+	pyinstaller --noconsole --onefile -n "BarkMan" --add-data "data;data" src/__main__.py
+
 clean:
 	rm -rf .venv
 	rm -rf .mypy_cache
 	rm -rf src/.mypy_cache
 	rm -rf __pycache__
+	rm -rf *.spec
+	rm -rf build
+	rm -rf dist
 	systemctl --user restart pipewire pipewire-pulse pulseaudio
 
 lint:
