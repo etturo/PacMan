@@ -407,10 +407,12 @@ class PlayingState(BaseState):
         self.__is_started = False
         self.__is_frightened = False
 
+        ghost_velocity = 3 if not self.__settings.ghost_freezed else 0
+
         ghost = Ghost(
             (0, 0),
             self.__scaled_size * 1.6,
-            3,
+            ghost_velocity,
             SpriteLibrary.get('red'),
             blinky_strategy
         )
@@ -570,10 +572,12 @@ class PlayingState(BaseState):
         self.__pacgums = []
         self.__ft_cells = self._get_42_coord()
 
+        ghost_velocity = 3 if not self.__settings.ghost_freezed else 0
+
         ghost = Ghost(
             (0, 0),
             self.__scaled_size * 1.6,
-            3,
+            ghost_velocity,
             SpriteLibrary.get('red'),
             blinky_strategy,
         )
@@ -637,6 +641,10 @@ class PlayingState(BaseState):
         ]
 
     def update(self, dt: float) -> None:
+        # if double speed is set every game tick is halfed
+        if self.__settings.double_speeded:
+            dt *= 2
+
         for element in self.__ui_elements:
             if isinstance(element, Lives):
                 element.update(self.__pacman.getLives())
@@ -813,7 +821,7 @@ class PlayingState(BaseState):
                             (self.__ghost_combo * 2
                             if self.__ghost_combo * 2 <= 1600 else 1600)
                         self.__points += self.__settings.points_per_ghost
-                    else:
+                    elif not self.__settings.invincibility:
                         self.__pacman.die()
 
     def _get_entity_screen_pos(

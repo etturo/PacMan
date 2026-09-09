@@ -112,11 +112,27 @@ class Game:
                 self.__active_state = SettingState(self.__game_settings)
 
             elif event.type == GameEvent.MODE_TO_GAME_OVER:
-                points = self.__active_state.getPoints()
-                self.__active_state = GameOverState(points, False)
+                # only with no cheat activated the score can be stored
+                if (
+                    self.__game_settings.ghost_freezed |
+                    self.__game_settings.double_speeded |
+                    self.__game_settings.invincibility
+                ):
+                    self.__active_state = MenuState()
+                else:
+                    points = self.__active_state.getPoints()
+                    self.__active_state = GameOverState(points, False)
             elif event.type == GameEvent.MODE_TO_WIN:
-                points = self.__active_state.getPoints()
-                self.__active_state = GameOverState(points, True)
+                # only with no cheat activated the score can be stored
+                if (
+                    self.__game_settings.ghost_freezed |
+                    self.__game_settings.double_speeded |
+                    self.__game_settings.invincibility
+                ):
+                    self.__active_state = MenuState()
+                else:
+                    points = self.__active_state.getPoints()
+                    self.__active_state = GameOverState(points, True)
 
             elif (
                 event.type == GameEvent.ADD_A_LIFE and
