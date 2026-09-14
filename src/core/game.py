@@ -1,3 +1,5 @@
+import sys
+
 from argparse import ArgumentParser
 
 import pygame
@@ -65,9 +67,9 @@ class Game:
                 self.__active_state.update(self.__dt)
                 self._render(self.__dt)
         except KeyboardInterrupt:
-            exit("\nProgram ended by the user")
+            sys.exit("\nProgram ended by the user")
             pygame.quit()
-        exit()
+        sys.exit()
         pygame.quit()
 
     def _render(self, dt: float) -> None:
@@ -87,7 +89,7 @@ class Game:
                     event.type == pygame.KEYDOWN and
                     event.key in self.__quit_buttons):
                 self.__is_running = False
-                exit()
+                sys.exit()
 
             elif (event.type == pygame.KEYDOWN and event.key == pygame.K_F11):
                 pygame.display.toggle_fullscreen()
