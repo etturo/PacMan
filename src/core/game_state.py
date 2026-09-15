@@ -37,6 +37,7 @@ from src.world.cell import Direction
 
 from src.utils.settings import Settings, GameEvent
 from src.utils.models import GameSettings
+from src.utils.paths import initial_leaderboard_path, leaderboard_path
 
 
 class BaseState(ABC):
@@ -949,23 +950,19 @@ class GameOverState(BaseState):
 
     @staticmethod
     def _update_leadboard(new_player: str, new_score: int) -> None:
+        path = leaderboard_path()
         try:
-            with open('data/leadboard/scores.json', 'r') as file:
+            source_path = path if path.exists() else initial_leaderboard_path()
+            with open(source_path, 'r') as file:
                 leadboard: list[tuple[str, int]] = json.load(file)
         except (FileNotFoundError, json.decoder.JSONDecodeError):
             leadboard = []
 
         leadboard.append((new_player, new_score))
 
-        Path("data/leadboard/").mkdir(parents=True, exist_ok=True)
-        path = Path("data/leadboard/scores.json")
-
-        if path.exists():
-            with open("data/leadboard/scores.json", 'w') as file:
-                json.dump(leadboard, file, indent=4)
-        else:
-            with open("data/leadboard/scores.json", 'x') as file:
-                json.dump(leadboard, file, indent=4)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with open(path, 'w') as file:
+            json.dump(leadboard, file, indent=4)
 
         GameEvent.post(GameEvent.MODE_TO_MENU)
 

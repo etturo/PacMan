@@ -9,6 +9,7 @@ from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.ui_utils import SpriteType
 from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.graphics.graphical_utils.sprite_library import SpriteLibrary
+from src.utils.paths import initial_leaderboard_path, leaderboard_path
 from src.graphics.ui.text import Text
 
 
@@ -254,7 +255,10 @@ class Leadboard(Element):
 
         leadboard: list[list[Any]] = []
         try:
-            with open("data/leadboard/scores.json", "r") as f:
+            path = leaderboard_path()
+            if not path.exists():
+                path = initial_leaderboard_path()
+            with open(path, "r") as f:
                 leadboard = cast(list[list[Any]], json.load(f))
         except (json.decoder.JSONDecodeError,
                 FileNotFoundError,

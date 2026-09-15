@@ -1,10 +1,14 @@
 .PHONY: install run debug clean lint lint-strict build
 
+ifeq ($(OS),Windows_NT)
+PYTHON = $(VENV)/Scripts/python.exe
+else
 PYTHON = $(BIN)/python3
+endif
 SRC = src
 VENV = .venv
 BIN = $(VENV)/bin
-CONFIG_FILE = "config.json"
+CONFIG_FILE = config.json
 
 all: install run
 
@@ -18,20 +22,10 @@ debug:
 	$(PYTHON) -m pdb -m $(SRC) $(CONFIG_FILE)
 
 build:
-# 	For linux
-	pyinstaller --noconsole --onefile -n "BarkMan" --add-data "data:data" src/__main__.py
-# 	For windows
-	pyinstaller --noconsole --onefile -n "BarkMan" --add-data "data;data" src/__main__.py
+	$(PYTHON) -m PyInstaller --clean BarkMan.spec
 
 clean:
-	rm -rf .venv
-	rm -rf .mypy_cache
-	rm -rf src/.mypy_cache
-	rm -rf __pycache__
-	rm -rf *.spec
-	rm -rf build
-	rm -rf dist
-	systemctl --user restart pipewire pipewire-pulse pulseaudio
+	$(PYTHON) -c "import shutil; [shutil.rmtree(path, ignore_errors=True) for path in ('.mypy_cache', 'src/.mypy_cache', '__pycache__', 'build', 'dist')]"
 
 lint:
 	$(BIN)/flake8 $(SRC)

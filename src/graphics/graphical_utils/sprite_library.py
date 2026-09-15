@@ -1,6 +1,7 @@
 from typing import Optional, cast
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
+from src.utils.paths import resource_path
 
 
 class SpriteLibraryMeta(type):
@@ -27,40 +28,40 @@ class SpriteLibrary(metaclass=SpriteLibraryMeta):
     def load(cls) -> None:
         cls.sprites = {
             "azure": SpriteSheet(
-                'data/assets/sprites/azure-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/azure-sprite-sheet.png'))
                 ),
             "b&w": SpriteSheet(
-                'data/assets/sprites/b&w-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/b&w-sprite-sheet.png'))
                 ),
             "blue": SpriteSheet(
-                'data/assets/sprites/blue-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/blue-sprite-sheet.png'))
                 ),
             "melon": SpriteSheet(
-                'data/assets/sprites/melon-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/melon-sprite-sheet.png'))
                 ),
             "orange": SpriteSheet(
-                'data/assets/sprites/orange-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/orange-sprite-sheet.png'))
                 ),
             "pink": SpriteSheet(
-                'data/assets/sprites/pink-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/pink-sprite-sheet.png'))
                 ),
             "red": SpriteSheet(
-                'data/assets/sprites/red-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/red-sprite-sheet.png'))
                 ),
             "white_text": SpriteSheet(
-                'data/assets/sprites/white_text-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/white_text-sprite-sheet.png'))
                 ),
             "yellow": SpriteSheet(
-                'data/assets/sprites/yellow-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/yellow-sprite-sheet.png'))
                 ),
             "green": SpriteSheet(
-                'data/assets/sprites/green-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/green-sprite-sheet.png'))
                 ),
             "pink_black": SpriteSheet(
-                'data/assets/sprites/pink_black-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/pink_black-sprite-sheet.png'))
                 ),
             "orange_green": SpriteSheet(
-                'data/assets/sprites/orange_green-sprite-sheet.png'
+                str(resource_path('data/assets/sprites/orange_green-sprite-sheet.png'))
                 ),
         }
         cls.__original_keys = list(cls.sprites.keys())
