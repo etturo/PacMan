@@ -263,8 +263,7 @@ class Leadboard(Element):
         except (json.decoder.JSONDecodeError,
                 FileNotFoundError,
                 FileExistsError):
-            print("WARNING! Failed to load the leadboard file, "
-                  "check json correctness.")
+            ...
 
         leadboard.sort(key=lambda x: int(x[1]), reverse=True)
 

@@ -79,9 +79,6 @@ class SpriteLibrary(metaclass=SpriteLibraryMeta):
     def add_item(cls, new_item: str, sheet_to_link: str) -> None:
         if sheet_to_link in cls.sprites:
             cls.sprites[new_item] = cls.sprites[sheet_to_link]
-        else:
-            print(f"WARNING! tried to link {new_item}"
-                  f" to {sheet_to_link} unsuccesfully")
 
     @classmethod
     def delete_item(cls, item_to_delete: str) -> None:

@@ -40,7 +40,6 @@ class Drawable(ABC):
         normalized = normalized.replace(" ", "_").replace('_', "")
         if normalized in cls._VALID_ANCHORS:
             return normalized
-        print(f"WARINING: Unsupported anchor '{anchor}'.")
         return ""
 
     def _get_rect(self) -> pygame.Rect:
@@ -66,7 +65,6 @@ class Drawable(ABC):
             rect.midright = self._position
         else:
             rect.center = self._position
-            print("WARNING: anchor not valid.")
 
         return rect
 
