@@ -12,6 +12,9 @@ from src.world.maze import Maze
 def suppress_prints(func: Callable[..., Any]) -> Callable[..., Any]:
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
+        if sys.stdout is None or sys.stderr is None:
+            return func(*args, **kwargs)
+
         sys.stdout.flush()
         sys.stderr.flush()
 
