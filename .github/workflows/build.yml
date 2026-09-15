@@ -1,63 +1,54 @@
 name: Build executables
-
 on:
-	push:
-	workflow_dispatch:
-
+  push:
+  workflow_dispatch:
 jobs:
-	build:
-		name: Build ${{ matrix.platform }} executable
-		runs-on: ${{ matrix.os }}
-		strategy:
-			fail-fast: false
-			matrix:
-				include:
-					- platform: linux
-						os: ubuntu-latest
-						artifact_path: dist/BarkMan
-						artifact_name: BarkMan-linux
-					- platform: windows
-						os: windows-latest
-						artifact_path: dist/BarkMan.exe
-						artifact_name: BarkMan-windows
-
-		steps:
-			- name: Check out repository
-				uses: actions/checkout@v4
-
-			- name: Set up Python
-				uses: actions/setup-python@v5
-				with:
-					python-version: "3.12"
-
-			- name: Install uv
-				uses: astral-sh/setup-uv@v5
-
-			- name: Install project dependencies
-				run: uv sync --frozen
-
-			- name: Build Linux executable
-				if: matrix.platform == 'linux'
-				run: >-
-					uv run pyinstaller --clean --noconsole --onefile
-					--name BarkMan
-					--add-data "data:data"
-					--add-data "config.json:."
-					src/__main__.py
-
-			- name: Build Windows executable
-				if: matrix.platform == 'windows'
-				shell: pwsh
-				run: >-
-					uv run pyinstaller --clean --noconsole --onefile
-					--name BarkMan
-					--add-data "data;data"
-					--add-data "config.json;."
-					src/__main__.py
-
-			- name: Upload executable
-				uses: actions/upload-artifact@v4
-				with:
-					name: ${{ matrix.artifact_name }}
-					path: ${{ matrix.artifact_path }}
-					if-no-files-found: error
+  build:
+    name: Build ${{ matrix.platform }} executable
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            os: ubuntu-latest
+            artifact_path: dist/BarkMan
+            artifact_name: BarkMan-linux
+          - platform: windows
+            os: windows-latest
+            artifact_path: dist/BarkMan.exe
+            artifact_name: BarkMan-windows
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Install project dependencies
+        run: uv sync --frozen
+      - name: Build Linux executable
+        if: matrix.platform == 'linux'
+        run: >-
+          uv run pyinstaller --clean --noconsole --onefile
+          --name BarkMan
+          --add-data "data:data"
+          --add-data "config.json:."
+          src/__main__.py
+      - name: Build Windows executable
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: >-
+          uv run pyinstaller --clean --noconsole --onefile
+          --name BarkMan
+          --add-data "data;data"
+          --add-data "config.json;."
+          src/__main__.py
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_path }}
+          if-no-files-found: error
