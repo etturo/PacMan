@@ -45,20 +45,21 @@ class Button(Drawable):
 
         self._primary_surface: pygame.Surface = self._surface
 
-    def handle_event(self, event: pygame.event.Event) -> None:
-        if event.type == pygame.MOUSEMOTION:
-            self._rect = self._get_rect()
-            self._is_hovered = self._rect.collidepoint(event.pos)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and self._is_hovered:
-                if self._on_click_sfx:
-                    self._on_click_sfx.play()
-                GameEvent.post(self._on_click)
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            if event.type == pygame.MOUSEMOTION:
+                self._rect = self._get_rect()
+                self._is_hovered = self._rect.collidepoint(event.pos)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1 and self._is_hovered:
+                    if self._on_click_sfx:
+                        self._on_click_sfx.play()
+                    GameEvent.post(self._on_click)
 
-        if self._is_hovered:
-            self._surface = self._primary_surface
-        else:
-            self._surface = self._secondary_surface
+            if self._is_hovered:
+                self._surface = self._primary_surface
+            else:
+                self._surface = self._secondary_surface
 
     def _create_textbox(self) -> None:
         text_size = self._sprite_size

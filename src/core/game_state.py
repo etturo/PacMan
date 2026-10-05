@@ -207,9 +207,8 @@ class MenuState(BaseState):
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
-        for event in events:
-            for button in self.__buttons:
-                button.handle_event(event)
+        for button in self.__buttons:
+            button.handle_events(events)
 
     def update(self, dt: float) -> None:
         pass
@@ -962,11 +961,20 @@ class GameOverState(BaseState):
             screen_height / 8,
             10
         )
+        self.__menu_button = Button(
+            position=(screen_width / 2, screen_height / 1.12),
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.MODE_TO_MENU,
+            text="back to main menu",
+            sprite_size=screen_height / 16,
+            secondary_sheet=SpriteLibrary['yellow'],
+        )
 
-        self.__elements: list[Text | TextInput] = [
+        self.__elements: list[Text | TextInput | Button] = [
             self.__text,
             self.__game_over_txt,
-            self.__name_text
+            self.__name_text,
+            self.__menu_button,
         ]
 
         self.__surface = \
@@ -981,7 +989,7 @@ class GameOverState(BaseState):
             self._update_leadboard(name, self.__points)
 
         for element in self.__elements:
-            if isinstance(element, LiveElement):
+            if isinstance(element, LiveElement or Button):
                 element.update()
 
     @staticmethod
@@ -1012,7 +1020,7 @@ class GameOverState(BaseState):
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
         for element in self.__elements:
-            if isinstance(element, LiveElement):
+            if isinstance(element, LiveElement | Button):
                 element.handle_events(events)
 
 
@@ -1205,9 +1213,8 @@ class SettingState(BaseState):
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
-        for event in events:
-            for button in self.__buttons:
-                button.handle_event(event)
+        for button in self.__buttons:
+            button.handle_events(events)
 
     def update(self, dt: float) -> None:
         pass
