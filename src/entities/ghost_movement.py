@@ -68,8 +68,14 @@ class GhostModeController:
         self.__phase += 1
         return True
 
-    def reset(self) -> None:
-        """Resets ghosts' states on PacMan's death or on a new level."""
+    def reset(self, level: int = 0) -> None:
+        """Resets ghosts' states on PacMan's death or on a new level.
+
+        Every level makes the scatter phases 3 seconds shorter."""
+        self.__schedule = tuple(
+            phase._replace(duration=max(0.0, phase.duration - 3 * level))
+            if phase.mode == GhostMode.SCATTER else phase
+            for phase in self.SCHEDULE)
         self.__elapsed = 0.0
         self.__phase = 0
         self.__paused = False

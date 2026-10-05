@@ -542,7 +542,8 @@ class PlayingState(BaseState):
         """One ghost per corner, released one after the other."""
         maze_w, maze_h = self.__actual_maze.getSize()
         size = self.__scaled_size * 1.6
-        speed = 3 if not self.__settings.ghost_freezed else 0
+        speed = (3 + 0.4 * min(self.__actual_level, 2)
+                 if not self.__settings.ghost_freezed else 0)
 
         # Blinky goes first: Inky reads him as self.__ghosts[0]
         self.__ghosts = [
@@ -555,7 +556,7 @@ class PlayingState(BaseState):
             Ghost((0, maze_h - 1), size, speed,
                   SpriteLibrary.get('orange'), clyde_strategy, 9.0),
         ]
-        self.__mode_controller.reset()
+        self.__mode_controller.reset(self.__actual_level)
         self.__update_ghost_mode(self.__ghosts,
                                  self.__mode_controller.getMode())
 
@@ -812,7 +813,7 @@ class PlayingState(BaseState):
                     GameEvent.post(GameEvent.MODE_TO_PAUSE)
 
     def _reset_entity_pos(self) -> None:
-        self.__mode_controller.reset()
+        self.__mode_controller.reset(self.__actual_level)
         self.__update_ghost_mode(self.__ghosts,
                                  self.__mode_controller.getMode())
         for entity in self.__entities:
