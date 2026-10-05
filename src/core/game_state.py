@@ -1206,9 +1206,8 @@ class SettingState(BaseState):
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
-        for event in events:
-            for button in self.__buttons:
-                button.handle_event(event)
+        for button in self.__buttons:
+            button.handle_events(events)
 
     def update(self, dt: float) -> None:
         pass
