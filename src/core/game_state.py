@@ -11,7 +11,14 @@ from src.entities.pacman import Pacman
 from src.entities.entity import Entity
 from src.entities.pacgums import Pacgum, SuperPacgum
 from src.entities.ghost import Ghost, GhostMode
-from src.entities.ghost_intelligence import GhostContext, blinky_strategy
+from src.entities.ghost_movement import (
+    GhostContext,
+    GhostModeController,
+    blinky_strategy,
+    pinky_strategy,
+    inky_strategy,
+    clyde_strategy,
+)
 
 from src.graphics.ui.button import Button, ToggleButton, SlideButton
 from src.graphics.ui.text import Text
@@ -408,18 +415,8 @@ class PlayingState(BaseState):
         self.__is_started = False
         self.__is_frightened = False
 
-        ghost_velocity = 3 if not self.__settings.ghost_freezed else 0
-
-        ghost = Ghost(
-            (0, 0),
-            self.__scaled_size * 1.6,
-            ghost_velocity,
-            SpriteLibrary.get('red'),
-            blinky_strategy
-        )
-        self.__ghosts = [
-            ghost
-        ]
+        self.__mode_controller = GhostModeController()
+        self._spawn_ghosts()
 
         for x in range(maze_w):
             for y in range(maze_h):
@@ -529,11 +526,37 @@ class PlayingState(BaseState):
         ghosts: list[Ghost],
         new_mode: GhostMode
         ) -> None:
-        if new_mode == GhostMode.FRIGHTENED:
-            self.__is_frightened = True
+        self.__is_frightened = new_mode == GhostMode.FRIGHTENED
+        if self.__is_frightened:
             self.__ghost_combo = 200
+
+        # The scatter/chase schedule freezes while the ghosts are blue
+        # and picks up where it left off once they are not.
+        self.__mode_controller.setPaused(self.__is_frightened)
+
         for ghost in ghosts:
             ghost.setMode(new_mode)
+
+    def _spawn_ghosts(self) -> None:
+        """One ghost per corner, released one after the other."""
+        maze_w, maze_h = self.__actual_maze.getSize()
+        size = self.__scaled_size * 1.6
+        speed = 3 if not self.__settings.ghost_freezed else 0
+
+        # Blinky goes first: Inky reads him as self.__ghosts[0]
+        self.__ghosts = [
+            Ghost((maze_w - 1, 0), size, speed,
+                  SpriteLibrary.get('red'), blinky_strategy),
+            Ghost((0, 0), size, speed,
+                  SpriteLibrary.get('pink'), pinky_strategy, 3.0),
+            Ghost((maze_w - 1, maze_h - 1), size, speed,
+                  SpriteLibrary.get('azure'), inky_strategy, 6.0),
+            Ghost((0, maze_h - 1), size, speed,
+                  SpriteLibrary.get('orange'), clyde_strategy, 9.0),
+        ]
+        self.__mode_controller.reset()
+        self.__update_ghost_mode(self.__ghosts,
+                                 self.__mode_controller.getMode())
 
     def __handle_level_clear(self) -> None:
         """Advance to the next level, or finish the game if it was the last."""
@@ -583,19 +606,7 @@ class PlayingState(BaseState):
 
         self.__pacgums = []
         self.__ft_cells = self._get_42_coord()
-
-        ghost_velocity = 3 if not self.__settings.ghost_freezed else 0
-
-        ghost = Ghost(
-            (0, 0),
-            self.__scaled_size * 1.6,
-            ghost_velocity,
-            SpriteLibrary.get('red'),
-            blinky_strategy,
-        )
-        ghost.setQueueDirection(Direction.STILL)
-        ghost.moveTo((0, 0), Direction.STILL)
-        self.__ghosts = [ghost]
+        self._spawn_ghosts()
 
         for x in range(maze_w):
             for y in range(maze_h):
@@ -671,6 +682,20 @@ class PlayingState(BaseState):
         if not self.__is_started:
             return
 
+        if self.__mode_controller.update(dt):
+            self.__update_ghost_mode(self.__ghosts,
+                                     self.__mode_controller.getMode())
+            for ghost in self.__ghosts:
+                ghost.reverseDirection()
+
+        if self.__is_frightened and (
+            any(ghost.isFrightenedOver() for ghost in self.__ghosts)
+            or all(ghost.getMode() != GhostMode.FRIGHTENED
+                   for ghost in self.__ghosts)
+        ):
+            self.__update_ghost_mode(self.__ghosts,
+                                     self.__mode_controller.getMode())
+
         self.__time_elapsed = self.getRemainingTime()
 
         if self.__time_elapsed <= 0:
@@ -692,7 +717,7 @@ class PlayingState(BaseState):
             if not entity.isMoving():
                 current_cell = entity.getCurrentCell()
 
-                if isinstance(entity, Ghost):
+                if isinstance(entity, Ghost) and entity.isReleased():
                     entity.decideNextMove(self._build_ghost_context(entity))
 
                 queued_dir = entity.getQueuedDirection()
@@ -738,18 +763,14 @@ class PlayingState(BaseState):
 
     def _build_ghost_context(self, ghost: Ghost) -> GhostContext:
         """Snapshot of the world as a ghost strategy gets to see it."""
-        maze_w, _ = self.__actual_maze.getSize()
-
         return GhostContext(
             maze=self.__actual_maze,
             ghost_pos=ghost.getCurrentCell(),
             ghost_dir=ghost.getCurrentDirection(),
             pacman_pos=self.__pacman.getCurrentCell(),
             pacman_dir=self.__pacman.getCurrentDirection(),
-            # STEP 4: the red one stops being the only ghost around and
-            # every ghost gets its own corner.
             blinky_pos=self.__ghosts[0].getCurrentCell(),
-            scatter_corner=(maze_w - 1, 0),
+            scatter_corner=ghost.getScatterCorner(),
             mode=ghost.getMode(),
             )
 
@@ -785,6 +806,9 @@ class PlayingState(BaseState):
                     GameEvent.post(GameEvent.MODE_TO_PAUSE)
 
     def _reset_entity_pos(self) -> None:
+        self.__mode_controller.reset()
+        self.__update_ghost_mode(self.__ghosts,
+                                 self.__mode_controller.getMode())
         for entity in self.__entities:
             entity.resetPosition()
 
@@ -827,10 +851,13 @@ class PlayingState(BaseState):
                     entity.die()
                     self.__update_ghost_mode(
                         self.__ghosts, GhostMode.FRIGHTENED)
+                    for ghost in self.__ghosts:
+                        ghost.reverseDirection()
                     self.__points += self.__settings.points_per_super_pacgum
                 if isinstance(entity, Ghost):
                     if entity.getMode() == GhostMode.FRIGHTENED:
                         entity.die(self.__ghost_combo)
+                        entity.setMode(self.__mode_controller.getMode())
                         self.__ghost_combo = \
                             (self.__ghost_combo * 2
                             if self.__ghost_combo * 2 <= 1600 else 1600)

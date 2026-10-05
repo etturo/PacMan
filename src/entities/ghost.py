@@ -3,10 +3,11 @@ import pygame
 from typing import Callable
 
 from src.entities.entity import Entity
-from src.entities.ghost_intelligence import (
+from src.entities.ghost_movement import (
     GhostContext,
     GhostMode,
     choose_direction,
+    random_target,
 )
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
@@ -37,10 +38,13 @@ class Ghost(Entity):
                 GhostContext
             ],
             tuple[int, int]],
+        release_delay: float = 0.0,
     ) -> None:
 
         super().__init__(init_pos, size, speed)
         self.__initial_speed = speed
+        self.__release_delay = release_delay
+        self.__release_timer = 0.0
 
         scale = SpriteSheet.scaleSprite
 
@@ -133,11 +137,27 @@ class Ghost(Entity):
     def getMode(self) -> GhostMode:
         return self.__mode
 
+    def getScatterCorner(self) -> tuple[int, int]:
+        # Every ghost spawns in its own scatter corner
+        return self._initial_cell
+
+    def isReleased(self) -> bool:
+        return self.__release_timer >= self.__release_delay
+
+    def resetPosition(self) -> None:
+        """Send the ghost back to its corner, waiting to be released."""
+        super().resetPosition()
+        self._current_direction = Direction.STILL
+        self._queued_direction = Direction.STILL
+        self.__release_timer = 0.0
+
     def setMode(self, new_mode: GhostMode) -> None:
+        # Eating another super pacgum restarts the countdown, and so
+        # does leaving FRIGHTENED.
+        self.__frightened_timer = 0.0
+
         if new_mode == GhostMode.FRIGHTENED:
-            # Eating another super pacgum restarts the countdown
-            self.__frightened_timer = 0.0
-            # and slows the ghosts
+            # Being frightened slows the ghosts down
             self._speed = self.__initial_speed / 1.5
         else:
             self._speed = self.__initial_speed
@@ -146,7 +166,13 @@ class Ghost(Entity):
 
     def decideNextMove(self, context: GhostContext) -> None:
         """Queue the direction that walks towards the strategy's target."""
-        target = self.__strategy(context)
+        match context.mode:
+            case GhostMode.SCATTER:
+                target = context.scatter_corner
+            case GhostMode.FRIGHTENED:
+                target = random_target(context)
+            case _:
+                target = self.__strategy(context)
 
         # The target can be any cell of the maze, not just a neighbour,
         # so choose_direction() is the one that turns it into the single
@@ -189,6 +215,7 @@ class Ghost(Entity):
 
     def update(self, dt: float) -> None:
         super().update(dt)
+        self.__release_timer += dt
 
         if not self._is_alive:
             self.__animation_timer += dt
@@ -199,9 +226,6 @@ class Ghost(Entity):
                 if self.__frame_index >= self.__death_animation_length:
                     self.resetPosition()
                     self._is_alive = True
-                    self._queued_direction = Direction.STILL
-                    self._current_direction = Direction.STILL
-                    self.__mode = GhostMode.CHASE
                     self.__frame_index = 0
             return
 
@@ -209,13 +233,23 @@ class Ghost(Entity):
 
         if self.__mode == GhostMode.FRIGHTENED:
             self.__frightened_timer += dt
-            if self.__frightened_timer >= self.__time_frightened:
-                self.__mode = GhostMode.CHASE
-                self.__frightened_timer = 0.0
 
         if self.__animation_timer >= self.__animation_delay:
             self.__animation_timer = 0.0
             self.__frame_index += 1
+
+    def reverseDirection(self) -> None:
+        """Forced U inversion; used when ghosts change mode.
+        It is necessary since no entity can ever make an inversion."""
+
+        self._current_direction = self._current_direction.opposite()
+        self._queued_direction = Direction.STILL
+
+    def isFrightenedOver(self) -> bool:
+        """True on the frames between the end of the blue window and
+        the mode the controller hands back through setMode()."""
+        return (self.__mode == GhostMode.FRIGHTENED
+                and self.__frightened_timer >= self.__time_frightened)
 
     def render(self,
                screen: pygame.Surface,
@@ -254,7 +288,7 @@ class Ghost(Entity):
                             )
                         ]
 
-        elif self.__mode == GhostMode.CHASE:
+        elif self.__mode in (GhostMode.CHASE, GhostMode.SCATTER):
             if self._current_direction == Direction.NORTH:
                 self._surface = \
                     self.__sprite_animation_up[
@@ -292,13 +326,11 @@ class Ghost(Entity):
                             ]
 
         elif self.__mode == GhostMode.FRIGHTENED:
-            self._surface = \
-                self.__frightened_animation[
-                    self.__frame_index % len(
-                        self.__frightened_animation
-                        )
-                        ]
-        # elif:
-        #     self.__mode == GhostMode.SCATTER:
-        #     ...
+            frames = self.__frightened_animation
+            # Only blue (the first 4 frames) until the last 1.5 seconds,
+            # then it flashes white too
+            if self.__frightened_timer < self.__time_frightened - 1.5:
+                frames = frames[:4]
+            self._surface = frames[self.__frame_index % len(frames)]
+
         super().render(screen, screen_pos, dt)

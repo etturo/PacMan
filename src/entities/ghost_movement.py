@@ -3,19 +3,75 @@ from collections import deque
 
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import NamedTuple
 
 from src.world.maze import Maze
 from src.world.cell import Direction
 
 
 UNREACHABLE = 1 << 30
-# DIRECTIONS = (Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.EAST)
+# Original order
+DIRECTIONS = (Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.EAST)
 
 
 class GhostMode(Enum):
     CHASE = auto()
     SCATTER = auto()
     FRIGHTENED = auto()
+
+
+class SchedulePhase(NamedTuple):
+    mode: GhostMode
+    duration: float
+
+
+class GhostModeController:
+    """Global timer for scatter/chase for all ghosts."""
+
+    SCHEDULE: tuple[SchedulePhase, ...] = (
+        SchedulePhase(GhostMode.SCATTER,  7.0),
+        SchedulePhase(GhostMode.CHASE,   20.0),
+        SchedulePhase(GhostMode.SCATTER,  7.0),
+        SchedulePhase(GhostMode.CHASE,   20.0),
+        SchedulePhase(GhostMode.SCATTER,  5.0),
+        SchedulePhase(GhostMode.CHASE,   20.0),
+        SchedulePhase(GhostMode.SCATTER,  5.0),
+        SchedulePhase(GhostMode.CHASE,   float('inf')),
+    )
+
+    def __init__(self) -> None:
+        self.__schedule = self.SCHEDULE
+        self.__phase: int = 0
+        self.__elapsed: float = 0.0
+        self.__paused: bool = False
+
+    def getMode(self) -> GhostMode:
+        """Get the current ghost mode."""
+        return self.__schedule[self.__phase].mode
+
+    def setPaused(self, paused: bool) -> None:
+        """Set the ghost mode to pause."""
+        self.__paused = paused
+
+    def update(self, dt: float) -> bool:
+        """Update the ghost's timer.
+
+        Returns: True if the mode changes, False otherwise."""
+        if self.__paused or self.__phase >= len(self.__schedule) - 1:
+            return False
+
+        self.__elapsed += dt
+        if self.__elapsed < self.__schedule[self.__phase].duration:
+            return False
+        self.__elapsed = 0.0
+        self.__phase += 1
+        return True
+
+    def reset(self) -> None:
+        """Resets ghosts' states on PacMan's death or on a new level."""
+        self.__elapsed = 0.0
+        self.__phase = 0
+        self.__paused = False
 
 
 @dataclass(frozen=True)
@@ -37,11 +93,7 @@ class GhostContext:
 def random_target(ctx: GhostContext) -> tuple[int, int]:
     """Aim at a random open neighbour."""
     open_dirs = [
-        direction
-        for direction in (Direction.NORTH,
-                          Direction.EAST,
-                          Direction.SOUTH,
-                          Direction.WEST)
+        direction for direction in DIRECTIONS
         if not ctx.maze[ctx.ghost_pos].hasWall(direction)
     ]
 
@@ -72,7 +124,7 @@ def bfs_distances(maze: Maze,
     while queue:
         x, y = queue.popleft()
         cell = maze[(x, y)]
-        for direction in Direction:
+        for direction in DIRECTIONS:
             if cell.hasWall(direction):
                 continue
 
@@ -103,10 +155,8 @@ def choose_direction(maze: Maze,
     """Closest direction to target.
 
     U-turn is permitted only if it's only legal move.
-    If distance is the same, the original order is preserved.
+    If distance is the same, the DIRECTIONS order wins.
     """
-    # TODO: verificare che si voglia lascaire l'ordine delle celle come
-    #  specificato in cell/Direction, perché non è quello originale
     distances = bfs_distances(maze, bound_target(maze, target))
     cell = maze[ghost_pos]
     banned = current_dir.opposite()
@@ -114,10 +164,8 @@ def choose_direction(maze: Maze,
     candidates: list[tuple[int, Direction]] = []
     fallback: list[Direction] = []
 
-    for direction in Direction:
-        # STILL never has a wall, so without this it would always be a
-        # candidate and would win every tie against the real u-turn.
-        if direction == Direction.STILL or cell.hasWall(direction):
+    for direction in DIRECTIONS:
+        if cell.hasWall(direction):
             continue
 
         d_x, d_y = direction.vector()
@@ -135,6 +183,41 @@ def choose_direction(maze: Maze,
     return min(candidates, key=lambda pair: pair[0])[1]
 
 
+def _ahead_of_pacman(ctx: GhostContext, tiles: int) -> tuple[int, int]:
+    """Cell `tiles` ahead of PacMan.
+
+    Facing north it also goes `tiles` west: the overflow bug of the original
+    is kept on purpose.
+    """
+    d_x, d_y = ctx.pacman_dir.vector()
+    if ctx.pacman_dir == Direction.NORTH:
+        d_x = -1
+    return ctx.pacman_pos[0] + d_x * tiles, ctx.pacman_pos[1] + d_y * tiles
+
+
 def blinky_strategy(ctx: GhostContext) -> tuple[int, int]:
     """Blinky's strategy: always follows PacMan"""
     return ctx.pacman_pos
+
+
+def pinky_strategy(ctx: GhostContext) -> tuple[int, int]:
+    """Pinky's strategy: 4 cells ahead of PacMan."""
+    return _ahead_of_pacman(ctx, 4)
+
+
+def inky_strategy(ctx: GhostContext) -> tuple[int, int]:
+    """Inky's strategy: the vector from Blinky to 2 cells ahead of
+    PacMan, doubled."""
+    p_x, p_y = _ahead_of_pacman(ctx, 2)
+    b_x, b_y = ctx.blinky_pos
+    return (2 * p_x - b_x, 2 * p_y - b_y)
+
+
+def clyde_strategy(ctx: GhostContext) -> tuple[int, int]:
+    """Clyde's strategy: follows PacMan from afar, runs back to his
+    corner once closer than 8 cells."""
+    g_x, g_y = ctx.ghost_pos
+    p_x, p_y = ctx.pacman_pos
+    if (g_x - p_x) ** 2 + (g_y - p_y) ** 2 > 8 ** 2:
+        return ctx.pacman_pos
+    return ctx.scatter_corner
