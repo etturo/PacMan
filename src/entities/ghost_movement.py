@@ -18,6 +18,7 @@ class GhostMode(Enum):
     CHASE = auto()
     SCATTER = auto()
     FRIGHTENED = auto()
+    EATEN = auto()
 
 
 class SchedulePhase(NamedTuple):

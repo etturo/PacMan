@@ -536,7 +536,8 @@ class PlayingState(BaseState):
         self.__mode_controller.setPaused(self.__is_frightened)
 
         for ghost in ghosts:
-            ghost.setMode(new_mode)
+            if ghost.getMode() != GhostMode.EATEN:
+                ghost.setMode(new_mode)
 
     def _spawn_ghosts(self) -> None:
         """One ghost per corner, released one after the other."""
@@ -718,8 +719,13 @@ class PlayingState(BaseState):
             if not entity.isMoving():
                 current_cell = entity.getCurrentCell()
 
-                if isinstance(entity, Ghost) and entity.isReleased():
-                    entity.decideNextMove(self._build_ghost_context(entity))
+                if isinstance(entity, Ghost):
+                    if (entity.getMode() == GhostMode.EATEN
+                            and current_cell == entity.getScatterCorner()):
+                        entity.setMode(self.__mode_controller.getMode())
+                    if entity.isReleased():
+                        entity.decideNextMove(
+                            self._build_ghost_context(entity))
 
                 queued_dir = entity.getQueuedDirection()
                 current_dir = entity.getCurrentDirection()
@@ -844,7 +850,9 @@ class PlayingState(BaseState):
                 continue
             if not entity.isAlive():
                 continue
-            if isinstance(entity, Ghost) and not entity.isReleased():
+            if isinstance(entity, Ghost) and (
+                    not entity.isReleased()
+                    or entity.getMode() == GhostMode.EATEN):
                 continue
             if entity.getPos() == pacman_pos:
                 if isinstance(entity, Pacgum):
@@ -860,7 +868,6 @@ class PlayingState(BaseState):
                 if isinstance(entity, Ghost):
                     if entity.getMode() == GhostMode.FRIGHTENED:
                         entity.die(self.__ghost_combo)
-                        entity.setMode(self.__mode_controller.getMode())
                         self.__ghost_combo = \
                             (self.__ghost_combo * 2
                             if self.__ghost_combo * 2 <= 1600 else 1600)

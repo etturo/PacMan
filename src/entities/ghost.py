@@ -188,6 +188,8 @@ class Ghost(Entity):
                 target = context.scatter_corner
             case GhostMode.FRIGHTENED:
                 target = random_target(context)
+            case GhostMode.EATEN:
+                target = self._initial_cell
             case _:
                 target = self.__strategy(context)
 
@@ -228,7 +230,8 @@ class Ghost(Entity):
         }[self.__current_points]
         self.__frame_index = 0
         self._is_alive = False
-        self._speed = self.__initial_speed
+        self.__mode = GhostMode.EATEN
+        self._speed = self.__initial_speed * 2
 
     def update(self, dt: float) -> None:
         super().update(dt)
@@ -241,7 +244,6 @@ class Ghost(Entity):
                 self.__frame_index += 1
 
                 if self.__frame_index >= self.__death_animation_length:
-                    self.resetPosition()
                     self._is_alive = True
                     self.__frame_index = 0
             return
@@ -259,6 +261,8 @@ class Ghost(Entity):
         """Forced U inversion; used when ghosts change mode.
         It is necessary since no entity can ever make an inversion."""
 
+        if self.__mode == GhostMode.EATEN:
+            return
         self._current_direction = self._current_direction.opposite()
         self._queued_direction = Direction.STILL
 
@@ -348,6 +352,14 @@ class Ghost(Entity):
             # then it flashes white too
             if self.__frightened_timer < self.__time_frightened - 1.5:
                 frames = frames[:4]
+            self._surface = frames[self.__frame_index % len(frames)]
+
+        elif self.__mode == GhostMode.EATEN:
+            frames = {
+                Direction.NORTH: self.__eyes_animation_up,
+                Direction.SOUTH: self.__eyes_animation_down,
+                Direction.WEST: self.__eyes_animation_left,
+            }.get(self._current_direction, self.__eyes_animation_right)
             self._surface = frames[self.__frame_index % len(frames)]
 
         super().render(screen, screen_pos, dt)
