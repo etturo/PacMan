@@ -2,6 +2,8 @@ import os
 import sys
 from pathlib import Path
 
+highscore_filename = "scores.json"
+
 
 def resource_path(relative_path: str) -> Path:
     base_path = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[2]))
@@ -17,7 +19,7 @@ def leaderboard_path() -> Path:
         data_root = Path(os.environ.get("LOCALAPPDATA", Path.home()))
     else:
         data_root = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
-    return data_root / "BarkMan" / "scores.json"
+    return data_root / "BarkMan" / highscore_filename
 
 
 def initial_leaderboard_path() -> Path:

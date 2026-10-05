@@ -11,7 +11,7 @@ class LevelConfig(BaseModel):
 
 
 class GameSettings(BaseModel):
-    highscore_filename: str = Field(default="config.json")
+    highscore_filename: str = Field(default="scores.json")
     levels: list[LevelConfig] = Field(
         default=[
             {"width": 5, "height": 5},

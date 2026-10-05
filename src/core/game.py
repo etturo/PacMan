@@ -22,6 +22,7 @@ from src.graphics.screen_manager import ScreenManager
 from src.utils.models import GameSettings, ParsingError
 from src.utils.settings import GameEvent
 from src.utils.parser import SettingParser
+from src.utils import paths
 
 
 class Game:
@@ -188,5 +189,6 @@ class Game:
                 from src.utils.paths import config_path
                 config_file = args.config_file or str(config_path())
             self.__game_settings = parser.parse(config_file)
+            paths.highscore_filename = self.__game_settings.highscore_filename
         except ParsingError as exc:
             raise SystemExit(str(exc)) from exc

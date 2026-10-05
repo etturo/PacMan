@@ -709,7 +709,7 @@ class PlayingState(BaseState):
             GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
         self._detect_collision()
 
-        for entity in self.__entities:
+        for entity in self.__entities[:]:
             if not entity.isAlive() and not isinstance(entity, Pacman | Ghost):
                 self.__entities.remove(entity)
 
@@ -868,10 +868,11 @@ class PlayingState(BaseState):
                 if isinstance(entity, Ghost):
                     if entity.getMode() == GhostMode.FRIGHTENED:
                         entity.die(self.__ghost_combo)
+                        self.__points += (self.__settings.points_per_ghost
+                                          * self.__ghost_combo // 200)
                         self.__ghost_combo = \
                             (self.__ghost_combo * 2
                             if self.__ghost_combo * 2 <= 1600 else 1600)
-                        self.__points += self.__settings.points_per_ghost
                     elif not self.__settings.invincibility:
                         self.__pacman.die()
 
