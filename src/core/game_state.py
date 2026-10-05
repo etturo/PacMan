@@ -599,7 +599,7 @@ class PlayingState(BaseState):
             self.__pacman_initial_pos,
             self.__scaled_size * 1.6,
             4.0,
-            self.__settings.lives,
+            self.__pacman.getLives(),
         )
         self.__current_direction = self.__pacman.getDir()
         self.__pacman.setQueueDirection(Direction.STILL)
