@@ -55,6 +55,7 @@ class Ghost(Entity):
         frightened_sheet_1 = SpriteLibrary.get('melon')
         frightened_sheet_2 = SpriteLibrary.get('green')
         point_sheet = SpriteLibrary.get('red')
+        eyes_sheet = SpriteLibrary.get('eyes')
 
         self.__sprite_animation_up = [
             scale(self.__sheet[SpriteType.GHOST_EYE_UP_1], size),
@@ -123,6 +124,22 @@ class Ghost(Entity):
             scale(point_sheet[SpriteType.SIXTEEN_HUND_POINTS], size),
             scale(point_sheet[SpriteType.SIXTEEN_HUND_POINTS], size),
             scale(point_sheet[SpriteType.SIXTEEN_HUND_POINTS], size),
+        ]
+        self.__eyes_animation_up = [
+            scale(eyes_sheet[SpriteType.GHOST_EYE_UP_1], size),
+            scale(eyes_sheet[SpriteType.GHOST_EYE_UP_2], size)
+        ]
+        self.__eyes_animation_down = [
+            scale(eyes_sheet[SpriteType.GHOST_EYE_DOWN_1], size),
+            scale(eyes_sheet[SpriteType.GHOST_EYE_DOWN_2], size),
+        ]
+        self.__eyes_animation_left = [
+            scale(eyes_sheet[SpriteType.GHOST_EYE_LEFT_1], size),
+            scale(eyes_sheet[SpriteType.GHOST_EYE_LEFT_2], size),
+        ]
+        self.__eyes_animation_right = [
+            scale(eyes_sheet[SpriteType.GHOST_EYE_RIGHT_1], size),
+            scale(eyes_sheet[SpriteType.GHOST_EYE_RIGHT_2], size),
         ]
 
         self.__animation_timer = 0.0
