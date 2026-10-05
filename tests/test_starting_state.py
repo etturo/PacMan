@@ -43,7 +43,7 @@ class TestStartingState(unittest.TestCase):
                 def getSurface(self):
                     return pygame.Surface((10, 10))
 
-                def handle_events(self, events):
+                def handle_event(self, events):
                     pygame.event.post(pygame.event.Event(GameEvent.MODE_TO_MENU))
 
                 def update(self):
