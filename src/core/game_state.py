@@ -844,6 +844,8 @@ class PlayingState(BaseState):
                 continue
             if not entity.isAlive():
                 continue
+            if isinstance(entity, Ghost) and not entity.isReleased():
+                continue
             if entity.getPos() == pacman_pos:
                 if isinstance(entity, Pacgum):
                     entity.die()
