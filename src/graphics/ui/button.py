@@ -247,43 +247,44 @@ class ToggleButton(Button):
             self._create_textbox()
             self._surface = self._primary_surface
 
-    def handle_event(self, event: pygame.event.Event) -> None:
-        if event.type == pygame.MOUSEMOTION:
-            self._rect = self._get_rect()
-            self._is_hovered = self._rect.collidepoint(event.pos)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1 and self._is_hovered:
-                if self._on_click_sfx:
-                    self._on_click_sfx.play()
-                GameEvent.post(self._on_click)
-                self.__toggled = not self.__toggled
-                self.__status_text = str(self.__toggled)
-                self._text = \
-                    f"{self.__title_text}\n{self.__status_text}".upper()
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            if event.type == pygame.MOUSEMOTION:
+                self._rect = self._get_rect()
+                self._is_hovered = self._rect.collidepoint(event.pos)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1 and self._is_hovered:
+                    if self._on_click_sfx:
+                        self._on_click_sfx.play()
+                    GameEvent.post(self._on_click)
+                    self.__toggled = not self.__toggled
+                    self.__status_text = str(self.__toggled)
+                    self._text = \
+                        f"{self.__title_text}\n{self.__status_text}".upper()
 
-                if self.__toggled:
-                    if self.__active_sheet:
-                        self._sheet = self.__active_sheet
-                    if self.__secondary_active_sheet:
-                        self._secondary_font = SpriteFont(
-                            self.__secondary_active_sheet,
-                            self._sprite_size
-                        )
-                else:
-                    self._sheet = self.__base_sheet
-                    if self.__base_secondary_sheet:
-                        self._secondary_font = SpriteFont(
-                            self.__base_secondary_sheet,
-                            self._sprite_size
-                        )
+                    if self.__toggled:
+                        if self.__active_sheet:
+                            self._sheet = self.__active_sheet
+                        if self.__secondary_active_sheet:
+                            self._secondary_font = SpriteFont(
+                                self.__secondary_active_sheet,
+                                self._sprite_size
+                            )
+                    else:
+                        self._sheet = self.__base_sheet
+                        if self.__base_secondary_sheet:
+                            self._secondary_font = SpriteFont(
+                                self.__base_secondary_sheet,
+                                self._sprite_size
+                            )
 
-                self._create_textbox()
-                self._primary_surface = self._surface
+                    self._create_textbox()
+                    self._primary_surface = self._surface
 
-        if self._is_hovered or self.__toggled:
-            self._surface = self._primary_surface
-        else:
-            self._surface = self._secondary_surface
+            if self._is_hovered or self.__toggled:
+                self._surface = self._primary_surface
+            else:
+                self._surface = self._secondary_surface
 
 
 class SlideButton(Button):
@@ -368,44 +369,45 @@ class SlideButton(Button):
             anchor="mid bottom"
         )
 
-    def handle_event(self, event: pygame.event.Event) -> None:
-        if event.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN):
-            self._rect = self._get_rect()
-            self._is_hovered = self._rect.collidepoint(event.pos)
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            if event.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN):
+                self._rect = self._get_rect()
+                self._is_hovered = self._rect.collidepoint(event.pos)
 
-            local_pos = (
-                event.pos[0] - self._rect.left,
-                event.pos[1] - self._rect.top
-                )
+                local_pos = (
+                    event.pos[0] - self._rect.left,
+                    event.pos[1] - self._rect.top
+                    )
 
-            event_dict = {'pos': local_pos}
-            if hasattr(event, 'button'):
-                event_dict['button'] = event.button
+                event_dict = {'pos': local_pos}
+                if hasattr(event, 'button'):
+                    event_dict['button'] = event.button
 
-            local_event = pygame.event.Event(event.type, event_dict)
-            self.__left_arrow.handle_event(local_event)
-            self.__right_arrow.handle_event(local_event)
+                local_event = pygame.event.Event(event.type, event_dict)
+                self.__left_arrow.handle_events([local_event])
+                self.__right_arrow.handle_events([local_event])
 
-        if (
-            event.type == self.__increment_on_click and
-            self.__value + self.__step_value <= self.__max_value
-        ):
-            self.__value += self.__step_value
-        elif (
-            event.type == self.__decrement_on_click and
-            self.__value - self.__step_value >= self.__min_value
-        ):
-            self.__value -= self.__step_value
+            if (
+                event.type == self.__increment_on_click and
+                self.__value + self.__step_value <= self.__max_value
+            ):
+                self.__value += self.__step_value
+            elif (
+                event.type == self.__decrement_on_click and
+                self.__value - self.__step_value >= self.__min_value
+            ):
+                self.__value -= self.__step_value
 
-        self.__value_count.setText(str(self.__value))
+            self.__value_count.setText(str(self.__value))
 
-        mid_x = self._clean_secondary.get_width() / 2
-        bottom_y = self._clean_secondary.get_height() / 1.15
-        self.__value_count.moveTo((mid_x, bottom_y))
+            mid_x = self._clean_secondary.get_width() / 2
+            bottom_y = self._clean_secondary.get_height() / 1.15
+            self.__value_count.moveTo((mid_x, bottom_y))
 
-        base_bg = self._clean_secondary
-        self._surface = base_bg.copy()
+            base_bg = self._clean_secondary
+            self._surface = base_bg.copy()
 
-        self.__left_arrow.render(self._surface)
-        self.__right_arrow.render(self._surface)
-        self.__value_count.render(self._surface)
+            self.__left_arrow.render(self._surface)
+            self.__right_arrow.render(self._surface)
+            self.__value_count.render(self._surface)
