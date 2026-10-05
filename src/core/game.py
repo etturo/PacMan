@@ -25,8 +25,8 @@ from src.utils.parser import SettingParser
 
 
 class Game:
-    def __init__(self) -> None:
-        self._load_config_file()
+    def __init__(self, config_file: str | None = None) -> None:
+        self._load_config_file(config_file)
 
         # RENDER UTILS
         self.__screen_manager: ScreenManager = ScreenManager()
@@ -174,16 +174,19 @@ class Game:
             elif event.type == GameEvent.TOGGLE_ROLLING_EFFECT:
                 self.__is_rolling = not self.__is_rolling
 
-    def _load_config_file(self) -> None:
+    def _load_config_file(self, config_file: str | None = None) -> None:
         arg_parser = ArgumentParser(
             prog="PacMan",
             description="Clone of the legendary retro game."
-            )
-        arg_parser.add_argument("config_file")
-        args = arg_parser.parse_args()
+        )
+        arg_parser.add_argument("config_file", nargs="?")
+        args = arg_parser.parse_known_args()[0]
 
         parser = SettingParser()
         try:
-            self.__game_settings = parser.parse(args.config_file)
+            if config_file is None:
+                from src.utils.paths import config_path
+                config_file = args.config_file or str(config_path())
+            self.__game_settings = parser.parse(config_file)
         except ParsingError as exc:
             raise SystemExit(str(exc)) from exc
