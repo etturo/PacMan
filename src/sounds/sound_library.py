@@ -24,15 +24,45 @@ class SoundLibraryMeta(type):
 
 class SoundLibrary(metaclass=SoundLibraryMeta):
     sounds: dict[str, SoundEffect] = {}
+    chomp_channel: pygame.mixer.Channel
 
     @classmethod
     def load(cls) -> None:
         cls.sounds = {
-            "intro" : SoundEffect(
+            "intro": SoundEffect(
+                str(resource_path('data/assets/sounds/pac-man-startup.mp3'))
+            ),
+            "death": SoundEffect(
+                str(resource_path('data/assets/sounds/pacman_death.wav'))
+            ),
+            "eat_ghost": SoundEffect(
+                str(resource_path('data/assets/sounds/pacman_eatghost.wav'))
+            ),
+            "eat_fruit": SoundEffect(
+                str(resource_path('data/assets/sounds/pacman_eatfruit.wav'))
+            ),
+            "extra_pac": SoundEffect(
+                str(resource_path('data/assets/sounds/pacman_extrapac.wav'))
+            ),
+            "intermission": SoundEffect(
                 str(resource_path(
-                    'data/assets/sounds/pac-man-startup.mp3'))
+                    'data/assets/sounds/pacman_intermission.wav'))
+            ),
+            "credit": SoundEffect(
+                str(resource_path(
+                    'data/assets/sounds/credit.wav'))
+            ),
+            "ed0": SoundEffect(
+                str(resource_path(
+                    'data/assets/sounds/eat_dot_0.wav'))
+            ),
+            "ed1": SoundEffect(
+                str(resource_path(
+                    'data/assets/sounds/eat_dot_1.wav'))
             )
         }
+        pygame.mixer.set_reserved(1)
+        cls.chomp_channel = pygame.mixer.Channel(0)
 
     @classmethod
     def get(cls, key: str) -> SoundEffect:

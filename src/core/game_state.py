@@ -91,6 +91,7 @@ class MenuState(BaseState):
             position=(screen_width / 2, first_y_button),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_PLAYING,
+            on_click_sfx=SoundLibrary.get("credit"),
             text='play',
             anchor='center',
             sprite_size=button_size,
@@ -103,6 +104,7 @@ class MenuState(BaseState):
                 ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_SETTINGS,
+            on_click_sfx=SoundLibrary.get("credit"),
             text='settings',
             anchor='center',
             sprite_size=button_size,
@@ -115,6 +117,7 @@ class MenuState(BaseState):
                 ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.EXIT,
+            # on_click_sfx=SoundLibrary.get("credit"),
             text='exit',
             anchor='center',
             sprite_size=button_size,
@@ -424,6 +427,7 @@ class PlayingState(BaseState):
 
         self.__is_started = False
         self.__is_frightened = False
+        self.__chomp_timer = 0.0
 
         self.__mode_controller = GhostModeController()
         self._spawn_ghosts()
@@ -715,6 +719,11 @@ class PlayingState(BaseState):
             self.__handle_level_clear()
             return
 
+        if self.__chomp_timer > 0:
+            self.__chomp_timer -= dt
+            if self.__chomp_timer <= 0:
+                SoundLibrary.get("ed1").playOn(SoundLibrary.chomp_channel)
+
         self.__pacman.update(dt)
         if self.__pacman.getLives() <= 0:
             GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
@@ -855,6 +864,7 @@ class PlayingState(BaseState):
 
     def _detect_collision(self) -> None:
         pacman_pos = self.__pacman.getPos()
+        pacman_cell = self.__pacman.getVisualCell()
 
         for entity in self.__entities:
             if entity == self.__pacman or not self.__pacman.isAlive():
@@ -865,12 +875,22 @@ class PlayingState(BaseState):
                     not entity.isReleased()
                     or entity.getMode() == GhostMode.EATEN):
                 continue
-            if entity.getPos() == pacman_pos:
+
+            target = pacman_pos if isinstance(entity, Ghost) else pacman_cell
+            if entity.getPos() == target:
                 if isinstance(entity, Pacgum):
                     entity.die()
+                    # SoundLibrary.get("chomp").play()
+                    # SoundLibrary.get("ed0").play()
+                    # SoundLibrary.get("ed1").play()
+                    SoundLibrary.get("ed0").playOn(SoundLibrary.chomp_channel)
+                    self.__chomp_timer = 0.5 / self.__pacman.getSpeed()
+
                     self.__points += self.__settings.points_per_pacgum
                 if isinstance(entity, SuperPacgum):
                     entity.die()
+                    SoundLibrary.get("ed0").playOn(SoundLibrary.chomp_channel)
+                    self.__chomp_timer = 0.5 / self.__pacman.getSpeed()
                     self.__update_ghost_mode(
                         self.__ghosts, GhostMode.FRIGHTENED)
                     for ghost in self.__ghosts:
@@ -879,6 +899,7 @@ class PlayingState(BaseState):
                 if isinstance(entity, Ghost):
                     if entity.getMode() == GhostMode.FRIGHTENED:
                         entity.die(self.__ghost_combo)
+                        SoundLibrary.get("eat_ghost").play()
                         self.__points += (self.__settings.points_per_ghost
                                           * self.__ghost_combo // 200)
                         self.__ghost_combo = \
@@ -886,6 +907,8 @@ class PlayingState(BaseState):
                                 if self.__ghost_combo * 2 <= 1600 else 1600)
                     elif not self.__settings.invincibility:
                         self.__pacman.die()
+                        self.__chomp_timer = 0.0
+                        SoundLibrary.get("death").play()
 
     def _get_entity_screen_pos(
             self,
@@ -978,6 +1001,7 @@ class GameOverState(BaseState):
             position=(screen_width / 2, screen_height / 1.12),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_MENU,
+            on_click_sfx=SoundLibrary.get("credit"),
             text="back to main menu",
             sprite_size=screen_height / 16,
             secondary_sheet=SpriteLibrary['yellow'],
@@ -1068,6 +1092,7 @@ class SettingState(BaseState):
             position=(screen_width / 50, screen_height / 50),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_MENU,
+            on_click_sfx=SoundLibrary.get("credit"),
             text="go back",
             sprite_size=button_size,
             anchor='top left'
@@ -1257,6 +1282,7 @@ class PauseState(BaseState):
             ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.BACK_TO_GAME,
+            on_click_sfx=SoundLibrary.get("credit"),
             text="resume",
             sprite_size=button_size,
             anchor="center",
@@ -1269,6 +1295,7 @@ class PauseState(BaseState):
             ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_MENU,
+            on_click_sfx=SoundLibrary.get("credit"),
             text="BACK TO\nMENU",
             sprite_size=button_size,
             anchor="center",

@@ -34,6 +34,11 @@ class Entity(ABC):
 
         return v_x, v_y
 
+    def getVisualCell(self) -> tuple[int, int]:
+        """Get the cell the entity's center is in during a move."""
+        v_x, v_y = self.getVisualPos()
+        return round(v_x), round(v_y)
+
     def isAlive(self) -> bool:
         return self._is_alive
 
@@ -54,6 +59,9 @@ class Entity(ABC):
 
     def setSpeed(self, new_speed: float) -> None:
         self._speed = new_speed
+
+    def getSpeed(self) -> float:
+        return self._speed
 
     def resetPosition(self) -> None:
         self._current_cell = self._initial_cell
