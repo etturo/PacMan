@@ -25,6 +25,7 @@ class SoundLibraryMeta(type):
 class SoundLibrary(metaclass=SoundLibraryMeta):
     sounds: dict[str, SoundEffect] = {}
     chomp_channel: pygame.mixer.Channel
+    loop_channel: pygame.mixer.Channel
 
     @classmethod
     def load(cls) -> None:
@@ -59,10 +60,20 @@ class SoundLibrary(metaclass=SoundLibraryMeta):
             "ed1": SoundEffect(
                 str(resource_path(
                     'data/assets/sounds/eat_dot_1.wav'))
+            ),
+            "siren": SoundEffect(
+                str(resource_path('data/assets/sounds/siren0.wav'))
+            ),
+            "fright": SoundEffect(
+                str(resource_path('data/assets/sounds/fright.wav'))
+            ),
+            "eyes": SoundEffect(
+                str(resource_path('data/assets/sounds/eyes.wav'))
             )
         }
-        pygame.mixer.set_reserved(1)
+        pygame.mixer.set_reserved(2)
         cls.chomp_channel = pygame.mixer.Channel(0)
+        cls.loop_channel = pygame.mixer.Channel(1)
 
     @classmethod
     def get(cls, key: str) -> SoundEffect:

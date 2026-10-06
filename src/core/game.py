@@ -102,13 +102,16 @@ class Game:
                 self.__active_state = StartingState()
 
             elif event.type == GameEvent.MODE_TO_MENU:
+                SoundLibrary.loop_channel.stop()
                 self.__active_state = MenuState()
 
             elif event.type == GameEvent.MODE_TO_PAUSE:
+                SoundLibrary.loop_channel.pause()
                 self.__freeze_state = self.__active_state
                 self.__active_state = PauseState()
 
             elif event.type == GameEvent.BACK_TO_GAME:
+                SoundLibrary.loop_channel.unpause()
                 self.__active_state = self.__freeze_state
 
             elif event.type == GameEvent.MODE_TO_PLAYING:
@@ -118,6 +121,7 @@ class Game:
                 self.__active_state = SettingState(self.__game_settings)
 
             elif event.type == GameEvent.MODE_TO_GAME_OVER:
+                SoundLibrary.loop_channel.stop()
                 # only with no cheat activated the score can be stored
                 if (
                     self.__game_settings.ghost_freezed |
@@ -129,6 +133,7 @@ class Game:
                     points = self.__active_state.getPoints()
                     self.__active_state = GameOverState(points, False)
             elif event.type == GameEvent.MODE_TO_WIN:
+                SoundLibrary.loop_channel.stop()
                 # only with no cheat activated the score can be stored
                 if (
                     self.__game_settings.ghost_freezed |

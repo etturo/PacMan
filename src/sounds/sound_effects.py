@@ -12,9 +12,9 @@ class SoundEffect:
     def play(self, loops: int = 0, maxtime: int = 0, fade_ms: int = 0) -> None:
         self.sound.play(loops, maxtime, fade_ms)
 
-    def playOn(self, channel: pygame.mixer.Channel) -> None:
+    def playOn(self, channel: pygame.mixer.Channel, loops: int = 0) -> None:
         """Play on the given channel, cutting what it was playing."""
-        channel.play(self.sound)
+        channel.play(self.sound, loops)
 
     def stop(self) -> None:
         self.sound.stop()

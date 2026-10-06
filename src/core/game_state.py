@@ -428,6 +428,7 @@ class PlayingState(BaseState):
         self.__is_started = False
         self.__is_frightened = False
         self.__chomp_timer = 0.0
+        self.__loop_sound: str | None = None
 
         self.__mode_controller = GhostModeController()
         self._spawn_ghosts()
@@ -696,6 +697,8 @@ class PlayingState(BaseState):
             elif isinstance(element, Level):
                 element.update(self.__actual_level + 1)
 
+        self._update_loop_sound()
+
         if not self.__is_started:
             return
 
@@ -787,6 +790,25 @@ class PlayingState(BaseState):
         if not remaining_pacgums and self.__pacman.isAlive():
             self.__handle_level_clear()
             return
+
+    def _update_loop_sound(self) -> None:
+        if not self.__is_started or not self.__pacman.isAlive():
+            name = None
+        elif any(ghost.getMode() == GhostMode.EATEN
+                 for ghost in self.__ghosts):
+            name = "eyes"
+        elif self.__is_frightened:
+            name = "fright"
+        else:
+            name = "siren"
+
+        if name == self.__loop_sound:
+            return
+        self.__loop_sound = name
+        if name is None:
+            SoundLibrary.loop_channel.stop()
+        else:
+            SoundLibrary.get(name).playOn(SoundLibrary.loop_channel, -1)
 
     def _build_ghost_context(self, ghost: Ghost) -> GhostContext:
         """Snapshot of the world as a ghost strategy gets to see it."""
