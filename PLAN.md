@@ -35,3 +35,14 @@ the remaining time is in silence, but sticazzi
  - [SOLVED] BUG FOUND: in big maps the pacgums are very big
  - [SOLVED] BUG FOUND: the screen when one dies for the time it says that you won but you loose
  - [SOLVED] BUG FOUND: when the seconds are negative they dont appear good EX: 1:-12 s
+
+
+# Sound to add
+ - [ ] Pacman waka
+ - [ ] pacgum eaten
+ - [ ] death sound
+ - [ ] pacman eaten
+ - [ ] ghost eye run sound
+ - [ ] lose a life sound
+
+

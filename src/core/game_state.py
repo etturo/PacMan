@@ -368,6 +368,7 @@ class StartingState(BaseState):
     def handle_events(self, events: list[pygame.event.Event]) -> None:
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                self.__intro_sound.stop()
                 pygame.event.post(pygame.event.Event(GameEvent.MODE_TO_MENU))
 
 

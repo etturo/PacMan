@@ -3,11 +3,14 @@ import pygame
 
 class SoundEffect:
     def __init__(self, file_path: str) -> None:
-        self.intro_music = pygame.mixer.Sound(file_path)
-        self.intro_music.set_volume(0.5)
+        self.sound = pygame.mixer.Sound(file_path)
+        self.sound.set_volume(1)
+
+    def setVolume(self, volume_perc: int) -> None:
+        self.sound.set_volume(volume_perc / 100)
 
     def play(self, loops: int = 0, maxtime: int = 0, fade_ms: int = 0) -> None:
-        self.intro_music.play(loops, maxtime, fade_ms)
+        self.sound.play(loops, maxtime, fade_ms)
 
     def stop(self) -> None:
-        self.intro_music.stop()
+        self.sound.stop()
