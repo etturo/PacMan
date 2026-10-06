@@ -38,6 +38,9 @@ from src.graphics.graphical_utils.sprite_font import SpriteFont
 from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING, SpriteType
 from src.graphics.maze_render import MazeRender
 
+from src.sounds.sound_library import SoundLibrary
+from src.sounds.sound_effects import SoundEffect
+
 from src.world.maze_wrapper import MazeWrapper
 from src.world.cell import Direction
 
@@ -248,6 +251,9 @@ class StartingState(BaseState):
         self.__elapsed_time = 0.0
         self.__grid_timer = 0.0
         self.__grid_interval = 0.15
+
+        self.__intro_sound = SoundLibrary.get("intro")
+        self.__intro_sound.play()
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))

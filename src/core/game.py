@@ -19,6 +19,9 @@ from src.world.maze_wrapper import MazeWrapper
 
 from src.graphics.screen_manager import ScreenManager
 
+from src.sounds.sound_library import SoundLibrary
+from src.sounds.sound_effects import SoundEffect
+
 from src.utils.models import GameSettings, ParsingError
 from src.utils.settings import GameEvent
 from src.utils.parser import SettingParser
@@ -28,6 +31,10 @@ from src.utils import paths
 class Game:
     def __init__(self, config_file: str | None = None) -> None:
         self._load_config_file(config_file)
+
+        # SOUNDS UILS
+        pygame.mixer.init()
+        SoundLibrary.load()
 
         # RENDER UTILS
         self.__screen_manager: ScreenManager = ScreenManager()
@@ -49,10 +56,6 @@ class Game:
             pygame.K_ESCAPE,
             pygame.QUIT
         ]
-
-        # PYGAME ATTRIBUTES
-
-        # SOUNDS UILS
 
         # WORLD ATTRIBUTES
         self.__maze: Maze
