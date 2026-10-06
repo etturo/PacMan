@@ -1,6 +1,7 @@
 import pygame
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
+from src.graphics.graphical_utils.sprite_library import SpriteLibrary
 from src.graphics.graphical_utils.ui_utils import SpriteType
 
 from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
@@ -71,7 +72,8 @@ class SpriteFont:
             self.__sheet.getSprite(8, 3, 13)
         self.__characters[SpriteType.CH_SPACE] = \
             self.__sheet.getSprite(8, 8, 11)
-        sheet1 = self.__sheet.getSprite(8, 2, 13)
+        # BAD PRACTICE
+        sheet1 = SpriteLibrary['azure'].getSprite(8, 3, 16)
         sheet2 = self.__sheet.getSprite(8, 2, 21)
         self.__characters[SpriteType.CH_COLON] = \
             self.__sheet.combineSprite2x2(sheet2, sheet1, sheet2, sheet1)

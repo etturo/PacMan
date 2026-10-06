@@ -14,9 +14,9 @@ class GameSettings(BaseModel):
     highscore_filename: str = Field(default="scores.json")
     levels: list[LevelConfig] = Field(
         default=[
-            {"width": 5, "height": 5},
-            {"width": 15, "height": 15},
-            {"width": 28, "height": 36}
+            LevelConfig(width=5, height=5),
+            LevelConfig(width=15, height=15),
+            LevelConfig(width=28, height=36)
         ]
     )
     lives: int = Field(default=3, gt=0, le=99)

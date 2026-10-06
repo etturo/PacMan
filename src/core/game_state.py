@@ -3,7 +3,6 @@ import random
 import json
 
 from abc import ABC, abstractmethod
-from pathlib import Path
 
 from src import __version__, __authors__
 
@@ -95,8 +94,10 @@ class MenuState(BaseState):
             secondary_sheet=SpriteLibrary['yellow']
         )
         settings_button = Button(
-            position=(screen_width / 2,
-             first_y_button + button_size * 2 + screen_height / 30),
+            position=(
+                screen_width / 2,
+                first_y_button + button_size * 2 + screen_height / 30
+                ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_SETTINGS,
             text='settings',
@@ -105,8 +106,10 @@ class MenuState(BaseState):
             secondary_sheet=SpriteLibrary['yellow']
         )
         exit_button = Button(
-            position=(screen_width / 2,
-             first_y_button + button_size * 4 + screen_height / 15),
+            position=(
+                screen_width / 2,
+                first_y_button + button_size * 4 + screen_height / 15
+                ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.EXIT,
             text='exit',
@@ -513,7 +516,8 @@ class PlayingState(BaseState):
         return self.__surface
 
     def getPoints(self) -> int:
-        return self.__final_points if self.__final_points > 0 else self.__points
+        return self.__final_points if self.__final_points > 0 \
+            else self.__points
 
     def getLives(self) -> int:
         return self.__pacman.getLives()
@@ -525,7 +529,7 @@ class PlayingState(BaseState):
         self,
         ghosts: list[Ghost],
         new_mode: GhostMode
-        ) -> None:
+    ) -> None:
         self.__is_frightened = new_mode == GhostMode.FRIGHTENED
         if self.__is_frightened:
             self.__ghost_combo = 200
@@ -872,7 +876,7 @@ class PlayingState(BaseState):
                                           * self.__ghost_combo // 200)
                         self.__ghost_combo = \
                             (self.__ghost_combo * 2
-                            if self.__ghost_combo * 2 <= 1600 else 1600)
+                                if self.__ghost_combo * 2 <= 1600 else 1600)
                     elif not self.__settings.invincibility:
                         self.__pacman.die()
 
@@ -991,7 +995,7 @@ class GameOverState(BaseState):
             self._update_leadboard(name, self.__points)
 
         for element in self.__elements:
-            if isinstance(element, LiveElement or Button):
+            if isinstance(element, LiveElement):
                 element.update()
 
     @staticmethod

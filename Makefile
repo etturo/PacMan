@@ -25,7 +25,7 @@ build:
 	$(PYTHON) -m PyInstaller --clean BarkMan.spec
 
 clean:
-	$(PYTHON) -c "import shutil; [shutil.rmtree(path, ignore_errors=True) for path in ('.mypy_cache', 'src/.mypy_cache', '__pycache__', 'build', 'dist')]"
+	$(PYTHON) -c "import shutil; from pathlib import Path; [shutil.rmtree(path, ignore_errors=True) for path in ('.mypy_cache', 'src/.mypy_cache', 'build', 'dist')] + [shutil.rmtree(path, ignore_errors=True) for path in Path('.').rglob('__pycache__') if path.is_dir()]"
 
 lint:
 	$(BIN)/flake8 $(SRC)

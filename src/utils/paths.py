@@ -6,7 +6,10 @@ highscore_filename = "scores.json"
 
 
 def resource_path(relative_path: str) -> Path:
-    base_path = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parents[2]))
+    base_path = Path(getattr(
+        sys, "_MEIPASS",
+        Path(__file__).resolve().parents[2])
+        )
     return base_path / relative_path
 
 
@@ -18,7 +21,12 @@ def leaderboard_path() -> Path:
     if os.name == "nt":
         data_root = Path(os.environ.get("LOCALAPPDATA", Path.home()))
     else:
-        data_root = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+        data_root = Path(
+            os.environ.get(
+                "XDG_DATA_HOME",
+                Path.home() / ".local" / "share"
+                )
+            )
     return data_root / "BarkMan" / highscore_filename
 
 

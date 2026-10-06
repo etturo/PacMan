@@ -214,7 +214,7 @@ class Ghost(Entity):
 
         self.setQueueDirection(next_dir)
 
-    def die(self, current_points: int) -> None:
+    def die(self, current_points: int = 200) -> None:
         # Based on the streak of ghost eaten the count of points
         # increases exponentially
         if current_points in [400, 800, 1600]:

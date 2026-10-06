@@ -68,7 +68,7 @@ class MazeWrapper:
 
             self.__load_maze()
 
-        except Exception as e:
+        except Exception:
             ...
 
     def __str__(self) -> str:
