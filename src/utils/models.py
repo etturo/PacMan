@@ -1,5 +1,3 @@
-import pygame
-
 from pydantic import BaseModel, Field, model_validator
 
 

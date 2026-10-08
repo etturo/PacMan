@@ -20,7 +20,6 @@ from src.world.maze_wrapper import MazeWrapper
 from src.graphics.screen_manager import ScreenManager
 
 from src.sounds.sound_library import SoundLibrary
-from src.sounds.sound_effects import SoundEffect
 
 from src.utils.models import GameSettings, ParsingError
 from src.utils.settings import GameEvent
@@ -63,7 +62,8 @@ class Game:
     def run(self) -> None:
         try:
             while self.__is_running:
-                self.__dt = self.__clock.tick(self.__game_settings.fps) / 1000.0
+                self.__dt = self.__clock.tick(
+                    self.__game_settings.fps) / 1000.0
                 events = pygame.event.get()
                 self._catch_events(events)
                 self.__active_state.handle_events(events)

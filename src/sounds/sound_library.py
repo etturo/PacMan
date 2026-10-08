@@ -1,6 +1,6 @@
-from typing import Optional, cast
-
 import pygame
+
+from typing import cast
 
 from src.sounds.sound_effects import SoundEffect
 

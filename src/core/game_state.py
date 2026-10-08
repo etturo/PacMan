@@ -39,7 +39,6 @@ from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING, SpriteType
 from src.graphics.maze_render import MazeRender
 
 from src.sounds.sound_library import SoundLibrary
-from src.sounds.sound_effects import SoundEffect
 
 from src.world.maze_wrapper import MazeWrapper
 from src.world.cell import Direction
@@ -386,7 +385,7 @@ class PlayingState(BaseState):
         self.__final_points: int = 0
         self.__ghost_combo = 0
         self.__max_seconds = settings.level_max_time
-        self.__time_elapsed = 0.0
+        self.__time_remaining = 0.0
 
         self.__actual_level = 0
         size = (
@@ -495,7 +494,7 @@ class PlayingState(BaseState):
             sprite_sheet=SpriteLibrary['white'],
             sprite_type=SpriteType.EMPTY_WALL,
             size=self.__text_size / 1.2,
-            time=self.__time_elapsed,
+            time=self.__time_remaining,
             max_time_seconds=self.__settings.level_max_time
         )
 
@@ -537,7 +536,7 @@ class PlayingState(BaseState):
     def getRemainingTime(self) -> float:
         return self.__timer.getRemainingTime()
 
-    def __update_ghost_mode(
+    def _update_ghost_mode(
         self,
         ghosts: list[Ghost],
         new_mode: GhostMode
@@ -573,10 +572,10 @@ class PlayingState(BaseState):
                   SpriteLibrary.get('orange'), clyde_strategy, 9.0),
         ]
         self.__mode_controller.reset(self.__actual_level)
-        self.__update_ghost_mode(self.__ghosts,
-                                 self.__mode_controller.getMode())
+        self._update_ghost_mode(self.__ghosts,
+                                self.__mode_controller.getMode())
 
-    def __handle_level_clear(self) -> None:
+    def _handle_level_clear(self) -> None:
         """Advance to the next level, or finish the game if it was the last."""
         if self.__actual_level + 1 >= len(self.__settings.levels):
             self.__final_points = self.__points
@@ -591,7 +590,7 @@ class PlayingState(BaseState):
         self.__ghost_combo = 0
         self.__is_frightened = False
         self.__is_started = False
-        self.__time_elapsed = 0.0
+        self.__time_remaining = 0.0
 
         size = (
             self.__settings.levels[self.__actual_level].width,
@@ -703,8 +702,8 @@ class PlayingState(BaseState):
             return
 
         if self.__mode_controller.update(dt):
-            self.__update_ghost_mode(self.__ghosts,
-                                     self.__mode_controller.getMode())
+            self._update_ghost_mode(self.__ghosts,
+                                    self.__mode_controller.getMode())
             for ghost in self.__ghosts:
                 ghost.reverseDirection()
 
@@ -713,14 +712,15 @@ class PlayingState(BaseState):
             or all(ghost.getMode() != GhostMode.FRIGHTENED
                    for ghost in self.__ghosts)
         ):
-            self.__update_ghost_mode(self.__ghosts,
-                                     self.__mode_controller.getMode())
+            self._update_ghost_mode(self.__ghosts,
+                                    self.__mode_controller.getMode())
 
-        self.__time_elapsed = self.getRemainingTime()
+        self.__time_remaining = self.getRemainingTime()
 
-        if self.__time_elapsed <= 0:
-            self.__handle_level_clear()
-            return
+        if self.__time_remaining <= 0 and self.__pacman.isAlive():
+            self.__pacman.die()
+            self.__chomp_timer = 0.0
+            SoundLibrary.get("death").play()
 
         if self.__chomp_timer > 0:
             self.__chomp_timer -= dt
@@ -788,7 +788,7 @@ class PlayingState(BaseState):
             and entity.isAlive()
         ]
         if not remaining_pacgums and self.__pacman.isAlive():
-            self.__handle_level_clear()
+            self._handle_level_clear()
             return
 
     def _update_loop_sound(self) -> None:
@@ -856,8 +856,8 @@ class PlayingState(BaseState):
 
     def _reset_entity_pos(self) -> None:
         self.__mode_controller.reset(self.__actual_level)
-        self.__update_ghost_mode(self.__ghosts,
-                                 self.__mode_controller.getMode())
+        self._update_ghost_mode(self.__ghosts,
+                                self.__mode_controller.getMode())
         for entity in self.__entities:
             entity.resetPosition()
 
@@ -913,7 +913,7 @@ class PlayingState(BaseState):
                     entity.die()
                     SoundLibrary.get("ed0").playOn(SoundLibrary.chomp_channel)
                     self.__chomp_timer = 0.5 / self.__pacman.getSpeed()
-                    self.__update_ghost_mode(
+                    self._update_ghost_mode(
                         self.__ghosts, GhostMode.FRIGHTENED)
                     for ghost in self.__ghosts:
                         ghost.reverseDirection()
