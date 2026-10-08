@@ -29,12 +29,15 @@ the remaining time is in silence, but sticazzi
  - [X] Frightened ghost animation added but it wont activate. TODO -> make the super pac gusm post the GhostModeToFrightened and make the ghost edible.
  - [X] Make the Game go to the next level if the time goes to 0 or the gums are finished
  - [X] Make the game cross platform
+ - [ ] Make when the time runs out to lose a life.
 
 # popo
  - [SOLVED] BUG FOUND: in map size: even width mazes, the pacman spawn in the 42 logo, TODO: hardcode the positions to not spawn.
  - [SOLVED] BUG FOUND: in big maps the pacgums are very big
  - [SOLVED] BUG FOUND: the screen when one dies for the time it says that you won but you loose
  - [SOLVED] BUG FOUND: when the seconds are negative they dont appear good EX: 1:-12 s
+ - [SOLVED] BUG FOUND: the state of the vfx in the buttons, doesnt take the actual state of the features.
+- [SOLVED] BUG FOUND: pacman animation should stop if not moving
 
 
 # Sound to add
@@ -44,5 +47,3 @@ the remaining time is in silence, but sticazzi
  - [ ] pacman eaten
  - [ ] ghost eye run sound
  - [ ] lose a life sound
-
-

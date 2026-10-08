@@ -120,6 +120,8 @@ class Pacman(Entity):
         if not self._is_alive:
             self._surface = self.__death_animation[self.__death_index]
 
+        elif not self.isMoving():
+            pass
         elif self._current_direction == Direction.NORTH:
             self._surface = self.__sprite_animation_up[self.__frame_index]
         elif self._current_direction == Direction.SOUTH:

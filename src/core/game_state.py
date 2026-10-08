@@ -1190,7 +1190,7 @@ class SettingState(BaseState):
             sprite_sheet=SpriteLibrary['white'],
             increment_on_click=GameEvent.ADD_10_FPS,
             decrement_on_click=GameEvent.SUB_10_FPS,
-            initial_value=pygame.display.get_desktop_refresh_rates()[0],
+            initial_value=settings.fps,
             text="  fps  ",
             sprite_size=button_size,
             anchor=' top left',
@@ -1204,7 +1204,7 @@ class SettingState(BaseState):
             on_click=GameEvent.TOGGLE_CRT_EFFECT,
             text="set crt effect",
             sprite_size=button_size,
-            initial_value=True,
+            initial_value=settings.crt,
             anchor='mid top',
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white']
@@ -1215,7 +1215,7 @@ class SettingState(BaseState):
             on_click=GameEvent.TOGGLE_GLITCH_EFFECT,
             text="set glitch vfx",
             sprite_size=button_size,
-            initial_value=True,
+            initial_value=settings.glitch,
             anchor='mid top',
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white']
@@ -1226,7 +1226,7 @@ class SettingState(BaseState):
             on_click=GameEvent.TOGGLE_GLOW_EFFECT,
             text="set glow vfx",
             sprite_size=button_size,
-            initial_value=True,
+            initial_value=settings.glow,
             anchor='mid top',
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white']
@@ -1237,7 +1237,7 @@ class SettingState(BaseState):
             on_click=GameEvent.TOGGLE_ROLLING_EFFECT,
             text="set rolling vfx",
             sprite_size=button_size,
-            initial_value=True,
+            initial_value=settings.rolling,
             anchor='mid top',
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white']

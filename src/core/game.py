@@ -30,22 +30,21 @@ from src.utils import paths
 
 class Game:
     def __init__(self, config_file: str | None = None) -> None:
-        self._load_config_file(config_file)
-
-        # SOUNDS UILS
+        # INIT
         pygame.mixer.init()
         SoundLibrary.load()
+        self.__screen_manager: ScreenManager = ScreenManager()
+
+        self._load_config_file(config_file)
 
         # RENDER UTILS
-        self.__screen_manager: ScreenManager = ScreenManager()
-        self.__is_crt = True
-        self.__is_glow = True
-        self.__is_glitch = True
-        self.__is_rolling = True
+        self.__game_settings.crt = True
+        self.__game_settings.glow = True
+        self.__game_settings.glitch = True
+        self.__game_settings.rolling = True
 
         # GAME SETTINGS
         self.__is_running: bool = True
-        self.__fps: int = 60
         self.__clock = pygame.time.Clock()
         self.__actual_level: int = 0
         self.__game_settings: GameSettings
@@ -64,7 +63,7 @@ class Game:
     def run(self) -> None:
         try:
             while self.__is_running:
-                self.__dt = self.__clock.tick(self.__fps) / 1000.0
+                self.__dt = self.__clock.tick(self.__game_settings.fps) / 1000.0
                 events = pygame.event.get()
                 self._catch_events(events)
                 self.__active_state.handle_events(events)
@@ -79,10 +78,10 @@ class Game:
     def _render(self, dt: float) -> None:
         self.__screen_manager.render(
             surface=self.__active_state.getSurface(dt),
-            crt=self.__is_crt,
-            glow=self.__is_glow,
-            glitch=self.__is_glitch,
-            rolling=self.__is_rolling,
+            crt=self.__game_settings.crt,
+            glow=self.__game_settings.glow,
+            glitch=self.__game_settings.glitch,
+            rolling=self.__game_settings.rolling,
         )
 
     def _catch_events(self, events: list[pygame.event.Event]) -> None:
@@ -169,19 +168,19 @@ class Game:
             elif event.type == GameEvent.TOGGLE_FULLSCREEN:
                 pygame.display.toggle_fullscreen()
             elif event.type == GameEvent.SUB_10_FPS:
-                if self.__fps > 10:
-                    self.__fps -= 10
+                if self.__game_settings.fps > 10:
+                    self.__game_settings.fps -= 10
             elif event.type == GameEvent.ADD_10_FPS:
-                if self.__fps < 200:
-                    self.__fps += 10
+                if self.__game_settings.fps < 200:
+                    self.__game_settings.fps += 10
             elif event.type == GameEvent.TOGGLE_CRT_EFFECT:
-                self.__is_crt = not self.__is_crt
+                self.__game_settings.crt = not self.__game_settings.crt
             elif event.type == GameEvent.TOGGLE_GLOW_EFFECT:
-                self.__is_glow = not self.__is_glow
+                self.__game_settings.glow = not self.__game_settings.glow
             elif event.type == GameEvent.TOGGLE_GLITCH_EFFECT:
-                self.__is_glitch = not self.__is_glitch
+                self.__game_settings.glitch = not self.__game_settings.glitch
             elif event.type == GameEvent.TOGGLE_ROLLING_EFFECT:
-                self.__is_rolling = not self.__is_rolling
+                self.__game_settings.rolling = not self.__game_settings.rolling
 
     def _load_config_file(self, config_file: str | None = None) -> None:
         arg_parser = ArgumentParser(

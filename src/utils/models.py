@@ -1,3 +1,5 @@
+import pygame
+
 from pydantic import BaseModel, Field, model_validator
 
 
@@ -30,6 +32,11 @@ class GameSettings(BaseModel):
     ghost_freezed: bool = False
     double_speeded: bool = False
     invincibility: bool = False
+    fps: int = 60
+    crt: bool = True
+    glitch: bool = True
+    glow: bool = True
+    rolling: bool = True
 
     @model_validator(mode="after")
     def validate_scores(self) -> 'GameSettings':
