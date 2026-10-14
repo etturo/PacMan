@@ -46,5 +46,5 @@ the remaining time is in silence, but sticazzi
  - Eyes sound.	[lenght: 0.265s].
  - Fright firstloop.	[lenght: 0.115s].
  - Pacman eat Super Pacgum.	[lenght: 1s].
- - Pacman eat Ghost.	[lenght: 0.575s]
+ - Pacman eat Ghost.	[lenght: 0.575s]~
  - Ghost moves.		[lenght: 0.4s]
