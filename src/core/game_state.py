@@ -717,7 +717,10 @@ class PlayingState(BaseState):
 
         self.__time_remaining = self.getRemainingTime()
 
-        if self.__time_remaining <= 0 and self.__pacman.isAlive():
+        if (self.__time_remaining <= 0 and
+            self.__pacman.isAlive() and
+            self.__settings.invincibility == False
+        ):
             self.__pacman.die()
             self.__chomp_timer = 0.0
             SoundLibrary.get("death").play()
