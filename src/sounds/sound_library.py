@@ -10,21 +10,16 @@ from src.utils.paths import resource_path
 
 class SoundLibraryMeta(type):
     def __getitem__(cls, key: str) -> SoundEffect:
-        sounds = cast(
-            dict[str, list[SoundEffect]],
-            getattr(cls, 'sounds', {})
+        current = cast(
+            dict[str, SoundEffect],
+            getattr(cls, 'current', {})
         )
-        if key in sounds:
-            return random.choice(sounds[key])
-
-        default = getattr(cls, '_SoundLibrary__default_sound', None)
-        if default is not None:
-            return cast(SoundEffect, default)
-        raise KeyError(key)
+        return current[key]
 
 
 class SoundLibrary(metaclass=SoundLibraryMeta):
     sounds: dict[str, list[SoundEffect]] = {}
+    current: dict[str, SoundEffect] = {}
     chomp_channel: pygame.mixer.Channel
     loop_channel: pygame.mixer.Channel
 
@@ -128,12 +123,17 @@ class SoundLibrary(metaclass=SoundLibraryMeta):
                 ),
             ]
         }
+        cls.pick()
         pygame.mixer.set_reserved(2)
         cls.chomp_channel = pygame.mixer.Channel(0)
         cls.loop_channel = pygame.mixer.Channel(1)
 
     @classmethod
     def get(cls, key: str) -> SoundEffect:
-        if key in cls.sounds.keys():
-            return random.choice(cls.sounds[key])
-        raise KeyError(key)
+        """Return the currently selected variant for key."""
+        return cls.current[key]
+
+    @classmethod
+    def pick(cls) -> None:
+        """Pick one random variant per sound, kept until the next pick."""
+        cls.current = {k: random.choice(v) for k, v in cls.sounds.items()}

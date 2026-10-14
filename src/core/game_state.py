@@ -509,6 +509,8 @@ class PlayingState(BaseState):
         self.__entities.append(self.__pacman)
         self.__entities.extend(self.__ghosts)
 
+        SoundLibrary.pick()
+
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
         self._render_maze()
@@ -586,6 +588,7 @@ class PlayingState(BaseState):
 
     def build_next_level(self) -> None:
         """Rebuild the maze, entities and timer for the next level."""
+        SoundLibrary.pick()
         self.__actual_level += 1
         self.__ghost_combo = 0
         self.__is_frightened = False
