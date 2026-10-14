@@ -41,9 +41,10 @@ the remaining time is in silence, but sticazzi
 
 
 # Sound to add
- - [X] Pacman waka
- - [X] pacgum eaten
- - [X] death sound
- - [X] pacman eaten
- - [X] ghost eye run sound
- - [X] lose a life sound
+ - Death sound [lenght: 2.95s].
+ - Eat dot 0 and 1.	[lenght each: 0.0825s].
+ - Eyes sound.	[lenght: 0.265s].
+ - Fright firstloop.	[lenght: 0.115s].
+ - Pacman eat Super Pacgum.	[lenght: 1s].
+ - Pacman eat Ghost.	[lenght: 0.575s]
+ - Ghost moves.		[lenght: 0.4s]
