@@ -885,7 +885,6 @@ class PlayingState(BaseState):
         self.__maze_renderer.render(self.__surface)
 
     def _detect_collision(self) -> None:
-        pacman_pos = self.__pacman.getPos()
         pacman_cell = self.__pacman.getVisualCell()
 
         for entity in self.__entities:
@@ -898,8 +897,9 @@ class PlayingState(BaseState):
                     or entity.getMode() == GhostMode.EATEN):
                 continue
 
-            target = pacman_pos if isinstance(entity, Ghost) else pacman_cell
-            if entity.getPos() == target:
+            # target = pacman_pos if isinstance(entity, Ghost) else pacman_cell
+            target = pacman_cell
+            if entity.getVisualCell() == target:
                 if isinstance(entity, Pacgum):
                     entity.die()
                     # SoundLibrary.get("chomp").play()

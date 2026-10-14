@@ -41,9 +41,9 @@ the remaining time is in silence, but sticazzi
 
 
 # Sound to add
- - [ ] Pacman waka
- - [ ] pacgum eaten
- - [ ] death sound
- - [ ] pacman eaten
- - [ ] ghost eye run sound
- - [ ] lose a life sound
+ - [X] Pacman waka
+ - [X] pacgum eaten
+ - [X] death sound
+ - [X] pacman eaten
+ - [X] ghost eye run sound
+ - [X] lose a life sound

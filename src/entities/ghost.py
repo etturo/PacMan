@@ -54,7 +54,7 @@ class Ghost(Entity):
 
         frightened_sheet_1 = SpriteLibrary.get('melon')
         frightened_sheet_2 = SpriteLibrary.get('green')
-        point_sheet = SpriteLibrary.get('red')
+        point_sheet = SpriteLibrary.get('yellow')
         eyes_sheet = SpriteLibrary.get('eyes')
 
         self.__sprite_animation_up = [
