@@ -19,7 +19,7 @@ from src.entities.ghost_movement import (
     clyde_strategy,
 )
 
-from src.graphics.ui.button import Button, ToggleButton, SlideButton
+from src.graphics.ui.button import Button, ToggleButton, SlideIntButton
 from src.graphics.ui.text import Text
 from src.graphics.ui.element import (
     LiveElement,
@@ -90,7 +90,7 @@ class MenuState(BaseState):
             position=(screen_width / 2, first_y_button),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_PLAYING,
-            on_click_sfx=SoundLibrary.get("credit"),
+            on_click_sfx=SoundLibrary.get("button"),
             text='play',
             anchor='center',
             sprite_size=button_size,
@@ -103,7 +103,7 @@ class MenuState(BaseState):
                 ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_SETTINGS,
-            on_click_sfx=SoundLibrary.get("credit"),
+            on_click_sfx=SoundLibrary.get("button"),
             text='settings',
             anchor='center',
             sprite_size=button_size,
@@ -116,7 +116,7 @@ class MenuState(BaseState):
                 ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.EXIT,
-            # on_click_sfx=SoundLibrary.get("credit"),
+            # on_click_sfx=SoundLibrary.get("button"),
             text='exit',
             anchor='center',
             sprite_size=button_size,
@@ -254,7 +254,7 @@ class StartingState(BaseState):
         self.__grid_timer = 0.0
         self.__grid_interval = 0.15
 
-        self.__intro_sound = SoundLibrary.get("intro")
+        self.__intro_sound = SoundLibrary.get('intro')
         self.__intro_sound.play()
 
     def getSurface(self, dt: float) -> pygame.Surface:
@@ -726,7 +726,7 @@ class PlayingState(BaseState):
         ):
             self.__pacman.die()
             self.__chomp_timer = 0.0
-            SoundLibrary.get("death").play()
+            SoundLibrary.get("pacman_death").play()
 
         if self.__chomp_timer > 0:
             self.__chomp_timer -= dt
@@ -806,7 +806,7 @@ class PlayingState(BaseState):
         elif self.__is_frightened:
             name = "fright"
         else:
-            name = "siren"
+            name = "ghost_move"
 
         if name == self.__loop_sound:
             return
@@ -927,7 +927,7 @@ class PlayingState(BaseState):
                 if isinstance(entity, Ghost):
                     if entity.getMode() == GhostMode.FRIGHTENED:
                         entity.die(self.__ghost_combo)
-                        SoundLibrary.get("eat_ghost").play()
+                        SoundLibrary.get("ghost_death").play()
                         self.__points += (self.__settings.points_per_ghost
                                           * self.__ghost_combo // 200)
                         self.__ghost_combo = \
@@ -936,7 +936,7 @@ class PlayingState(BaseState):
                     elif not self.__settings.invincibility:
                         self.__pacman.die()
                         self.__chomp_timer = 0.0
-                        SoundLibrary.get("death").play()
+                        SoundLibrary.get("pacman_death").play()
 
     def _get_entity_screen_pos(
             self,
@@ -1029,7 +1029,7 @@ class GameOverState(BaseState):
             position=(screen_width / 2, screen_height / 1.12),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_MENU,
-            on_click_sfx=SoundLibrary.get("credit"),
+            on_click_sfx=SoundLibrary.get("button"),
             text="back to main menu",
             sprite_size=screen_height / 16,
             secondary_sheet=SpriteLibrary['yellow'],
@@ -1120,13 +1120,13 @@ class SettingState(BaseState):
             position=(screen_width / 50, screen_height / 50),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_MENU,
-            on_click_sfx=SoundLibrary.get("credit"),
+            on_click_sfx=SoundLibrary.get("button"),
             text="go back",
             sprite_size=button_size,
             anchor='top left'
         )
         ghost_freeze_button = ToggleButton(
-            position=(screen_width / 25, screen_height / 3),
+            position=(screen_width / 25, screen_height / 3.2),
             sprite_sheet=SpriteLibrary['white'],
             on_click=GameEvent.TOGGLE_FREEZE,
             text="ghost freeze",
@@ -1137,7 +1137,7 @@ class SettingState(BaseState):
             secondary_active_sheet=SpriteLibrary['white'],
         )
         invincibility_button = ToggleButton(
-            position=(screen_width / 5.5, screen_height / 1.5),
+            position=(screen_width / 5.5, screen_height / 1.85),
             sprite_sheet=SpriteLibrary['white'],
             on_click=GameEvent.TOGGLE_INVINCIBILITY,
             text="shield",
@@ -1148,7 +1148,7 @@ class SettingState(BaseState):
             secondary_active_sheet=SpriteLibrary['white'],
         )
         double_speed_button = ToggleButton(
-            position=(screen_width / 25, screen_height / 2),
+            position=(screen_width / 25, screen_height / 2.35),
             sprite_sheet=SpriteLibrary['white'],
             on_click=GameEvent.TOGGLE_DOUBLE_SPEED,
             text="double speed",
@@ -1158,8 +1158,8 @@ class SettingState(BaseState):
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white']
         )
-        lives_button = SlideButton(
-            position=(screen_width / 25, screen_height / 1.5),
+        lives_button = SlideIntButton(
+            position=(screen_width / 25, screen_height / 1.85),
             sprite_sheet=SpriteLibrary['white'],
             increment_on_click=GameEvent.ADD_A_LIFE,
             decrement_on_click=GameEvent.SUB_A_LIFE,
@@ -1191,7 +1191,7 @@ class SettingState(BaseState):
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white']
         )
-        fps_slider = SlideButton(
+        fps_slider = SlideIntButton(
             position=(screen_width / 1.55, screen_height / 3),
             sprite_sheet=SpriteLibrary['white'],
             increment_on_click=GameEvent.ADD_10_FPS,
@@ -1310,7 +1310,7 @@ class PauseState(BaseState):
             ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.BACK_TO_GAME,
-            on_click_sfx=SoundLibrary.get("credit"),
+            on_click_sfx=SoundLibrary.get("button"),
             text="resume",
             sprite_size=button_size,
             anchor="center",
@@ -1323,7 +1323,7 @@ class PauseState(BaseState):
             ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_MENU,
-            on_click_sfx=SoundLibrary.get("credit"),
+            on_click_sfx=SoundLibrary.get("button"),
             text="BACK TO\nMENU",
             sprite_size=button_size,
             anchor="center",

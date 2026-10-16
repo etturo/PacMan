@@ -4,21 +4,12 @@ import pygame
 from typing import cast
 
 from src.sounds.sound_effects import SoundEffect
+from src.sounds.sound_set import SoundSet
 
 from src.utils.paths import resource_path
 
-
-class SoundLibraryMeta(type):
-    def __getitem__(cls, key: str) -> SoundEffect:
-        current = cast(
-            dict[str, SoundEffect],
-            getattr(cls, 'current', {})
-        )
-        return current[key]
-
-
-class SoundLibrary(metaclass=SoundLibraryMeta):
-    sounds: dict[str, list[SoundEffect]] = {}
+class SoundLibrary:
+    sounds: dict[str, SoundSet] = {}
     current: dict[str, SoundEffect] = {}
     chomp_channel: pygame.mixer.Channel
     loop_channel: pygame.mixer.Channel
@@ -26,102 +17,7 @@ class SoundLibrary(metaclass=SoundLibraryMeta):
     @classmethod
     def load(cls) -> None:
         cls.sounds = {
-            "intro":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/pac-man-startup.mp3'
-                        )),
-                ),
-            ],
-            "death":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/pacman_death.wav'
-                        )),
-                ),
-            ],
-            "eat_ghost":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/pacman_eatghost.wav'
-                        )),
-                ),
-            ],
-            "eat_fruit":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/pacman_eatfruit.wav'
-                        )),
-                ),
-            ],
-            "extra_pac":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/pacman_extrapac.wav'
-                        )),
-                ),
-            ],
-            "intermission":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/pacman_intermission.wav'
-                        )),
-                ),
-            ],
-            "credit":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/credit.wav'
-                        )),
-                ),
-            ],
-            "ed0":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/eat_dot_0.wav'
-                        )),
-                ),
-            ],
-            "ed1":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/eat_dot_1.wav'
-                        )),
-                ),
-            ],
-            "siren":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/siren0.wav'
-                        )),
-                ),
-            ],
-            "fright":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/fright.wav'
-                        )),
-                ),
-            ],
-            "eyes":
-            [
-                SoundEffect(
-                    str(resource_path(
-                        'data/assets/sounds/eyes.wav'
-                        )),
-                ),
-            ]
+            "classic": SoundSet("classic")
         }
         cls.pick()
         pygame.mixer.set_reserved(2)
@@ -136,4 +32,10 @@ class SoundLibrary(metaclass=SoundLibraryMeta):
     @classmethod
     def pick(cls) -> None:
         """Pick one random variant per sound, kept until the next pick."""
-        cls.current = {k: random.choice(v) for k, v in cls.sounds.items()}
+        n = cls.sounds["classic"].getLen()
+        # seleziono prima un set per ogni chiave
+        selected = \
+            [random.choice(list(cls.sounds.keys())) for _ in range(n)]
+        # poi prendiamo la chiave giusta da quel set
+        for i, k in enumerate(cls.sounds["classic"].getKeys()):
+            cls.current[k] = cls.sounds[selected[i]].getSound(k)

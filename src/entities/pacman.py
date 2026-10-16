@@ -55,28 +55,16 @@ class Pacman(Entity):
 
         self.__death_animation = [
             scale(self.__sheet[SpriteType.PACMAN_DEATH_1], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_1], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_2], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_2], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_3], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_3], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_4], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_4], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_5], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_5], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_6], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_6], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_7], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_7], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_8], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_8], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_9], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_9], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_10], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_10], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_11], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_11], size),
-            scale(self.__sheet[SpriteType.PACMAN_DEATH_12], size),
             scale(self.__sheet[SpriteType.PACMAN_DEATH_12], size),
         ]
 

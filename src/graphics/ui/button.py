@@ -287,7 +287,7 @@ class ToggleButton(Button):
                 self._surface = self._secondary_surface
 
 
-class SlideButton(Button):
+class SlideIntButton(Button):
     def __init__(
         self,
         position: tuple[float, float],
@@ -359,6 +359,131 @@ class SlideButton(Button):
             formatted_text = f"{str(self.__value)}"
         else:
             formatted_text = f"{str(self.__value)} "
+
+        self.__value_count = Text(
+            text=formatted_text,
+            position=(
+                self._surface.get_width() / 2,
+                self._surface.get_height() / 1.15),
+            sprite_sheet=sprite_sheet,
+            text_size=sprite_size,
+            anchor="mid bottom"
+        )
+
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            if event.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN):
+                self._rect = self._get_rect()
+                self._is_hovered = self._rect.collidepoint(event.pos)
+
+                local_pos = (
+                    event.pos[0] - self._rect.left,
+                    event.pos[1] - self._rect.top
+                    )
+
+                event_dict = {'pos': local_pos}
+                if hasattr(event, 'button'):
+                    event_dict['button'] = event.button
+
+                local_event = pygame.event.Event(event.type, event_dict)
+                self.__left_arrow.handle_events([local_event])
+                self.__right_arrow.handle_events([local_event])
+
+            if (
+                event.type == self.__increment_on_click and
+                self.__value + self.__step_value <= self.__max_value
+            ):
+                self.__value += self.__step_value
+            elif (
+                event.type == self.__decrement_on_click and
+                self.__value - self.__step_value >= self.__min_value
+            ):
+                self.__value -= self.__step_value
+
+            self.__value_count.setText(str(self.__value))
+
+            mid_x = self._clean_secondary.get_width() / 2
+            bottom_y = self._clean_secondary.get_height() / 1.15
+            self.__value_count.moveTo((mid_x, bottom_y))
+
+            base_bg = self._clean_secondary
+            self._surface = base_bg.copy()
+
+            self.__left_arrow.render(self._surface)
+            self.__right_arrow.render(self._surface)
+            self.__value_count.render(self._surface)
+
+
+class SlideStrButton(Button):
+    def __init__(
+        self,
+        position: tuple[float, float],
+        sprite_sheet: SpriteSheet,
+        increment_on_click: GameEvent,
+        decrement_on_click: GameEvent,
+        initial_value: str,
+        text: str,
+        sprite_size: float,
+        on_click_sfx: SoundEffect | None = None,
+        anchor: str = "center",
+        secondary_sheet: None | SpriteSheet = None,
+    ) -> None:
+        super(Button, self).__init__(position, sprite_sheet, anchor)
+        self._text: str = f"{text}\n\n"
+        self.__increment_on_click: GameEvent = increment_on_click
+        self.__decrement_on_click: GameEvent = decrement_on_click
+        self._on_click_sfx: SoundEffect | None = on_click_sfx
+        self._is_hovered: bool = False
+        self._font: SpriteFont = SpriteFont(sprite_sheet, sprite_size)
+        self.__value: int = initial_value
+        self.__step_value = step_value
+        self.__max_value = max_value
+        self.__min_value = min_value
+
+        self._offset = 5
+        self._sprite_size = sprite_size
+
+        self._secondary_surface: pygame.Surface
+        self._secondary_font = self._font
+        if secondary_sheet is not None:
+            self._secondary_font = SpriteFont(secondary_sheet, sprite_size)
+
+        self._is_pressed: bool = False
+
+        self._create_textbox()
+
+        self._clean_primary = self._surface.copy()
+        self._clean_secondary = self._secondary_surface.copy()
+
+        self.__left_arrow = Button(
+            position=(0, self._clean_primary.get_height()),
+            sprite_sheet=sprite_sheet,
+            on_click=decrement_on_click,
+            text="<",
+            sprite_size=sprite_size,
+            on_click_sfx=on_click_sfx,
+            anchor='bottom left',
+            secondary_sheet=secondary_sheet
+        )
+
+        self.__right_arrow = Button(
+            position=(
+                self._clean_primary.get_width(),
+                self._clean_primary.get_height()),
+            sprite_sheet=sprite_sheet,
+            on_click=increment_on_click,
+            text=">",
+            sprite_size=sprite_size,
+            on_click_sfx=on_click_sfx,
+            anchor='bottom right',
+            secondary_sheet=secondary_sheet
+        )
+
+        if len(str(self.__value)) == 3:
+            formatted_text = f"{str(self.__value)}"
+        else:
+            formatted_text = f"{str(self.__value)} "
+
         self.__value_count = Text(
             text=formatted_text,
             position=(
