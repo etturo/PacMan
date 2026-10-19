@@ -18,7 +18,8 @@ class SoundLibrary:
     @classmethod
     def load(cls) -> None:
         cls.sounds = {
-            "classic": SoundSet("classic")
+            "classic": SoundSet("classic"),
+            "lmongili": SoundSet("lmongili")
         }
         cls.current_set_name = "classic"
         cls.pick()
@@ -36,34 +37,29 @@ class SoundLibrary:
         return cls.current_set_name
 
     @classmethod
+    def _use_set(cls, set_name: str) -> None:
+        cls.current_set_name = set_name
+        sound_set = cls.sounds[set_name]
+        cls.current = {
+            key: sound_set.getSound(key)
+            for key in sound_set.getKeys()
+        }
+
+    @classmethod
     def nextSet(cls, set_name: str | None = None) -> None:
         set_names = list(cls.sounds)
         set_name = set_name or cls.current_set_name
         next_index = (set_names.index(set_name) + 1) % len(set_names)
-        cls.current_set_name = set_names[next_index]
-        cls.current = {
-            key: cls.sounds[cls.current_set_name].getSound(key)
-            for key in cls.sounds[cls.current_set_name].getKeys()
-        }
+        cls._use_set(set_names[next_index])
 
     @classmethod
     def prevSet(cls, set_name: str | None = None) -> None:
         set_names = list(cls.sounds)
         set_name = set_name or cls.current_set_name
         previous_index = (set_names.index(set_name) - 1) % len(set_names)
-        cls.current_set_name = set_names[previous_index]
-        cls.current = {
-            key: cls.sounds[cls.current_set_name].getSound(key)
-            for key in cls.sounds[cls.current_set_name].getKeys()
-        }
+        cls._use_set(set_names[previous_index])
 
     @classmethod
     def pick(cls) -> None:
-        """Pick one random variant per sound, kept until the next pick."""
-        n = cls.sounds["classic"].getLen()
-        # seleziono prima un set per ogni chiave
-        selected = \
-            [random.choice(list(cls.sounds.keys())) for _ in range(n)]
-        # poi prendiamo la chiave giusta da quel set
-        for i, k in enumerate(cls.sounds["classic"].getKeys()):
-            cls.current[k] = cls.sounds[selected[i]].getSound(k)
+        """Pick one complete sound set and keep it until the next pick."""
+        cls._use_set(random.choice(list(cls.sounds)))

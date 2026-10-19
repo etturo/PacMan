@@ -923,7 +923,7 @@ class PlayingState(BaseState):
                     self.__points += self.__settings.points_per_pacgum
                 if isinstance(entity, SuperPacgum):
                     entity.die()
-                    SoundLibrary.get("ed0").playOn(SoundLibrary.chomp_channel)
+                    SoundLibrary.get("super_pacgum").playOn(SoundLibrary.chomp_channel)
                     self.__chomp_timer = 0.5 / self.__pacman.getSpeed()
                     self._update_ghost_mode(
                         self.__ghosts, GhostMode.FRIGHTENED)

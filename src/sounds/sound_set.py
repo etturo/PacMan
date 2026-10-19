@@ -29,7 +29,7 @@ class SoundSet:
                 str(resource_path(f"data/assets/sounds/{owner}/ghost_move.wav"))
             ),
             "intro": SoundEffect(
-                str(resource_path(f"data/assets/sounds/{owner}/intro.mp3"))
+                str(resource_path(f"data/assets/sounds/classic/intro.mp3"))
             ),
             "pacman_death": SoundEffect(
                 str(resource_path(f"data/assets/sounds/{owner}/pacman_death.wav"))
