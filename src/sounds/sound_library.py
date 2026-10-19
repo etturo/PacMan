@@ -21,7 +21,9 @@ class SoundLibrary:
     def load(cls) -> None:
         cls.sounds = {
             "classic": SoundSet("classic"),
-            "lmongili": SoundSet("lmongili")
+            "lmongili": SoundSet("lmongili"),
+            "dmandric": SoundSet("dmandric"),
+            "mcicconi": SoundSet("mcicconi"),
         }
         cls.current_set_name = "classic"
         cls._use_set("classic")
