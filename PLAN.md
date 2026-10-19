@@ -30,6 +30,7 @@ the remaining time is in silence, but sticazzi
  - [X] Make the Game go to the next level if the time goes to 0 or the gums are finished
  - [X] Make the game cross platform
  - [X] Make when the time runs out to lose a life.
+ - [ ] Make the multiple sounds channel, because the audio that longs more than they should interrupts, even when it is not needed, ex: the Super Pacgums or the ed0, i think that ed0 and ed1 should be in two separate channels, so they can follow each other.
 
 # popo
  - [SOLVED] BUG FOUND: in map size: even width mazes, the pacman spawn in the 42 logo, TODO: hardcode the positions to not spawn.
