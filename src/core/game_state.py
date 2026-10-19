@@ -54,6 +54,8 @@ from src.utils.paths import initial_leaderboard_path, leaderboard_path
 
 
 class BaseState(ABC):
+    _selected: int = -1
+
     @abstractmethod
     def getSurface(self, dt: float) -> pygame.Surface:
         pass
@@ -77,6 +79,17 @@ class BaseState(ABC):
     def getRemainingTime(self) -> float:
         # mypy says this has to be like that... ok...
         return 0.0
+
+    def _navigate(self, buttons: list[Button],
+                  events: list[pygame.event.Event]) -> None:
+        for event in events:
+            if (event.type == pygame.KEYDOWN
+                    and event.key in (pygame.K_UP, pygame.K_DOWN)):
+                step = 1 if event.key == pygame.K_DOWN else -1
+                self._selected = (self._selected + step) % len(buttons) \
+                    if self._selected >= 0 else 0
+                for index, button in enumerate(buttons):
+                    button.setHovered(index == self._selected)
 
 
 class MenuState(BaseState):
@@ -193,8 +206,8 @@ class MenuState(BaseState):
 
         self.__buttons = [
             start_button,
-            exit_button,
             settings_button,
+            exit_button,
         ]
         self.__texts = [
             title_txt,
@@ -220,6 +233,7 @@ class MenuState(BaseState):
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        self._navigate(self.__buttons, events)
         for button in self.__buttons:
             button.handle_events(events)
 
@@ -1389,6 +1403,7 @@ class PauseState(BaseState):
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        self._navigate(self.__buttons, events)
         for button in self.__buttons:
             button.handle_events(events)
 

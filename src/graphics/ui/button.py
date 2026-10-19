@@ -52,8 +52,12 @@ class Button(Drawable):
             if event.type == pygame.MOUSEMOTION:
                 self._rect = self._get_rect()
                 self._is_hovered = self._rect.collidepoint(event.pos)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1 and self._is_hovered:
+            elif (
+                event.type == pygame.MOUSEBUTTONDOWN and event.button == 1
+                or event.type == pygame.KEYDOWN
+                and event.key == pygame.K_RETURN
+            ):
+                if self._is_hovered:
                     if self._on_click_sfx:
                         self._on_click_sfx.play()
                     GameEvent.post(self._on_click)
@@ -62,6 +66,10 @@ class Button(Drawable):
                 self._surface = self._primary_surface
             else:
                 self._surface = self._secondary_surface
+
+    def setHovered(self, hovered: bool) -> None:
+        """Set the hover state, used by keyboard selection."""
+        self._is_hovered = hovered
 
     def _create_textbox(self) -> None:
         text_size = self._sprite_size
