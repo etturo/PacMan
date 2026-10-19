@@ -529,7 +529,8 @@ class PlayingState(BaseState):
         self.__entities.append(self.__pacman)
         self.__entities.extend(self.__ghosts)
 
-        SoundLibrary.pick()
+        if SoundLibrary.isRandomMode():
+            SoundLibrary.pick()
 
     def getSurface(self, dt: float) -> pygame.Surface:
         self.__surface.fill((0, 0, 0))
@@ -608,7 +609,8 @@ class PlayingState(BaseState):
 
     def build_next_level(self) -> None:
         """Rebuild the maze, entities and timer for the next level."""
-        SoundLibrary.pick()
+        if SoundLibrary.isRandomMode():
+            SoundLibrary.pick()
         self.__actual_level += 1
         self.__ghost_combo = 0
         self.__is_frightened = False
@@ -1268,13 +1270,17 @@ class SettingState(BaseState):
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white']
         )
-        random_button = Button(
+        random_button = ToggleButton(
             position=(screen_width / 3.5, screen_height / 1.35),
             sprite_sheet=SpriteLibrary['white'],
+            active_sheet=SpriteLibrary['orange_green'],
+            secondary_active_sheet=SpriteLibrary['white'],
             on_click=GameEvent.RANDOM_SOUND_SET,
+            initial_value=False,
             text="@",
             sprite_size=button_size,
             anchor='mid top',
+            print_bool=False,
         )
         sounds_box = Box(
             position=(screen_width / 25, screen_height / 1.4),
@@ -1330,6 +1336,16 @@ class SettingState(BaseState):
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        sound_set_events = {
+            GameEvent.NEXT_SOUND_SET,
+            GameEvent.PREV_SOUND_SET,
+        }
+        if SoundLibrary.isRandomMode():
+            events = [
+                event for event in events
+                if event.type not in sound_set_events
+            ]
+
         for button in self.__buttons:
             button.handle_events(events)
 

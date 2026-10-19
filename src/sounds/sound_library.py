@@ -1,8 +1,6 @@
 import random
 import pygame
 
-from typing import cast
-
 from src.sounds.sound_effects import SoundEffect
 from src.sounds.sound_set import SoundSet
 
@@ -12,6 +10,7 @@ class SoundLibrary:
     sounds: dict[str, SoundSet] = {}
     current: dict[str, SoundEffect] = {}
     current_set_name: str = "classic"
+    random_mode: bool = False
     chomp_channel: pygame.mixer.Channel
     loop_channel: pygame.mixer.Channel
 
@@ -22,7 +21,8 @@ class SoundLibrary:
             "lmongili": SoundSet("lmongili")
         }
         cls.current_set_name = "classic"
-        cls.pick()
+        cls._use_set("classic")
+        cls.random_mode = False
         pygame.mixer.set_reserved(2)
         cls.chomp_channel = pygame.mixer.Channel(0)
         cls.loop_channel = pygame.mixer.Channel(1)
@@ -37,6 +37,10 @@ class SoundLibrary:
         return cls.current_set_name
 
     @classmethod
+    def isRandomMode(cls) -> bool:
+        return cls.random_mode
+
+    @classmethod
     def _use_set(cls, set_name: str) -> None:
         cls.current_set_name = set_name
         sound_set = cls.sounds[set_name]
@@ -47,6 +51,8 @@ class SoundLibrary:
 
     @classmethod
     def nextSet(cls, set_name: str | None = None) -> None:
+        if cls.random_mode:
+            return
         set_names = list(cls.sounds)
         set_name = set_name or cls.current_set_name
         next_index = (set_names.index(set_name) + 1) % len(set_names)
@@ -54,6 +60,8 @@ class SoundLibrary:
 
     @classmethod
     def prevSet(cls, set_name: str | None = None) -> None:
+        if cls.random_mode:
+            return
         set_names = list(cls.sounds)
         set_name = set_name or cls.current_set_name
         previous_index = (set_names.index(set_name) - 1) % len(set_names)
@@ -61,5 +69,20 @@ class SoundLibrary:
 
     @classmethod
     def pick(cls) -> None:
-        """Pick one complete sound set and keep it until the next pick."""
-        cls._use_set(random.choice(list(cls.sounds)))
+        """Enable random mode and pick each sound independently."""
+        cls.random_mode = True
+        sound_sets = list(cls.sounds.values())
+        keys = next(iter(sound_sets)).getKeys()
+        cls.current = {
+            key: random.choice(sound_sets).getSound(key)
+            for key in keys
+        }
+
+    @classmethod
+    def toggleRandom(cls) -> None:
+        """Toggle random mode, allowing manual set selection when disabled."""
+        if cls.random_mode:
+            cls.random_mode = False
+            cls._use_set(cls.current_set_name)
+        else:
+            cls.pick()

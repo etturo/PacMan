@@ -210,12 +210,15 @@ class ToggleButton(Button):
         secondary_sheet: None | SpriteSheet = None,
         active_sheet: None | SpriteSheet = None,
         secondary_active_sheet: None | SpriteSheet = None,
+        print_bool: bool = True,
     ) -> None:
 
         self.__toggled: bool = initial_value
         self.__title_text = text
-        self.__status_text = str(self.__toggled)
-        self._text = f"{self.__title_text}\n{self.__status_text}"
+        self.__print_bool = print_bool
+        self._text = self.__title_text
+        if self.__print_bool:
+            self._text += f"\n{self.__toggled}"
 
         self.__base_sheet = sprite_sheet
         self.__base_secondary_sheet = secondary_sheet
@@ -268,9 +271,9 @@ class ToggleButton(Button):
                         self._on_click_sfx.play()
                     GameEvent.post(self._on_click)
                     self.__toggled = not self.__toggled
-                    self.__status_text = str(self.__toggled)
-                    self._text = \
-                        f"{self.__title_text}\n{self.__status_text}".upper()
+                    if self.__print_bool:
+                        self._text = \
+                            f"{self.__title_text}\n{self.__toggled}".upper()
 
                     if self.__toggled:
                         if self.__active_sheet:
