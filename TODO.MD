@@ -1,4 +1,7 @@
-- [ ] Create a SoundManager class similar to the sprite library to handle sounds
+- [ ] Aggiungere 256 livelli con un JSON e specificare anche le varie fasi 
+  di scatter, chase e fright a seconda del livello: ricrearlo come 
+  l'originale, che dopo il livello 21 è tutto uguale con difficoltà al 
+  massimo (no scatter, velocità al max, ecc.)
 
 # FUTURE ARCHITECTURAL IMPROVEMENTS
  - [X] **Refactor Game Class to Instance-Based:** Replace the static `@classmethod` structure with an instantiable class to improve testability and allow clean state initialization/resets.

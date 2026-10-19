@@ -18,3 +18,7 @@ class SoundEffect:
 
     def stop(self) -> None:
         self.sound.stop()
+
+    def getLength(self) -> float:
+        """Return the sound duration in seconds."""
+        return self.sound.get_length()

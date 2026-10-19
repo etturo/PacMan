@@ -11,8 +11,11 @@ class SoundLibrary:
     current: dict[str, SoundEffect] = {}
     current_set_name: str = "classic"
     random_mode: bool = False
-    chomp_channel: pygame.mixer.Channel
+    chomp_channel_0: pygame.mixer.Channel
+    chomp_channel_1: pygame.mixer.Channel
     loop_channel: pygame.mixer.Channel
+    special_channel: pygame.mixer.Channel
+    death_channel: pygame.mixer.Channel
 
     @classmethod
     def load(cls) -> None:
@@ -23,11 +26,12 @@ class SoundLibrary:
         cls.current_set_name = "classic"
         cls._use_set("classic")
         cls.random_mode = False
-        pygame.mixer.set_reserved(2)
+        pygame.mixer.set_reserved(5)
         cls.chomp_channel_0 = pygame.mixer.Channel(0)
         cls.chomp_channel_1 = pygame.mixer.Channel(1)
         cls.loop_channel = pygame.mixer.Channel(2)
         cls.special_channel = pygame.mixer.Channel(3)
+        cls.death_channel = pygame.mixer.Channel(4)
 
     @classmethod
     def get(cls, key: str) -> SoundEffect:

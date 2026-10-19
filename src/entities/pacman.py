@@ -132,8 +132,14 @@ class Pacman(Entity):
             self._surface = self.__sprite_full
         super().render(screen, screen_pos, dt)
 
+    def die(self, duration: float = 1.2) -> None:
+        """Start the death animation, stretched over duration seconds."""
+        super().die()
+        self.__animation_delay = duration / len(self.__death_animation)
+
     def respawn(self) -> None:
         self._is_alive = True
         self.__death_index = 0
+        self.__animation_delay = 0.1
         self._queued_direction = Direction.STILL
         self._current_direction = Direction.STILL

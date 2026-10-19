@@ -428,6 +428,15 @@ class PlayingState(BaseState):
 
         self.__text_size = self.__screen_width / 30
 
+        self.__ready_timer = 0.0
+        self.__ready_txt = Text(
+            "READY!",
+            (self.__text_size * 1.3, self.__screen_height / 2),
+            SpriteLibrary['yellow'],
+            self.__text_size / 1.2,
+            anchor='midleft',
+        )
+
         if (maze_w % 2 != 0):
             self.__pacman_initial_pos = (maze_w // 2, maze_h // 2)
         else:
@@ -546,6 +555,9 @@ class PlayingState(BaseState):
             screen_x, screen_y = self._get_entity_screen_pos(e_x, e_y)
 
             entity.render(self.__surface, (screen_x, screen_y), dt)
+
+        if not self.__is_started or self.__ready_timer > 0:
+            self.__ready_txt.render(self.__surface)
 
         return self.__surface
 
@@ -726,6 +738,11 @@ class PlayingState(BaseState):
         if not self.__is_started:
             return
 
+        if self.__ready_timer > 0:
+            if not SoundLibrary.death_channel.get_busy():
+                self.__ready_timer -= dt
+            return
+
         if self.__mode_controller.update(dt):
             self._update_ghost_mode(self.__ghosts,
                                     self.__mode_controller.getMode())
@@ -746,9 +763,7 @@ class PlayingState(BaseState):
             self.__pacman.isAlive() and
             self.__settings.invincibility == False
         ):
-            self.__pacman.die()
-            self.__chomp_timer = 0.0
-            SoundLibrary.get("pacman_death").play()
+            self._kill_pacman()
 
         if self.__chomp_timer > 0:
             self.__chomp_timer -= dt
@@ -819,8 +834,15 @@ class PlayingState(BaseState):
             self._handle_level_clear()
             return
 
+    def _kill_pacman(self) -> None:
+        death_sound = SoundLibrary.get("pacman_death")
+        death_sound.playOn(SoundLibrary.death_channel)
+        self.__pacman.die(death_sound.getLength())
+        self.__chomp_timer = 0.0
+
     def _update_loop_sound(self) -> None:
-        if not self.__is_started or not self.__pacman.isAlive():
+        if (not self.__is_started or self.__ready_timer > 0
+                or not self.__pacman.isAlive()):
             name = None
         elif any(ghost.getMode() == GhostMode.EATEN
                  for ghost in self.__ghosts):
@@ -891,6 +913,7 @@ class PlayingState(BaseState):
 
         if self.__pacman.getLives() > 0:
             self.__pacman.respawn()
+        self.__ready_timer = 2.0
 
     def _render_maze(self) -> None:
         columns, rows = self.__actual_maze.getSize()
@@ -959,9 +982,7 @@ class PlayingState(BaseState):
                             (self.__ghost_combo * 2
                                 if self.__ghost_combo * 2 <= 1600 else 1600)
                     elif not self.__settings.invincibility:
-                        self.__pacman.die()
-                        self.__chomp_timer = 0.0
-                        SoundLibrary.get("pacman_death").play()
+                        self._kill_pacman()
 
     def _get_entity_screen_pos(
             self,
