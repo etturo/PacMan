@@ -24,8 +24,10 @@ class SoundLibrary:
         cls._use_set("classic")
         cls.random_mode = False
         pygame.mixer.set_reserved(2)
-        cls.chomp_channel = pygame.mixer.Channel(0)
-        cls.loop_channel = pygame.mixer.Channel(1)
+        cls.chomp_channel_0 = pygame.mixer.Channel(0)
+        cls.chomp_channel_1 = pygame.mixer.Channel(1)
+        cls.loop_channel = pygame.mixer.Channel(2)
+        cls.special_channel = pygame.mixer.Channel(3)
 
     @classmethod
     def get(cls, key: str) -> SoundEffect:

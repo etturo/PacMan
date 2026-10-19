@@ -753,7 +753,7 @@ class PlayingState(BaseState):
         if self.__chomp_timer > 0:
             self.__chomp_timer -= dt
             if self.__chomp_timer <= 0:
-                SoundLibrary.get("ed1").playOn(SoundLibrary.chomp_channel)
+                SoundLibrary.get("ed1").playOn(SoundLibrary.chomp_channel_1)
 
         self.__pacman.update(dt)
         if self.__pacman.getLives() <= 0:
@@ -933,13 +933,15 @@ class PlayingState(BaseState):
                     # SoundLibrary.get("chomp").play()
                     # SoundLibrary.get("ed0").play()
                     # SoundLibrary.get("ed1").play()
-                    SoundLibrary.get("ed0").playOn(SoundLibrary.chomp_channel)
+                    SoundLibrary.get("ed0").playOn(
+                        SoundLibrary.chomp_channel_0)
                     self.__chomp_timer = 0.5 / self.__pacman.getSpeed()
 
                     self.__points += self.__settings.points_per_pacgum
                 if isinstance(entity, SuperPacgum):
                     entity.die()
-                    SoundLibrary.get("super_pacgum").playOn(SoundLibrary.chomp_channel)
+                    SoundLibrary.get("super_pacgum").playOn(
+                        SoundLibrary.special_channel)
                     self.__chomp_timer = 0.5 / self.__pacman.getSpeed()
                     self._update_ghost_mode(
                         self.__ghosts, GhostMode.FRIGHTENED)
@@ -949,7 +951,8 @@ class PlayingState(BaseState):
                 if isinstance(entity, Ghost):
                     if entity.getMode() == GhostMode.FRIGHTENED:
                         entity.die(self.__ghost_combo)
-                        SoundLibrary.get("ghost_death").play()
+                        SoundLibrary.get("ghost_death").playOn(
+                            SoundLibrary.special_channel)
                         self.__points += (self.__settings.points_per_ghost
                                           * self.__ghost_combo // 200)
                         self.__ghost_combo = \
