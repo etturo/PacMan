@@ -181,6 +181,12 @@ class Game:
                 self.__game_settings.glitch = not self.__game_settings.glitch
             elif event.type == GameEvent.TOGGLE_ROLLING_EFFECT:
                 self.__game_settings.rolling = not self.__game_settings.rolling
+            elif event.type == GameEvent.RANDOM_SOUND_SET:
+                SoundLibrary.pick()
+            elif event.type == GameEvent.NEXT_SOUND_SET:
+                SoundLibrary.nextSet()
+            elif event.type == GameEvent.PREV_SOUND_SET:
+                SoundLibrary.prevSet()
 
     def _load_config_file(self, config_file: str | None = None) -> None:
         arg_parser = ArgumentParser(

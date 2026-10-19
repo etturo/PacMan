@@ -70,6 +70,7 @@ class SpriteType(Enum):
     CH_QUOTE = auto()
     CH_SPACE = auto()
     CH_COLON = auto()
+    CH_DICE = auto()
 
     # UI SPRITES
     # # CORNERS
@@ -177,4 +178,5 @@ CHAR_MAPPING: dict[str, SpriteType] = {
     ">": SpriteType.RIGHT_ARROW,
     "<": SpriteType.LEFT_ARROW,
     ":": SpriteType.CH_COLON,
+    "@": SpriteType.CH_DICE,
 }

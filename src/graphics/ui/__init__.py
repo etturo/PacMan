@@ -1,4 +1,4 @@
-from .button import Button, SlideIntButton, ToggleButton
+from .button import Button, SlideIntButton, SlideStrButton, ToggleButton
 from .drawable import Drawable
 from .element import (
     Box,
@@ -22,6 +22,7 @@ __all__ = [
     "Lives",
     "Points",
     "SlideButton",
+    "SlideStrButton",
     "Text",
     "TextInput",
     "Timer",

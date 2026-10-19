@@ -207,7 +207,7 @@ class TextInput(LiveElement):
                 elif event.key != pygame.K_RETURN:
                     char = event.unicode.lower()
                     if (len(self.__text_buffer) < self.__max_length
-                            and char.isalnum()):
+                            and (char.isalnum() or char == '@')):
                         self.__text_buffer += char
                         self._render_text()
                 elif event.key == pygame.K_RETURN:

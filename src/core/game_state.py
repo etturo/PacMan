@@ -19,7 +19,12 @@ from src.entities.ghost_movement import (
     clyde_strategy,
 )
 
-from src.graphics.ui.button import Button, ToggleButton, SlideIntButton
+from src.graphics.ui.button import (
+    Button,
+    ToggleButton,
+    SlideIntButton,
+    SlideStrButton,
+    )
 from src.graphics.ui.text import Text
 from src.graphics.ui.element import (
     LiveElement,
@@ -243,6 +248,7 @@ class StartingState(BaseState):
             self.__columns -= 1
         self.__rows = int(max(8, self.__screen_height // self.__glyph_size))
         self.__chars = [char for char in CHAR_MAPPING if char != " "]
+        self.__chars.remove('@')
         self.__target_word = "PACMAN"
         self.__center_row = self.__rows // 2
         self.__start_col = \
@@ -1248,6 +1254,34 @@ class SettingState(BaseState):
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white']
         )
+        random_button = Button(
+            position=(screen_width / 3.5, screen_height / 1.35),
+            sprite_sheet=SpriteLibrary['white'],
+            on_click=GameEvent.RANDOM_SOUND_SET,
+            text="@",
+            sprite_size=button_size,
+            anchor='mid top',
+        )
+        sounds_box = Box(
+            position=(screen_width / 25, screen_height / 1.4),
+            width=screen_width / 3.5,
+            height=screen_height / 4.5,
+            sprite_sheet=SpriteLibrary['white'],
+            sprite_type=SpriteType.EMPTY_WALL,
+            size=screen_height / 15,
+            anchor='top left'
+        )
+        slide_authors = SlideStrButton(
+            position=(screen_width / 18, screen_height / 1.35),
+            text="SET",
+            values=SoundLibrary.sounds.keys(),
+            initial_value=SoundLibrary.getCurrentSetName(),
+            sprite_sheet=SpriteLibrary['white'],
+            decrement_on_click=GameEvent.PREV_SOUND_SET,
+            increment_on_click=GameEvent.NEXT_SOUND_SET,
+            anchor='top left',
+            sprite_size=button_size
+        )
 
         self.__texts = [
             title,
@@ -1255,6 +1289,7 @@ class SettingState(BaseState):
         self.__elements = [
             cheat_box,
             graphics_box,
+            sounds_box,
         ]
         self.__buttons = [
             ghost_freeze_button,
@@ -1268,6 +1303,8 @@ class SettingState(BaseState):
             toggle_glitch,
             toggle_glow,
             toggle_rolling,
+            slide_authors,
+            random_button,
         ]
 
         self.__surface = pygame.Surface((screen_width, screen_height))

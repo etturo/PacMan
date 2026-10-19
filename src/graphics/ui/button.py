@@ -1,5 +1,7 @@
 import pygame
 
+from collections.abc import Iterable
+
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.graphical_utils.ui_utils import SpriteType
 from src.graphics.graphical_utils.sprite_font import SpriteFont
@@ -415,6 +417,8 @@ class SlideIntButton(Button):
 
 
 class SlideStrButton(Button):
+    _max_value_length = 10
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -424,21 +428,25 @@ class SlideStrButton(Button):
         initial_value: str,
         text: str,
         sprite_size: float,
+        values: Iterable[str],
         on_click_sfx: SoundEffect | None = None,
         anchor: str = "center",
         secondary_sheet: None | SpriteSheet = None,
     ) -> None:
+        self.__values = list(values)
+        if not self.__values:
+            raise ValueError("SlideStrButton requires at least one value")
+        if initial_value not in self.__values:
+            raise ValueError("initial_value must be one of values")
+
         super(Button, self).__init__(position, sprite_sheet, anchor)
-        self._text: str = f"{text}\n\n"
+        self._text: str = f"{text}\n\n{' ' * self._max_value_length}"
         self.__increment_on_click: GameEvent = increment_on_click
         self.__decrement_on_click: GameEvent = decrement_on_click
         self._on_click_sfx: SoundEffect | None = on_click_sfx
         self._is_hovered: bool = False
         self._font: SpriteFont = SpriteFont(sprite_sheet, sprite_size)
-        self.__value: int = initial_value
-        self.__step_value = step_value
-        self.__max_value = max_value
-        self.__min_value = min_value
+        self.__value_index = self.__values.index(initial_value)
 
         self._offset = 5
         self._sprite_size = sprite_size
@@ -479,13 +487,8 @@ class SlideStrButton(Button):
             secondary_sheet=secondary_sheet
         )
 
-        if len(str(self.__value)) == 3:
-            formatted_text = f"{str(self.__value)}"
-        else:
-            formatted_text = f"{str(self.__value)} "
-
         self.__value_count = Text(
-            text=formatted_text,
+            text=self.__get_display_value(),
             position=(
                 self._surface.get_width() / 2,
                 self._surface.get_height() / 1.15),
@@ -515,16 +518,16 @@ class SlideStrButton(Button):
 
             if (
                 event.type == self.__increment_on_click and
-                self.__value + self.__step_value <= self.__max_value
+                self.__value_index < len(self.__values) - 1
             ):
-                self.__value += self.__step_value
+                self.__value_index += 1
             elif (
                 event.type == self.__decrement_on_click and
-                self.__value - self.__step_value >= self.__min_value
+                self.__value_index > 0
             ):
-                self.__value -= self.__step_value
+                self.__value_index -= 1
 
-            self.__value_count.setText(str(self.__value))
+            self.__value_count.setText(self.__get_display_value())
 
             mid_x = self._clean_secondary.get_width() / 2
             bottom_y = self._clean_secondary.get_height() / 1.15
@@ -536,3 +539,6 @@ class SlideStrButton(Button):
             self.__left_arrow.render(self._surface)
             self.__right_arrow.render(self._surface)
             self.__value_count.render(self._surface)
+
+    def __get_display_value(self) -> str:
+        return self.__values[self.__value_index][:self._max_value_length]

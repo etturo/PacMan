@@ -49,6 +49,10 @@ class GameEvent(IntEnum):
 
     MODE_TO_WIN = pygame.USEREVENT + 22
 
+    RANDOM_SOUND_SET = pygame.USEREVENT + 23
+    NEXT_SOUND_SET = pygame.USEREVENT + 24
+    PREV_SOUND_SET = pygame.USEREVENT + 25
+
     @staticmethod
     def post(mode: 'GameEvent') -> None:
         pygame.event.post(pygame.event.Event(mode))

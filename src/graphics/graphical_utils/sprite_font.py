@@ -82,6 +82,34 @@ class SpriteFont:
             self.__sheet.getRotatedSprite(16, 5, 2, 90)
         self.__characters[SpriteType.RIGHT_ARROW] = \
             self.__sheet.getRotatedSprite(16, 5, 2, 270)
+        dice1 = self.__sheet.combineSprite2x2(
+            self.__sheet.getSprite(8, 4, 17),
+            self.__sheet.getSprite(8, 4, 18),
+            self.__sheet.getSprite(8, 5, 17),
+            self.__sheet.getSprite(8, 5, 18)
+        )
+        dice2 = self.__sheet.combineSprite2x2(
+            self.__sheet.getSprite(8, 4, 19),
+            self.__sheet.getSprite(8, 4, 20),
+            self.__sheet.getSprite(8, 5, 19),
+            self.__sheet.getSprite(8, 5, 20)
+        )
+        dice3 = self.__sheet.combineSprite2x2(
+            self.__sheet.getSprite(8, 6, 17),
+            self.__sheet.getSprite(8, 6, 18),
+            self.__sheet.getSprite(8, 7, 17),
+            self.__sheet.getRotatedSprite(8, 4, 19, 180)
+        )
+        dice4 = self.__sheet.combineSprite2x2(
+            self.__sheet.getSprite(8, 6, 19),
+            self.__sheet.getSprite(8, 6, 20),
+            self.__sheet.getRotatedSprite(8, 4, 18, 180),
+            self.__sheet.getSprite(8, 7, 20)
+        )
+        self.__characters[SpriteType.CH_DICE] = \
+            self.__sheet.combineSprite2x2(
+                dice1, dice2, dice3, dice4
+            )
 
         self.__original_char = self.__characters.copy()
         self.setSize(size)
