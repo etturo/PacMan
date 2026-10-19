@@ -532,6 +532,10 @@ class Timer(LiveElement):
     def pause(self) -> None:
         self.__is_going = False
 
+    def reset(self) -> None:
+        """Restart the countdown from the full time."""
+        self.__time_elapsed = self.__start_time
+
     def getIsGoing(self) -> bool:
         return self.__is_going
 

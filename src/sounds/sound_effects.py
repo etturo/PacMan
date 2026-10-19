@@ -1,10 +1,22 @@
+import wave
 import pygame
 
 
 class SoundEffect:
     def __init__(self, file_path: str) -> None:
-        self.sound = pygame.mixer.Sound(file_path)
+        if self._is_empty(file_path):
+            self.sound = pygame.mixer.Sound(buffer=bytes(4))
+        else:
+            self.sound = pygame.mixer.Sound(file_path)
         self.sound.set_volume(1)
+
+    @staticmethod
+    def _is_empty(file_path: str) -> bool:
+        try:
+            with wave.open(file_path, "rb") as wav:
+                return wav.getnframes() == 0
+        except wave.Error:
+            return False
 
     def setVolume(self, volume_perc: int) -> None:
         self.sound.set_volume(volume_perc / 100)

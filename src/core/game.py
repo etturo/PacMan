@@ -105,12 +105,12 @@ class Game:
                 self.__active_state = MenuState()
 
             elif event.type == GameEvent.MODE_TO_PAUSE:
-                SoundLibrary.loop_channel.pause()
+                pygame.mixer.pause()
                 self.__freeze_state = self.__active_state
                 self.__active_state = PauseState()
 
             elif event.type == GameEvent.BACK_TO_GAME:
-                SoundLibrary.loop_channel.unpause()
+                pygame.mixer.unpause()
                 self.__active_state = self.__freeze_state
 
             elif event.type == GameEvent.MODE_TO_PLAYING:

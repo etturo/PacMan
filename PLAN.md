@@ -38,11 +38,12 @@ the remaining time is in silence, but sticazzi
    in modo che il giocatore abbia tempo di rimettersi in sesto
  - [X] Aggiustare il tempo di ripartenza del livello, perché alcuni 
    audio personalizzati di morte impiegano piú secondi dell'animazione
- - [ ] BUG: a volte quando passo velocemente sopra un fantasma non muoio. 
+ - [X] BUG: a volte quando passo velocemente sopra un fantasma non muoio. 
    Forse perché sono nella fase scatter, da indagare e cercare di 
    riprodurre il bug
- - [ ] BUG: quando seleziono audio random, se poi esco dal menú e rientro 
+ - [X] BUG: quando seleziono audio random, se poi esco dal menú e rientro 
    il dado non è piú verde, ma in realtà è attivo.
+
 
 # popo
  - [SOLVED] BUG FOUND: in map size: even width mazes, the pacman spawn in the 42 logo, TODO: hardcode the positions to not spawn.

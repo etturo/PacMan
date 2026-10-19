@@ -1,3 +1,4 @@
+import math
 import pygame
 import random
 import json
@@ -741,6 +742,8 @@ class PlayingState(BaseState):
         if self.__ready_timer > 0:
             if not SoundLibrary.death_channel.get_busy():
                 self.__ready_timer -= dt
+                if self.__ready_timer <= 0:
+                    self.__timer.start()
             return
 
         if self.__mode_controller.update(dt):
@@ -763,6 +766,7 @@ class PlayingState(BaseState):
             self.__pacman.isAlive() and
             self.__settings.invincibility == False
         ):
+            self.__timer.reset()
             self._kill_pacman()
 
         if self.__chomp_timer > 0:
@@ -839,6 +843,7 @@ class PlayingState(BaseState):
         death_sound.playOn(SoundLibrary.death_channel)
         self.__pacman.die(death_sound.getLength())
         self.__chomp_timer = 0.0
+        self.__timer.pause()
 
     def _update_loop_sound(self) -> None:
         if (not self.__is_started or self.__ready_timer > 0
@@ -936,7 +941,7 @@ class PlayingState(BaseState):
         self.__maze_renderer.render(self.__surface)
 
     def _detect_collision(self) -> None:
-        pacman_cell = self.__pacman.getVisualCell()
+        pacman_pos = self.__pacman.getVisualPos()
 
         for entity in self.__entities:
             if entity == self.__pacman or not self.__pacman.isAlive():
@@ -949,8 +954,7 @@ class PlayingState(BaseState):
                 continue
 
             # target = pacman_pos if isinstance(entity, Ghost) else pacman_cell
-            target = pacman_cell
-            if entity.getVisualCell() == target:
+            if math.dist(entity.getVisualPos(), pacman_pos) < 0.5:
                 if isinstance(entity, Pacgum):
                     entity.die()
                     # SoundLibrary.get("chomp").play()
@@ -1300,7 +1304,7 @@ class SettingState(BaseState):
             active_sheet=SpriteLibrary['orange_green'],
             secondary_active_sheet=SpriteLibrary['white'],
             on_click=GameEvent.RANDOM_SOUND_SET,
-            initial_value=False,
+            initial_value=SoundLibrary.isRandomMode(),
             text="@",
             sprite_size=button_size,
             anchor='mid top',
