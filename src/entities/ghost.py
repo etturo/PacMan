@@ -56,6 +56,7 @@ class Ghost(Entity):
         frightened_sheet_2 = SpriteLibrary.get('green')
         point_sheet = SpriteLibrary.get('yellow')
         eyes_sheet = SpriteLibrary.get('eyes')
+        still_shit = SpriteLibrary.get('b&w')
 
         self.__sprite_animation_up = [
             scale(self.__sheet[SpriteType.GHOST_EYE_UP_1], size),
@@ -140,6 +141,10 @@ class Ghost(Entity):
         self.__eyes_animation_right = [
             scale(eyes_sheet[SpriteType.GHOST_EYE_RIGHT_1], size),
             scale(eyes_sheet[SpriteType.GHOST_EYE_RIGHT_2], size),
+        ]
+        self.__still_animation = [
+            scale(still_shit[SpriteType.GHOST_EYE_DOWN_1], size),
+            scale(still_shit[SpriteType.GHOST_EYE_DOWN_2], size),
         ]
 
         self.__animation_timer = 0.0
@@ -308,6 +313,12 @@ class Ghost(Entity):
                                 self.__death_animation_1600
                             )
                         ]
+
+        elif not self.isMoving():
+            self._surface = \
+                self.__still_animation[
+                    self.__frame_index % len(self.__still_animation)
+                    ]
 
         elif self.__mode in (GhostMode.CHASE, GhostMode.SCATTER):
             if self._current_direction == Direction.NORTH:

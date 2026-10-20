@@ -79,7 +79,11 @@ class SoundLibrary:
     def pick(cls) -> None:
         """Enable random mode and pick each sound independently."""
         cls.random_mode = True
-        sound_sets = list(cls.sounds.values())
+        sound_sets = [
+            sound_set
+            for set_name, sound_set in cls.sounds.items()
+            if set_name != "classic"
+        ]
         keys = next(iter(sound_sets)).getKeys()
         cls.current = {
             key: random.choice(sound_sets).getSound(key)

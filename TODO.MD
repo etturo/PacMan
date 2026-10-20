@@ -4,7 +4,7 @@
   massimo (no scatter, velocità al max, ecc.)
 - [ ] mettere audio di transizione come nel pacman originale tra un livello 
   e l'altro, con animazione di pacman che segue il fantasma
-- [ ] fantasmini grigi o bianchi quando ancora non sono attivi nella mappa
+- [X] fantasmini grigi o bianchi quando ancora non sono attivi nella mappa
 
 # FUTURE ARCHITECTURAL IMPROVEMENTS
  - [X] **Refactor Game Class to Instance-Based:** Replace the static `@classmethod` structure with an instantiable class to improve testability and allow clean state initialization/resets.
