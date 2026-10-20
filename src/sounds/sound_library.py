@@ -24,6 +24,7 @@ class SoundLibrary:
             "lmongili": SoundSet("lmongili"),
             "dmandric": SoundSet("dmandric"),
             "mcicconi": SoundSet("mcicconi"),
+            "lciardo": SoundSet("lciardo"),
         }
         cls.current_set_name = "classic"
         cls._use_set("classic")
