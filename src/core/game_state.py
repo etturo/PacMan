@@ -624,6 +624,7 @@ class PlayingState(BaseState):
         """Rebuild the maze, entities and timer for the next level."""
         if SoundLibrary.isRandomMode():
             SoundLibrary.pick()
+        SoundLibrary.get("pacman_intermission").play()
         self.__actual_level += 1
         self.__ghost_combo = 0
         self.__is_frightened = False
@@ -918,7 +919,7 @@ class PlayingState(BaseState):
 
         if self.__pacman.getLives() > 0:
             self.__pacman.respawn()
-        self.__ready_timer = 2.0
+        self.__ready_timer = 5.0
 
     def _render_maze(self) -> None:
         columns, rows = self.__actual_maze.getSize()
