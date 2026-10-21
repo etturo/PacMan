@@ -25,6 +25,10 @@ class SoundLibrary:
             "dmandric": SoundSet("dmandric"),
             "mcicconi": SoundSet("mcicconi"),
             "lciardo": SoundSet("lciardo"),
+            "mshahein": SoundSet("mshahein"),
+            "pipriolo": SoundSet("pipriolo"),
+            "fbertozz": SoundSet("fbertozz"),
+            "eturini": SoundSet("eturini"),
         }
         cls.current_set_name = "classic"
         cls._use_set("classic")
