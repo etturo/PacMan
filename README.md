@@ -13,7 +13,8 @@ The project also explores how a small game can be structured into independent
 systems: configuration parsing, game states, entities, maze generation,
 rendering, sound, and persistent scores. The interface deliberately combines
 the original arcade vocabulary with a CRT-inspired visual style, including
-optional glow, glitch, rolling, and CRT effects.
+glow, glitch, rolling, and CRT effects. These effects start enabled when the
+game is launched; the settings screen can toggle them while the game runs.
 
 ## Features
 
@@ -100,11 +101,17 @@ The supported structure and model defaults are:
 | `fps` | integer | `60` | Target update/render frequency |
 | `crt`, `glitch`, `glow`, `rolling` | boolean | `true` | Initial visual post-processing options |
 
-The checked-in configuration intentionally differs from some model defaults:
-it uses three levels (`15x15`, `15x15`, `28x36`), one starting life, and writes
-to `highscore.txt`. The configuration file is therefore the authoritative
-runtime choice for this checkout. `points_per_super_pacgum` must always be
-greater than `points_per_pacgum`.
+The checked-in [`config.json`](./config.json) is the authoritative runtime
+configuration for this checkout. It uses three levels (`15x15`, `5x5`,
+`7x7`), three starting lives, a 120-second level timer, and writes to
+`highscore.txt`. The parser also accepts the documented model defaults when a
+field is omitted. `points_per_super_pacgum` must always be greater than
+`points_per_pacgum`.
+
+The `pacgums` setting is retained in the configuration model but is not used
+to determine the number of collectibles. On mazes large enough for it,
+gameplay reserves a fixed central pattern of cells; the four corner cells
+receive super pac-gums.
 
 ## Highscore
 
@@ -121,10 +128,10 @@ modify installed assets:
 
 If no user score file exists, the bundled
 [`data/leadboard/scores.json`](./data/leadboard/scores.json) is used as the
-initial display. Scores made while a development cheat is active are not
-stored. This keeps the leaderboard comparable while still allowing cheats to
-be useful for testing and demonstrations. JSON was chosen because the
-leaderboard is small, human-readable, and does not require a database.
+initial display and copied to the user data path. Scores made while a
+development cheat is active are not stored: the game returns to the menu
+instead of opening the score-entry screen. JSON is used even when the
+configured filename has a `.txt` extension.
 
 ## Maze Generation
 
@@ -140,7 +147,8 @@ then copied into the internal row-major maze representation. Keeping this
 adapter separate means the rest of the game only depends on the project's
 maze interface and can use the same maze for rendering, collision checks, and
 ghost pathfinding. A fixed seed makes a run reproducible; changing `seed`
-changes the generated layouts.
+changes the generated layouts. The wrapper suppresses generator output and
+silently leaves the maze uninitialized if generation raises an exception.
 
 ## Implementation
 
@@ -162,8 +170,9 @@ Important implementation choices include:
   loading. UI elements derive from drawable/live element abstractions so
   buttons, text, score, lives, and timers share rendering conventions.
 - **Validation at the boundary:** JSON is parsed once into typed Pydantic
-  settings before the game starts, preventing invalid gameplay parameters from
-  spreading through the simulation.
+  settings before the game starts. The model validates lives, pac-gum points,
+  seed, level time, and the relationship between normal and super pac-gum
+  scores; level dimensions and FPS are not range-constrained by the model.
 - **Packaged resources:** `paths.resource_path` supports both normal source
   execution and PyInstaller's bundled resource directory.
 
@@ -205,7 +214,9 @@ The code is grouped by responsibility:
   and UI components.
 - [`src/sounds`](./src/sounds): sound loading and playback.
 - [`src/utils`](./src/utils): settings models, parsing, paths, and constants.
-- [`tests`](./tests): focused tests for UI behavior and gameplay state.
+- [`tests`](./tests): unit tests for UI helpers and gameplay state. These tests
+  are not currently all synchronized with the latest module names and method
+  signatures.
 
 ## Project Management
 
