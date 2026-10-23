@@ -29,23 +29,8 @@ jobs:
         uses: astral-sh/setup-uv@v5
       - name: Install project dependencies
         run: uv sync --frozen
-      - name: Build Linux executable
-        if: matrix.platform == 'linux'
-        run: >-
-          uv run pyinstaller --clean --noconsole --onefile
-          --name Pacman
-          --add-data "data:data"
-          --add-data "config.json:."
-          src/__main__.py
-      - name: Build Windows executable
-        if: matrix.platform == 'windows'
-        shell: pwsh
-        run: >-
-          uv run pyinstaller --clean --noconsole --onefile
-          --name Pacman
-          --add-data "data;data"
-          --add-data "config.json;."
-          src/__main__.py
+      - name: Build executable from the checked-in spec
+        run: uv run pyinstaller --clean Pacman.spec
       - name: Upload executable
         uses: actions/upload-artifact@v4
         with:

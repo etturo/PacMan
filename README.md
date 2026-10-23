@@ -75,6 +75,29 @@ Controls are shown in the in-game menu. In short, use the arrow keys or
 exit. The settings screen also exposes FPS, visual effects, lives, and
 development cheats.
 
+### Building a release package
+
+The root [`Pacman.spec`](./Pacman.spec) is the reproducible PyInstaller
+packaging definition. After installing dependencies, regenerate the executable
+with:
+
+```bash
+make build
+```
+
+The result is `dist/Pacman` on Linux and `dist/Pacman.exe` on Windows. The
+executable is a one-file package containing the source resources, sounds,
+sprites, maze-generator dependency, and default configuration. Do not copy
+the repository's `build/` directory as the release: upload the executable
+from `dist/` to the selected private or unlisted distribution page.
+
+Before publishing a build, launch the executable on the target operating
+system, open the main menu, verify the controls panel, start a game, open
+settings, and confirm that fullscreen, FPS, visual effects, lives, sound-set
+selection, and the development options respond correctly. The main menu
+contains the minimal player instructions, so no separate runtime dependency
+is required.
+
 ## Configuration
 
 The configuration file is JSON. `SettingParser` removes comments before
