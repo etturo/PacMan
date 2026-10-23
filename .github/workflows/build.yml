@@ -11,7 +11,7 @@ jobs:
       matrix:
         include:
           - platform: linux
-            os: ubuntu-20.04
+            os: ubuntu-22.04
             artifact_path: dist/Pacman
             artifact_name: Pacman-linux
           - platform: windows
