@@ -4,7 +4,6 @@ import pygame
 from src.sounds.sound_effects import SoundEffect
 from src.sounds.sound_set import SoundSet
 
-from src.utils.paths import resource_path
 
 class SoundLibrary:
     sounds: dict[str, SoundSet] = {}

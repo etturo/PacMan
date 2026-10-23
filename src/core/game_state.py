@@ -763,9 +763,10 @@ class PlayingState(BaseState):
 
         self.__time_remaining = self.getRemainingTime()
 
-        if (self.__time_remaining <= 0 and
+        if (
+            self.__time_remaining <= 0 and
             self.__pacman.isAlive() and
-            self.__settings.invincibility == False
+            not self.__settings.invincibility
         ):
             self.__timer.reset()
             self._kill_pacman()

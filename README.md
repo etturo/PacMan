@@ -115,9 +115,9 @@ list numerically and displays the ten highest entries.
 Scores are saved outside the repository so that playing the game does not
 modify installed assets:
 
-- Linux: `$XDG_DATA_HOME/BarkMan/<highscore_filename>`, or
-  `~/.local/share/BarkMan/<highscore_filename>` when `XDG_DATA_HOME` is unset.
-- Windows: `%LOCALAPPDATA%\BarkMan\<highscore_filename>`.
+- Linux: `$XDG_DATA_HOME/Pacman/<highscore_filename>`, or
+  `~/.local/share/Pacman/<highscore_filename>` when `XDG_DATA_HOME` is unset.
+- Windows: `%LOCALAPPDATA%\Pacman\<highscore_filename>`.
 
 If no user score file exists, the bundled
 [`data/leadboard/scores.json`](./data/leadboard/scores.json) is used as the

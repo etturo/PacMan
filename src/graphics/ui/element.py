@@ -256,14 +256,30 @@ class Leadboard(Element):
         leadboard: list[list[Any]] = []
         try:
             path = leaderboard_path()
+            path.parent.mkdir(parents=True, exist_ok=True)
             if not path.exists():
-                path = initial_leaderboard_path()
-            with open(path, "r") as f:
-                leadboard = cast(list[list[Any]], json.load(f))
+                init_path = initial_leaderboard_path()
+                if init_path.exists():
+                    with open(init_path, "r") as f:
+                        leadboard = cast(list[list[Any]], json.load(f))
+                else:
+                    leadboard = []
+                with open(path, "w") as f:
+                    json.dump(leadboard, f)
+            else:
+                with open(path, "r") as f:
+                    leadboard = cast(list[list[Any]], json.load(f))
         except (json.decoder.JSONDecodeError,
                 FileNotFoundError,
-                FileExistsError):
-            ...
+                FileExistsError
+                ):
+            leadboard = []
+            try:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                with open(path, "w") as f:
+                    json.dump(leadboard, f)
+            except Exception:
+                pass
 
         leadboard.sort(key=lambda x: int(x[1]), reverse=True)
 

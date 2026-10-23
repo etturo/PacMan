@@ -1,4 +1,4 @@
-from .button import Button, SlideIntButton, SlideStrButton, ToggleButton
+from .button import Button, SlideStrButton, ToggleButton
 from .drawable import Drawable
 from .element import (
     Box,

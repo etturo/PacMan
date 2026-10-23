@@ -27,7 +27,7 @@ def leaderboard_path() -> Path:
                 Path.home() / ".local" / "share"
                 )
             )
-    return data_root / "BarkMan" / highscore_filename
+    return data_root / "Pacman" / highscore_filename
 
 
 def initial_leaderboard_path() -> Path:
