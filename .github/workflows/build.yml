@@ -12,12 +12,12 @@ jobs:
         include:
           - platform: linux
             os: ubuntu-latest
-            artifact_path: dist/BarkMan
-            artifact_name: BarkMan-linux
+            artifact_path: dist/Pacman
+            artifact_name: Pacman-linux
           - platform: windows
             os: windows-latest
-            artifact_path: dist/BarkMan.exe
-            artifact_name: BarkMan-windows
+            artifact_path: dist/Pacman.exe
+            artifact_name: Pacman-windows
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
         if: matrix.platform == 'linux'
         run: >-
           uv run pyinstaller --clean --noconsole --onefile
-          --name BarkMan
+          --name Pacman
           --add-data "data:data"
           --add-data "config.json:."
           src/__main__.py
@@ -42,7 +42,7 @@ jobs:
         shell: pwsh
         run: >-
           uv run pyinstaller --clean --noconsole --onefile
-          --name BarkMan
+          --name Pacman
           --add-data "data;data"
           --add-data "config.json;."
           src/__main__.py
