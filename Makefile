@@ -1,4 +1,4 @@
-.PHONY: install run debug clean lint lint-strict build
+.PHONY: install run debug clean lint lint-strict build train
 
 ifeq ($(OS),Windows_NT)
 PYTHON = $(VENV)/Scripts/python.exe
@@ -20,6 +20,9 @@ run:
 
 debug:
 	$(PYTHON) -m pdb -m $(SRC) $(CONFIG_FILE)
+
+train:
+	$(PYTHON) -m $(SRC).ai.train $(CONFIG_FILE)
 
 build:
 	$(PYTHON) -m PyInstaller --clean Pacman.spec

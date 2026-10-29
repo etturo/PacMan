@@ -1,4 +1,5 @@
-*This project has been created as part of the 42 curriculum by aflorea, eturini.*
+*This project has been created as part of the 42 curriculum by eturini, 
+aflorea.*
 
 # Pacman
 
@@ -21,7 +22,7 @@ game is launched; the settings screen can toggle them while the game runs.
 - Start screen, menu, settings, pause, gameplay, victory, and game-over states.
 - Keyboard controls using the arrow keys or `W`, `A`, `S`, and `D`.
 - Multiple configurable levels and a deterministic maze seed.
-- Four ghost personalities inspired by the original Pac-Man behaviors:
+- Four ghost personalities inspired by the original Pac-Man behaviours:
   Blinky, Pinky, Inky, and Clyde.
 - Scatter/chase scheduling, frightened ghosts, ghost eating, lives, timers,
   and progressive scoring.

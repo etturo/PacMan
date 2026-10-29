@@ -7,6 +7,9 @@ from abc import ABC, abstractmethod
 
 from src import __version__, __authors__
 
+from src.ai.agent import QAgent
+from src.ai.context import PacmanContext
+
 from src.entities.pacman import Pacman
 from src.entities.entity import Entity
 from src.entities.pacgums import Pacgum, SuperPacgum
@@ -115,10 +118,23 @@ class MenuState(BaseState):
             sprite_size=button_size,
             secondary_sheet=SpriteLibrary['yellow']
         )
-        settings_button = Button(
+        ai_button = Button(
             position=(
                 screen_width / 2,
                 first_y_button + button_size * 2 + screen_height / 30
+                ),
+            sprite_sheet=SpriteLibrary['yellow'],
+            on_click=GameEvent.MODE_TO_AI_PLAYING,
+            on_click_sfx=SoundLibrary.get("button"),
+            text='ai play',
+            anchor='center',
+            sprite_size=button_size,
+            secondary_sheet=SpriteLibrary['yellow']
+        )
+        settings_button = Button(
+            position=(
+                screen_width / 2,
+                first_y_button + button_size * 4 + screen_height / 15
                 ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.MODE_TO_SETTINGS,
@@ -131,7 +147,7 @@ class MenuState(BaseState):
         exit_button = Button(
             position=(
                 screen_width / 2,
-                first_y_button + button_size * 4 + screen_height / 15
+                first_y_button + button_size * 6 + screen_height / 10
                 ),
             sprite_sheet=SpriteLibrary['yellow'],
             on_click=GameEvent.EXIT,
@@ -207,6 +223,7 @@ class MenuState(BaseState):
 
         self.__buttons = [
             start_button,
+            ai_button,
             settings_button,
             exit_button,
         ]
@@ -396,12 +413,14 @@ class StartingState(BaseState):
 
 
 class PlayingState(BaseState):
-    def __init__(self, settings: GameSettings) -> None:
+    def __init__(self, settings: GameSettings,
+                 agent: QAgent | None = None) -> None:
         self.__maze_renderer = MazeRender()
         self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
         self.__settings = settings
+        self.__agent = agent
         self.__points: int = 0
         self.__final_points: int = 0
         self.__ghost_combo = 0
@@ -572,6 +591,19 @@ class PlayingState(BaseState):
     def getRemainingTime(self) -> float:
         return self.__timer.getRemainingTime()
 
+    def getPacmanContext(self) -> PacmanContext:
+        """Snapshot of the world as the AI player gets to see it."""
+        return PacmanContext(
+            maze=self.__actual_maze,
+            pacman_pos=self.__pacman.getCurrentCell(),
+            ghosts=[(ghost.getVisualCell(), ghost.getMode())
+                    for ghost in self.__ghosts if ghost.isReleased()],
+            food={entity.getCurrentCell() for entity in self.__entities
+                  if isinstance(entity, Pacgum | SuperPacgum)
+                  and entity.isAlive()},
+            points=self.__points,
+            )
+
     def _update_ghost_mode(
         self,
         ghosts: list[Ghost],
@@ -737,6 +769,10 @@ class PlayingState(BaseState):
 
         self._update_loop_sound()
 
+        if self.__agent is not None and not self.__is_started:
+            self.__is_started = True
+            self.__timer.start()
+
         if not self.__is_started:
             return
 
@@ -780,6 +816,11 @@ class PlayingState(BaseState):
         if self.__pacman.getLives() <= 0:
             GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
         self._detect_collision()
+
+        if (self.__agent is not None and self.__pacman.isAlive()
+                and not self.__pacman.isMoving()):
+            self.__pacman.setQueueDirection(
+                self.__agent.getAction(self.getPacmanContext()))
 
         for entity in self.__entities[:]:
             if not entity.isAlive() and not isinstance(entity, Pacman | Ghost):

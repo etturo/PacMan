@@ -53,6 +53,8 @@ class GameEvent(IntEnum):
     NEXT_SOUND_SET = pygame.USEREVENT + 24
     PREV_SOUND_SET = pygame.USEREVENT + 25
 
+    MODE_TO_AI_PLAYING = pygame.USEREVENT + 26
+
     @staticmethod
     def post(mode: 'GameEvent') -> None:
         pygame.event.post(pygame.event.Event(mode))

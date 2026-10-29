@@ -4,6 +4,8 @@ from argparse import ArgumentParser
 
 import pygame
 
+from src.ai.agent import QAgent
+
 from src.core.game_state import (
     BaseState,
     StartingState,
@@ -46,6 +48,7 @@ class Game:
         self.__is_running: bool = True
         self.__clock = pygame.time.Clock()
         self.__actual_level: int = 0
+        self.__is_ai_playing: bool = False
         self.__game_settings: GameSettings
         self.__active_state: BaseState = StartingState()
 
@@ -114,7 +117,14 @@ class Game:
                 self.__active_state = self.__freeze_state
 
             elif event.type == GameEvent.MODE_TO_PLAYING:
+                self.__is_ai_playing = False
                 self.__active_state = PlayingState(self.__game_settings)
+
+            elif event.type == GameEvent.MODE_TO_AI_PLAYING:
+                self.__is_ai_playing = True
+                agent = QAgent.load(
+                    str(paths.resource_path('data/ai/weights.json')))
+                self.__active_state = PlayingState(self.__game_settings, agent)
 
             elif event.type == GameEvent.MODE_TO_SETTINGS:
                 self.__active_state = SettingState(self.__game_settings)
@@ -125,7 +135,8 @@ class Game:
                 if (
                     self.__game_settings.ghost_freezed |
                     self.__game_settings.double_speeded |
-                    self.__game_settings.invincibility
+                    self.__game_settings.invincibility |
+                    self.__is_ai_playing
                 ):
                     self.__active_state = MenuState()
                 else:
@@ -137,7 +148,8 @@ class Game:
                 if (
                     self.__game_settings.ghost_freezed |
                     self.__game_settings.double_speeded |
-                    self.__game_settings.invincibility
+                    self.__game_settings.invincibility |
+                    self.__is_ai_playing
                 ):
                     self.__active_state = MenuState()
                 else:
