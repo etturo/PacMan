@@ -1,3 +1,5 @@
+"""Define the   init   module."""
+
 from .cell import Cell, Direction, InvalidCellOperation
 from .maze import Maze
 from .maze_wrapper import MazeWrapper

@@ -1,3 +1,5 @@
+"""Define the   init   module."""
+
 from .entity import Entity
 from .ghost import Ghost
 from .ghost_movement import (

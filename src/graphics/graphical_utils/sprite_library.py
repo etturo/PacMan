@@ -1,3 +1,5 @@
+"""Define the sprite library module."""
+
 from typing import Optional, cast
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
@@ -5,7 +7,10 @@ from src.utils.paths import resource_path
 
 
 class SpriteLibraryMeta(type):
+    """Represent the SpriteLibraryMeta component."""
+
     def __getitem__(cls, key: str) -> SpriteSheet:
+        """Implement the __getitem__ operation."""
         sprites = cast(
             dict[str, SpriteSheet],
             getattr(cls, 'sprites', {})
@@ -20,12 +25,15 @@ class SpriteLibraryMeta(type):
 
 
 class SpriteLibrary(metaclass=SpriteLibraryMeta):
+    """Represent the SpriteLibrary component."""
+
     sprites: dict[str, SpriteSheet] = {}
     __original_keys: list[str] = []
     __default_sprite: Optional[SpriteSheet] = None
 
     @classmethod
     def load(cls) -> None:
+        """Perform the load operation."""
         cls.sprites = {
             "azure": SpriteSheet(
                 str(resource_path(
@@ -85,6 +93,7 @@ class SpriteLibrary(metaclass=SpriteLibraryMeta):
 
     @classmethod
     def get(cls, key: str) -> SpriteSheet:
+        """Perform the get operation."""
         if key in cls.sprites:
             return cls.sprites[key]
         if cls.__default_sprite is not None:
@@ -93,10 +102,12 @@ class SpriteLibrary(metaclass=SpriteLibraryMeta):
 
     @classmethod
     def add_item(cls, new_item: str, sheet_to_link: str) -> None:
+        """Perform the add_item operation."""
         if sheet_to_link in cls.sprites:
             cls.sprites[new_item] = cls.sprites[sheet_to_link]
 
     @classmethod
     def delete_item(cls, item_to_delete: str) -> None:
+        """Perform the delete_item operation."""
         if item_to_delete not in cls.__original_keys:
             cls.sprites.pop(item_to_delete, None)

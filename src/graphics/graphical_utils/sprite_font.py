@@ -1,3 +1,5 @@
+"""Define the sprite font module."""
+
 import pygame
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
@@ -8,7 +10,10 @@ from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 
 
 class SpriteFont:
+    """Represent the SpriteFont component."""
+
     def __init__(self, sheet: SpriteSheet, size: float = 16) -> None:
+        """Initialize the component."""
         self.__size = size
         self.__sheet = sheet
         self.__characters: dict[SpriteType, pygame.Surface] = {}
@@ -119,7 +124,7 @@ class SpriteFont:
                position: tuple[float, float],
                text: str
                ) -> None:
-
+        """Perform the render operation."""
         pos_x, pos_y = position
 
         initial_x = pos_x
@@ -140,9 +145,11 @@ class SpriteFont:
                 current_y += self.__size
 
     def getSize(self) -> float:
+        """Perform the getSize operation."""
         return self.__size
 
     def setSize(self, new_size: float) -> None:
+        """Perform the setSize operation."""
         if new_size <= 0:
             new_size = 8
         self.__size = new_size

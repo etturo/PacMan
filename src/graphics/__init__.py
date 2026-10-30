@@ -1,3 +1,5 @@
+"""Define the   init   module."""
+
 from .maze_render import MazeRender
 from .screen_manager import ScreenManager
 from .graphical_utils.sprite_font import SpriteFont

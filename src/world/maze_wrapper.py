@@ -1,3 +1,5 @@
+"""Define the maze wrapper module."""
+
 import sys
 import os
 
@@ -12,8 +14,11 @@ from src.world.maze import Maze
 
 
 def suppress_prints(func: Callable[..., Any]) -> Callable[..., Any]:
+    """Suppress output written while calling the wrapped function."""
+
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
+        """Perform the wrapper operation."""
         if sys.stdout is None or sys.stderr is None:
             return func(*args, **kwargs)
 
@@ -45,13 +50,17 @@ def suppress_prints(func: Callable[..., Any]) -> Callable[..., Any]:
 
 
 class MazeWrapper:
+    """Represent the MazeWrapper component."""
+
     def __init__(self) -> None:
+        """Initialize the component."""
         self.__generator: MazeGenerator
         self.__maze_list: list[list[int]] = list()
         self.__maze: Maze
 
     @suppress_prints
     def generate(self, size: tuple[int, int], seed: int) -> None:
+        """Perform the generate operation."""
         self._size: tuple[int, int] = size
         self._seed: int = seed
 
@@ -75,6 +84,7 @@ class MazeWrapper:
             pygame.quit()
 
     def __str__(self) -> str:
+        """Implement the __str__ operation."""
         output: str = '\n'
 
         for row in self.__maze:
@@ -86,9 +96,11 @@ class MazeWrapper:
 
     @property
     def maze(self) -> Maze:
+        """Perform the maze operation."""
         return self.__maze
 
     def __load_maze(self) -> None:
+        """Perform the __load_maze operation."""
         self.__maze = Maze(self._size, self._seed)
 
         for y, row in enumerate(self.__maze_list):

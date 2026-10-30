@@ -1,3 +1,5 @@
+"""Define the context module."""
+
 from dataclasses import dataclass
 
 from src.entities.ghost_movement import GhostMode
@@ -16,6 +18,7 @@ class PacmanContext:
     pacman_speed in cells per second
     ghost_speed is the speed of the dangerous ghosts, cells per second.
     """
+
     maze: Maze
     pacman_pos: tuple[int, int]
     ghosts: list[tuple[tuple[int, int], GhostMode]]

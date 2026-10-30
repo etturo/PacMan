@@ -1,3 +1,5 @@
+"""Define the game module."""
+
 import sys
 import os
 
@@ -32,8 +34,11 @@ from src.utils import paths
 
 
 class Game:
+    """Represent the Game component."""
+
     def __init__(self, config_file: str | None = None) -> None:
         # INIT
+        """Initialize the component."""
         self._init_audio()
         SoundLibrary.load()
         self.__screen_manager: ScreenManager = ScreenManager()
@@ -65,6 +70,7 @@ class Game:
         self.__mazegen: MazeWrapper = MazeWrapper()
 
     def run(self) -> None:
+        """Perform the run operation."""
         try:
             while self.__is_running:
                 self.__dt = self.__clock.tick(
@@ -80,6 +86,7 @@ class Game:
             pygame.quit()
 
     def _render(self, dt: float) -> None:
+        """Perform the _render operation."""
         self.__screen_manager.render(
             surface=self.__active_state.getSurface(dt),
             crt=self.__game_settings.crt,
@@ -89,6 +96,7 @@ class Game:
         )
 
     def _catch_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the _catch_events operation."""
         for event in events:
             # Quit program conditions
             if (event.type == pygame.QUIT or
@@ -211,6 +219,7 @@ class Game:
                 SoundLibrary.prevSet()
 
     def _load_config_file(self, config_file: str | None = None) -> None:
+        """Perform the _load_config_file operation."""
         arg_parser = ArgumentParser(
             prog="PacMan",
             description="Clone of the legendary retro game."
@@ -230,6 +239,7 @@ class Game:
 
     @staticmethod
     def _init_audio() -> None:
+        """Perform the _init_audio operation."""
         try:
             pygame.mixer.init()
         except pygame.error:

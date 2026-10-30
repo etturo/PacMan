@@ -1,3 +1,5 @@
+"""Define the   init   module."""
+
 from .sound_effects import SoundEffect
 from .sound_library import SoundLibrary
 

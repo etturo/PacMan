@@ -1,3 +1,5 @@
+"""Define the button module."""
+
 import pygame
 
 from collections.abc import Iterable
@@ -15,6 +17,8 @@ from src.utils.settings import GameEvent
 
 
 class Button(Drawable):
+    """Represent the Button component."""
+
     def __init__(self,
                  position: tuple[float, float],
                  sprite_sheet: SpriteSheet,
@@ -25,6 +29,7 @@ class Button(Drawable):
                  anchor: str = "center",
                  secondary_sheet: None | SpriteSheet = None,
                  ) -> None:
+        """Initialize the component."""
         super().__init__(position, sprite_sheet, anchor)
         self._text: str = text.upper()
         self._on_click: GameEvent = on_click
@@ -48,6 +53,7 @@ class Button(Drawable):
         self._primary_surface: pygame.Surface = self._surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for event in events:
             if event.type == pygame.MOUSEMOTION:
                 self._rect = self._get_rect()
@@ -72,6 +78,7 @@ class Button(Drawable):
         self._is_hovered = hovered
 
     def _create_textbox(self) -> None:
+        """Perform the _create_textbox operation."""
         text_size = self._sprite_size
         box_sprite_size = text_size / 2
 
@@ -178,6 +185,7 @@ class Button(Drawable):
     def _calculate_text_render_size(text: str,
                                     sprite_size: float
                                     ) -> tuple[float, float]:
+        """Perform the _calculate_text_render_size operation."""
         if not text:
             return (0, 0)
 
@@ -197,6 +205,8 @@ class Button(Drawable):
 
 
 class ToggleButton(Button):
+    """Represent the ToggleButton component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -212,7 +222,7 @@ class ToggleButton(Button):
         secondary_active_sheet: None | SpriteSheet = None,
         print_bool: bool = True,
     ) -> None:
-
+        """Initialize the component."""
         self.__toggled: bool = initial_value
         self.__title_text = text
         self.__print_bool = print_bool
@@ -261,6 +271,7 @@ class ToggleButton(Button):
             self._surface = self._primary_surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for event in events:
             if event.type == pygame.MOUSEMOTION:
                 self._rect = self._get_rect()
@@ -301,6 +312,8 @@ class ToggleButton(Button):
 
 
 class SlideIntButton(Button):
+    """Represent the SlideIntButton component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -317,6 +330,7 @@ class SlideIntButton(Button):
         anchor: str = "center",
         secondary_sheet: None | SpriteSheet = None,
     ) -> None:
+        """Initialize the component."""
         super(Button, self).__init__(position, sprite_sheet, anchor)
         self._text: str = f"{text}\n\n"
         self.__increment_on_click: GameEvent = increment_on_click
@@ -384,6 +398,7 @@ class SlideIntButton(Button):
         )
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for event in events:
             if event.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN):
                 self._rect = self._get_rect()
@@ -428,6 +443,8 @@ class SlideIntButton(Button):
 
 
 class SlideStrButton(Button):
+    """Represent the SlideStrButton component."""
+
     _max_value_length = 10
 
     def __init__(
@@ -444,6 +461,7 @@ class SlideStrButton(Button):
         anchor: str = "center",
         secondary_sheet: None | SpriteSheet = None,
     ) -> None:
+        """Initialize the component."""
         self.__values = list(values)
         if not self.__values:
             raise ValueError("SlideStrButton requires at least one value")
@@ -509,6 +527,7 @@ class SlideStrButton(Button):
         )
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for event in events:
             if event.type in (pygame.MOUSEMOTION, pygame.MOUSEBUTTONDOWN):
                 self._rect = self._get_rect()
@@ -552,4 +571,5 @@ class SlideStrButton(Button):
             self.__value_count.render(self._surface)
 
     def __get_display_value(self) -> str:
+        """Perform the __get_display_value operation."""
         return self.__values[self.__value_index][:self._max_value_length]

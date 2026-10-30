@@ -1,3 +1,5 @@
+"""Define the sprite sheet module."""
+
 import pygame
 
 from src.utils.settings import Settings
@@ -18,7 +20,7 @@ class SpriteSheet:
             self,
             filename: str,
             ) -> None:
-
+        """Initialize the component."""
         self.__sheet = pygame.image.load(filename).convert()
         self.__sheet.set_colorkey((0, 0, 0))
 
@@ -49,6 +51,7 @@ class SpriteSheet:
             self,
             sprite: SpriteType,
             ) -> pygame.Surface:
+        """Implement the __getitem__ operation."""
         try:
             return_value = self.__data[sprite]
         except KeyError:
@@ -62,6 +65,7 @@ class SpriteSheet:
             row: int,
             column: int,
             ) -> pygame.Surface:
+        """Perform the getSprite operation."""
         return self.__sprite_table[sprite_size][row][column]
 
     def _load_grid(
@@ -70,7 +74,7 @@ class SpriteSheet:
             bottom_right: tuple[int, int],
             sprite_size: int,
             ) -> dict[int, dict[int, pygame.Surface]]:
-
+        """Perform the _load_grid operation."""
         rows: dict[int, dict[int, pygame.Surface]] = {}
         row_number = 1
 
@@ -101,9 +105,11 @@ class SpriteSheet:
 
     @staticmethod
     def _scale_surface(surface: pygame.Surface) -> pygame.Surface:
+        """Perform the _scale_surface operation."""
         return pygame.transform.scale_by(surface, Settings.DEFAULT_SCALE)
 
     def _load_skins(self) -> None:
+        """Perform the _load_skins operation."""
         self.__data[SpriteType.EMPTY_WALL] = self.combineSprite2x2(
             self.getSprite(8, 8, 3),
             self.getSprite(8, 8, 3),
@@ -280,7 +286,7 @@ class SpriteSheet:
             bottom_left: pygame.Surface,
             bottom_right: pygame.Surface,
             ) -> pygame.Surface:
-
+        """Perform the combineSprite2x2 operation."""
         single_width = top_left.get_width()
         single_height = top_left.get_height()
 
@@ -303,10 +309,11 @@ class SpriteSheet:
             column: int,
             degree: int
             ) -> pygame.Surface:
-
+        """Perform the getRotatedSprite operation."""
         base_surface = self.getSprite(sprite_size, row, column)
         return pygame.transform.rotate(base_surface, degree)
 
     @staticmethod
     def scaleSprite(sprite: pygame.Surface, size: float) -> pygame.Surface:
+        """Perform the scaleSprite operation."""
         return pygame.transform.scale(sprite, (size, size))

@@ -1,9 +1,14 @@
+"""Define the sound set module."""
+
 from src.sounds.sound_effects import SoundEffect
 from src.utils.paths import resource_path
 
 
 class SoundSet:
+    """Represent the SoundSet component."""
+
     def __init__(self, owner: str) -> None:
+        """Initialize the component."""
         self.__owner_name: str = owner
 
         self.__sounds: dict[str, SoundEffect] = {
@@ -87,10 +92,13 @@ class SoundSet:
         }
 
     def getSound(self, sound_name: str) -> SoundEffect:
+        """Perform the getSound operation."""
         return self.__sounds[sound_name]
 
     def getLen(self) -> int:
+        """Perform the getLen operation."""
         return len(self.__sounds)
 
     def getKeys(self) -> list[str]:
+        """Perform the getKeys operation."""
         return list(self.__sounds.keys())

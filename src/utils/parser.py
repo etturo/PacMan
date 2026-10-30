@@ -1,3 +1,5 @@
+"""Define the parser module."""
+
 from pathlib import Path
 import json
 import re
@@ -8,11 +10,15 @@ from src.utils.models import GameSettings, ParsingError
 
 
 class SettingParser:
+    """Represent the SettingParser component."""
+
     def __init__(self) -> None:
+        """Initialize the component."""
         self.__parsed_settings: GameSettings | None = None
 
     @staticmethod
     def _clean_text(text: str) -> str:
+        """Perform the _clean_text operation."""
         pattern = re.compile(
             r'("(?:\\.|[^"\\])*")|(/\*.*?\*/|//[^\n]*|#[^\n]*)',
             re.DOTALL,
@@ -20,6 +26,7 @@ class SettingParser:
         return pattern.sub(lambda m: m.group(1) if m.group(1) else "", text)
 
     def parse(self, file_path: str) -> GameSettings:
+        """Perform the parse operation."""
         path = Path(file_path)
 
         try:

@@ -1,3 +1,5 @@
+"""Define the pacgums module."""
+
 import pygame
 
 from src.entities.entity import Entity
@@ -8,12 +10,15 @@ from src.graphics.graphical_utils.ui_utils import SpriteType
 
 
 class Pacgum(Entity):
+    """Represent the Pacgum component."""
+
     def __init__(
             self,
             pos: tuple[int, int],
             size: float,
             points: int
     ) -> None:
+        """Initialize the component."""
         super().__init__(
             pos,
             size,
@@ -27,12 +32,15 @@ class Pacgum(Entity):
 
 
 class SuperPacgum(Entity):
+    """Represent the SuperPacgum component."""
+
     def __init__(
         self,
         pos: tuple[int, int],
         size: float,
         points: int
     ) -> None:
+        """Initialize the component."""
         super().__init__(
             pos,
             size,
@@ -51,6 +59,7 @@ class SuperPacgum(Entity):
         self.__frame_index = 0
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         super().update(dt)
 
         self.__animation_timer += dt
@@ -65,5 +74,6 @@ class SuperPacgum(Entity):
             screen_pos: tuple[float, float],
             dt: float,
             ) -> None:
+        """Perform the render operation."""
         self._surface = self.__animation[self.__frame_index]
         super().render(screen, screen_pos, dt)

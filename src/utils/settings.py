@@ -1,9 +1,13 @@
+"""Define the settings module."""
+
 import pygame
 
 from enum import IntEnum
 
 
 class Settings:
+    """Represent the Settings component."""
+
     DEFAULT_SCALE = 2.0
 
     # VIRTUAL_WINDOW_WIDTH = 640
@@ -22,6 +26,8 @@ class Settings:
 
 
 class GameEvent(IntEnum):
+    """Represent the GameEvent component."""
+
     MODE_TO_STARTING = pygame.USEREVENT + 1
     MODE_TO_MENU = pygame.USEREVENT + 2
     MODE_TO_PLAYING = pygame.USEREVENT + 3
@@ -61,4 +67,5 @@ class GameEvent(IntEnum):
 
     @staticmethod
     def post(mode: 'GameEvent') -> None:
+        """Perform the post operation."""
         pygame.event.post(pygame.event.Event(mode))

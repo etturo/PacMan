@@ -1,3 +1,5 @@
+"""Define the ghost module."""
+
 import pygame
 
 from typing import Callable
@@ -20,6 +22,8 @@ __all__ = ['Ghost', 'GhostMode']
 
 
 class Ghost(Entity):
+    """Represent the Ghost component."""
+
     def __init__(
         self,
         init_pos: tuple[int, int],
@@ -42,7 +46,7 @@ class Ghost(Entity):
         fright_speed: float = 2.0,
         fright_time: float = 6.0,
     ) -> None:
-
+        """Initialize the component."""
         super().__init__(init_pos, size, speed)
         self.__initial_speed = speed
         self.__fright_speed = fright_speed
@@ -160,13 +164,16 @@ class Ghost(Entity):
         self._surface = self.__frightened_animation[0]
 
     def getMode(self) -> GhostMode:
+        """Perform the getMode operation."""
         return self.__mode
 
     def getScatterCorner(self) -> tuple[int, int]:
         # Every ghost spawns in its own scatter corner
+        """Perform the getScatterCorner operation."""
         return self._initial_cell
 
     def isReleased(self) -> bool:
+        """Perform the isReleased operation."""
         return self.__release_timer >= self.__release_delay
 
     def resetPosition(self) -> None:
@@ -179,6 +186,7 @@ class Ghost(Entity):
     def setMode(self, new_mode: GhostMode) -> None:
         # Eating another super pacgum restarts the countdown, and so
         # does leaving FRIGHTENED.
+        """Perform the setMode operation."""
         self.__frightened_timer = 0.0
 
         if new_mode == GhostMode.FRIGHTENED:
@@ -224,6 +232,7 @@ class Ghost(Entity):
     def die(self, current_points: int = 200) -> None:
         # Based on the streak of ghost eaten the count of points
         # increases exponentially
+        """Perform the die operation."""
         if current_points in [400, 800, 1600]:
             self.__current_points = current_points
         else:
@@ -241,6 +250,7 @@ class Ghost(Entity):
         self._speed = self.__initial_speed * 2
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         super().update(dt)
         self.__release_timer += dt
 
@@ -265,17 +275,21 @@ class Ghost(Entity):
             self.__frame_index += 1
 
     def reverseDirection(self) -> None:
-        """Forced U inversion; used when ghosts change mode.
-        It is necessary since no entity can ever make an inversion."""
+        """Reverse direction when ghosts change mode.
 
+        It is necessary since no entity can ever make an inversion.
+        """
         if self.__mode == GhostMode.EATEN:
             return
         self._current_direction = self._current_direction.opposite()
         self._queued_direction = Direction.STILL
 
     def isFrightenedOver(self) -> bool:
-        """True on the frames between the end of the blue window and
-        the mode the controller hands back through setMode()."""
+        """Determine whether the frightened period has ended.
+
+        This is true on the frames between the end of the blue window and
+        the mode the controller hands back through setMode().
+        """
         return (self.__mode == GhostMode.FRIGHTENED
                 and self.__frightened_timer >= self.__time_frightened)
 
@@ -294,7 +308,7 @@ class Ghost(Entity):
                screen_pos: tuple[float, float],
                dt: float,
                ) -> None:
-
+        """Perform the render operation."""
         if not self._is_alive:
             match self.__current_points:
                 case 200:

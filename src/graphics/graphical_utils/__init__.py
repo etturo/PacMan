@@ -1,3 +1,5 @@
+"""Define the   init   module."""
+
 from .sprite_font import SpriteFont
 from .sprite_library import SpriteLibrary
 from .sprite_sheet import SpriteSheet

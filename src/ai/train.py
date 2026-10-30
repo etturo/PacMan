@@ -1,3 +1,5 @@
+"""Define the train module."""
+
 import os
 import sys
 
@@ -22,6 +24,7 @@ END_EVENTS = (
 
 
 def _init_headless() -> None:
+    """Perform the _init_headless operation."""
     os.environ["SDL_VIDEODRIVER"] = "dummy"
     os.environ["SDL_AUDIODRIVER"] = "dummy"
     pygame.init()
@@ -35,6 +38,7 @@ def _init_headless() -> None:
 
 
 def _play_episode(settings: GameSettings, agent: QAgent) -> int:
+    """Perform the _play_episode operation."""
     state = PlayingState(settings, agent)
     while True:
         state.update(DT)

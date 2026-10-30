@@ -1,3 +1,5 @@
+"""Define the screen manager module."""
+
 import random
 
 import pygame
@@ -7,7 +9,10 @@ from src.utils.settings import Settings
 
 
 class ScreenManager:
+    """Represent the ScreenManager component."""
+
     def __init__(self) -> None:
+        """Initialize the component."""
         pygame.init()
 
         self.__virtual_screen_width = Settings.VIRTUAL_WINDOW_WIDTH
@@ -30,6 +35,7 @@ class ScreenManager:
         SpriteLibrary.add_item('eyes', 'black')
 
     def _apply_crt_overlay(self) -> pygame.Surface:
+        """Perform the _apply_crt_overlay operation."""
         overlay = pygame.Surface(
             (self.__virtual_screen_width, self.__virtual_screen_height),
             pygame.SRCALPHA
@@ -46,6 +52,7 @@ class ScreenManager:
         return overlay
 
     def _apply_glow(self) -> None:
+        """Perform the _apply_glow operation."""
         glow_surf = pygame.transform.smoothscale(
             self.__screen,
             (self.__virtual_screen_width // 2,
@@ -60,6 +67,7 @@ class ScreenManager:
         self.__screen.blit(glow_surf, (0, 0))
 
     def _add_glitch_effect(self) -> None:
+        """Perform the _add_glitch_effect operation."""
         intensity = "minimum"
         shift_amount = {
             "minimum": 10,
@@ -87,6 +95,7 @@ class ScreenManager:
         glitch_surface: pygame.Surface,
         intensity: str
     ) -> None:
+        """Perform the _add_color_separation operation."""
         color_shift = {
             "minimum": 2,
             "medium": 6,
@@ -108,6 +117,7 @@ class ScreenManager:
                     )
 
     def _add_rolling_static(self) -> None:
+        """Perform the _add_rolling_static operation."""
         intensity = "minimum"
         static_chance = {
             "minimum": 0.0001,
@@ -135,6 +145,7 @@ class ScreenManager:
             )
 
     def getScreen(self) -> pygame.Surface:
+        """Perform the getScreen operation."""
         return self.__screen
 
     def render(
@@ -145,6 +156,7 @@ class ScreenManager:
             glitch: bool = True,
             rolling: bool = True,
     ) -> None:
+        """Perform the render operation."""
         self.__screen.fill((0, 0, 0))
         self.__screen.blit(surface, (0, 0))
 

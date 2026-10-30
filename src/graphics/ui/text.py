@@ -1,3 +1,5 @@
+"""Define the text module."""
+
 import pygame
 
 from src.graphics.graphical_utils.sprite_font import SpriteFont
@@ -7,6 +9,8 @@ from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 
 
 class Text(Drawable):
+    """Represent the Text component."""
+
     def __init__(
             self,
             text: str,
@@ -15,6 +19,7 @@ class Text(Drawable):
             text_size: float,
             anchor: str = "center",
             ) -> None:
+        """Initialize the component."""
         super().__init__(position, sprite_sheet, anchor)
 
         self.__text = text.upper()
@@ -37,9 +42,11 @@ class Text(Drawable):
         self.__font.render(self._surface, (0, 0), self.__text)
 
     def getSize(self) -> tuple[float, float]:
+        """Perform the getSize operation."""
         return (self.__width, self.__height)
 
     def setText(self, text: str) -> None:
+        """Perform the setText operation."""
         self.__text = text
         self._surface.fill((0, 0, 0))
         self.__font.render(self._surface, (0, 0), self.__text)

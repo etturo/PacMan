@@ -1,3 +1,5 @@
+"""Define the element module."""
+
 import pygame
 import json
 from typing import cast, Any
@@ -14,6 +16,8 @@ from src.graphics.ui.text import Text
 
 
 class Element(Drawable):
+    """Represent the Element component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -22,6 +26,7 @@ class Element(Drawable):
         size: float,
         anchor: str = "topleft"
     ):
+        """Initialize the component."""
         super().__init__(position, sprite_sheet, anchor)
 
         self._surface = pygame.Surface((size, size))
@@ -33,6 +38,8 @@ class Element(Drawable):
 
 
 class LiveElement(Element, ABC):
+    """Represent the LiveElement component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -41,6 +48,7 @@ class LiveElement(Element, ABC):
         size: float,
         anchor: str = "topleft"
     ):
+        """Initialize the component."""
         super().__init__(
             position,
             sprite_sheet,
@@ -51,13 +59,17 @@ class LiveElement(Element, ABC):
 
     @abstractmethod
     def update(self, value: Any) -> None:
+        """Perform the update operation."""
         pass
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         pass
 
 
 class Lives(LiveElement):
+    """Represent the Lives component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -66,6 +78,7 @@ class Lives(LiveElement):
         size: float,
         initial_lives: int = 3
     ):
+        """Initialize the component."""
         super().__init__(position, sprite_sheet, sprite_type, size)
         self.__lives = -1
         self.__size = size
@@ -78,6 +91,7 @@ class Lives(LiveElement):
             )
 
     def update(self, value: int = 0) -> None:
+        """Perform the update operation."""
         if self.__lives == value:
             return
 
@@ -103,10 +117,13 @@ class Lives(LiveElement):
                 self._surface.blit(self.__sprite, (i * self.__size, 0))
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         return
 
 
 class Points(LiveElement):
+    """Represent the Points component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -114,6 +131,7 @@ class Points(LiveElement):
         size: float,
         initial_points: int = 3
     ):
+        """Initialize the component."""
         super().__init__(
             position,
             sprite_sheet,
@@ -136,6 +154,7 @@ class Points(LiveElement):
         self._surface = pygame.Surface(self.__text.getSize(), pygame.SRCALPHA)
 
     def update(self, value: int = 0) -> None:
+        """Perform the update operation."""
         self.__points = value
         self._surface.fill((0, 0, 0, 0))
 
@@ -152,10 +171,13 @@ class Points(LiveElement):
         self.__text.render(self._surface)
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         return
 
 
 class TextInput(LiveElement):
+    """Represent the TextInput component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -163,6 +185,7 @@ class TextInput(LiveElement):
         size: float,
         max_length: int = 10
     ):
+        """Initialize the component."""
         super().__init__(
             position,
             sprite_sheet,
@@ -182,6 +205,7 @@ class TextInput(LiveElement):
         self.__is_finished = False
 
     def _render_text(self) -> None:
+        """Perform the _render_text operation."""
         self._surface.fill((0, 0, 0, 0))
         display_text = self.__text_buffer if self.__text_buffer else " "
 
@@ -199,6 +223,7 @@ class TextInput(LiveElement):
         text_element.render(self._surface)
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for event in events:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_BACKSPACE:
@@ -216,16 +241,21 @@ class TextInput(LiveElement):
                         self.__is_finished = True
 
     def get_text(self) -> str:
+        """Perform the get_text operation."""
         return self.__text_buffer
 
     def isFinished(self) -> bool:
+        """Perform the isFinished operation."""
         return self.__is_finished
 
     def update(self, value: int = 0) -> None:
+        """Perform the update operation."""
         return
 
 
 class Leadboard(Element):
+    """Represent the Leadboard component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -236,6 +266,7 @@ class Leadboard(Element):
         size: float,
         anchor: str = "topleft"
     ):
+        """Initialize the component."""
         super().__init__(position, sprite_sheet, sprite_type, size, anchor)
         self.__font: SpriteFont = SpriteFont(sprite_sheet, size)
         self.__offset = 5
@@ -297,6 +328,7 @@ class Leadboard(Element):
             text.render(self._surface)
 
     def _create_textbox(self) -> None:
+        """Perform the _create_textbox operation."""
         text_size = self.__sprite_size
         box_sprite_size = text_size / 2
 
@@ -370,6 +402,8 @@ class Leadboard(Element):
 
 
 class Box(Element):
+    """Represent the Box component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -381,6 +415,7 @@ class Box(Element):
         title: str = "",
         anchor: str = "topleft",
     ):
+        """Initialize the component."""
         super().__init__(position, sprite_sheet, sprite_type, size, anchor)
         self.__offset = 5
         self.__width = width
@@ -404,6 +439,7 @@ class Box(Element):
         title_box.render(self._surface)
 
     def _create_textbox(self) -> None:
+        """Perform the _create_textbox operation."""
         text_size = self.__sprite_size
         box_sprite_size = text_size / 2
 
@@ -477,6 +513,8 @@ class Box(Element):
 
 
 class Timer(LiveElement):
+    """Represent the Timer component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -489,6 +527,7 @@ class Timer(LiveElement):
         max_time_seconds: int,
         anchor: str = "topleft",
     ):
+        """Initialize the component."""
         super().__init__(position, sprite_sheet, sprite_type, size, anchor)
         self.__offset = 5
         self.__width = width
@@ -522,6 +561,7 @@ class Timer(LiveElement):
         self.__font.render(self._surface, (0, 0), self.__text)
 
     def update(self, dt: float = 0.0) -> None:
+        """Perform the update operation."""
         if self.__is_going:
             self.__time_elapsed += dt
             remaining_seconds = self.__max_time_seconds - self.__time_elapsed
@@ -541,12 +581,15 @@ class Timer(LiveElement):
         self.__font.render(self._surface, (0, 0), self.__text)
 
     def getRemainingTime(self) -> float:
+        """Perform the getRemainingTime operation."""
         return self.__max_time_seconds - self.__time_elapsed
 
     def start(self) -> None:
+        """Perform the start operation."""
         self.__is_going = True
 
     def pause(self) -> None:
+        """Perform the pause operation."""
         self.__is_going = False
 
     def reset(self) -> None:
@@ -554,10 +597,13 @@ class Timer(LiveElement):
         self.__time_elapsed = self.__start_time
 
     def getIsGoing(self) -> bool:
+        """Perform the getIsGoing operation."""
         return self.__is_going
 
 
 class Level(LiveElement):
+    """Represent the Level component."""
+
     def __init__(
         self,
         position: tuple[float, float],
@@ -566,6 +612,7 @@ class Level(LiveElement):
         size: float,
         anchor: str = "topleft",
     ):
+        """Initialize the component."""
         super().__init__(
             position,
             sprite_sheet,
@@ -587,6 +634,7 @@ class Level(LiveElement):
         self._surface = pygame.Surface(self.__text.getSize(), pygame.SRCALPHA)
 
     def update(self, value: int) -> None:
+        """Perform the update operation."""
         self.__level = value
 
         self._surface.fill((0, 0, 0))

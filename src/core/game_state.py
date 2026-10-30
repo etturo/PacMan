@@ -1,3 +1,5 @@
+"""Define the game state module."""
+
 import math
 import pygame
 import random
@@ -59,34 +61,43 @@ from src.utils.paths import initial_leaderboard_path, leaderboard_path
 
 
 class BaseState(ABC):
+    """Represent the BaseState component."""
+
     _selected: int = -1
 
     @abstractmethod
     def getSurface(self, dt: float) -> pygame.Surface:
+        """Perform the getSurface operation."""
         pass
 
     @abstractmethod
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         pass
 
     @abstractmethod
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         pass
 
     def getPoints(self) -> int:
         # mypy says this has to be like that... ok...
+        """Perform the getPoints operation."""
         return 0
 
     def getLives(self) -> int:
         # mypy says this has to be like that... ok...
+        """Perform the getLives operation."""
         return 0
 
     def getRemainingTime(self) -> float:
         # mypy says this has to be like that... ok...
+        """Perform the getRemainingTime operation."""
         return 0.0
 
     def _navigate(self, buttons: list[Button],
                   events: list[pygame.event.Event]) -> None:
+        """Perform the _navigate operation."""
         for event in events:
             if (event.type == pygame.KEYDOWN
                     and event.key in (pygame.K_UP, pygame.K_DOWN)):
@@ -98,7 +109,10 @@ class BaseState(ABC):
 
 
 class MenuState(BaseState):
+    """Represent the MenuState component."""
+
     def __init__(self) -> None:
+        """Initialize the component."""
         self.__buttons: list[Button]
         self.__texts: list[Text]
 
@@ -246,22 +260,28 @@ class MenuState(BaseState):
                 )
 
     def getSurface(self, dt: float) -> pygame.Surface:
+        """Perform the getSurface operation."""
         self.__surface.fill((0, 0, 0))
         for element in self.__buttons + self.__elements + self.__texts:
             element.render(self.__surface)
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         self._navigate(self.__buttons, events)
         for button in self.__buttons:
             button.handle_events(events)
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         pass
 
 
 class StartingState(BaseState):
+    """Represent the StartingState component."""
+
     def __init__(self) -> None:
+        """Initialize the component."""
         self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
@@ -297,6 +317,7 @@ class StartingState(BaseState):
         self.__intro_sound.play()
 
     def getSurface(self, dt: float) -> pygame.Surface:
+        """Perform the getSurface operation."""
         self.__surface.fill((0, 0, 0))
 
         if self.__elapsed_time < self.__reveal_start:
@@ -403,10 +424,12 @@ class StartingState(BaseState):
         return self.__surface
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         self.__elapsed_time += dt
         self.__grid_timer += dt
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 self.__intro_sound.stop()
@@ -421,6 +444,7 @@ class IntermissionState(BaseState):
     """
 
     def __init__(self, duration: float = 5.0) -> None:
+        """Initialize the component."""
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
 
@@ -458,6 +482,7 @@ class IntermissionState(BaseState):
         self.__sound.play()
 
     def getSurface(self, dt: float) -> pygame.Surface:
+        """Perform the getSurface operation."""
         self.__surface.fill((0, 0, 0))
         self.__prompt.render(self.__surface)
 
@@ -488,6 +513,7 @@ class IntermissionState(BaseState):
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for event in events:
             if (
                 event.type == pygame.KEYDOWN
@@ -496,6 +522,7 @@ class IntermissionState(BaseState):
                 self._finish()
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         if self.__finished:
             return
 
@@ -508,6 +535,7 @@ class IntermissionState(BaseState):
             self._finish()
 
     def _finish(self) -> None:
+        """Perform the _finish operation."""
         if self.__finished:
             return
         self.__finished = True
@@ -516,8 +544,11 @@ class IntermissionState(BaseState):
 
 
 class PlayingState(BaseState):
+    """Represent the PlayingState component."""
+
     def __init__(self, settings: GameSettings,
                  agent: QAgent | None = None) -> None:
+        """Initialize the component."""
         self.__maze_renderer = MazeRender()
         self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
@@ -662,6 +693,7 @@ class PlayingState(BaseState):
             SoundLibrary.pick()
 
     def getSurface(self, dt: float) -> pygame.Surface:
+        """Perform the getSurface operation."""
         self.__surface.fill((0, 0, 0))
         self._render_maze()
 
@@ -682,13 +714,16 @@ class PlayingState(BaseState):
         return self.__surface
 
     def getPoints(self) -> int:
+        """Perform the getPoints operation."""
         return self.__final_points if self.__final_points > 0 \
             else self.__points
 
     def getLives(self) -> int:
+        """Perform the getLives operation."""
         return self.__pacman.getLives()
 
     def getRemainingTime(self) -> float:
+        """Perform the getRemainingTime operation."""
         return self.__timer.getRemainingTime()
 
     def getPacmanContext(self) -> PacmanContext:
@@ -709,16 +744,19 @@ class PlayingState(BaseState):
             )
 
     def _get_difficulty(self) -> LevelDifficulty:
+        """Perform the _get_difficulty operation."""
         table = self.__settings.difficulty
         return table[min(self.__actual_level, len(table) - 1)]
 
     def _get_size(self) -> tuple[int, int]:
+        """Perform the _get_size operation."""
         table = self.__settings.levels
         level = table[min(self.__actual_level, len(table) - 1)]
         return level.width, level.height
 
     @staticmethod
     def _speed_from_percent(percent: int) -> float:
+        """Perform the _speed_from_percent operation."""
         return Settings.MAX_SPEED * percent / 100
 
     def _update_ghost_mode(
@@ -726,6 +764,7 @@ class PlayingState(BaseState):
         ghosts: list[Ghost],
         new_mode: GhostMode
     ) -> None:
+        """Perform the _update_ghost_mode operation."""
         self.__is_frightened = new_mode == GhostMode.FRIGHTENED
         if self.__is_frightened:
             self.__ghost_combo = 200
@@ -879,6 +918,7 @@ class PlayingState(BaseState):
         ]
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         for element in self.__ui_elements:
             if isinstance(element, Lives):
                 element.update(self.__pacman.getLives())
@@ -1004,6 +1044,7 @@ class PlayingState(BaseState):
             return
 
     def _kill_pacman(self) -> None:
+        """Perform the _kill_pacman operation."""
         death_sound = SoundLibrary.get("pacman_death")
         death_sound.playOn(SoundLibrary.death_channel)
         self.__pacman.die(death_sound.getLength())
@@ -1011,6 +1052,7 @@ class PlayingState(BaseState):
         self.__timer.pause()
 
     def _update_loop_sound(self) -> None:
+        """Perform the _update_loop_sound operation."""
         if (not self.__is_started or self.__ready_timer > 0
                 or not self.__pacman.isAlive()):
             name = None
@@ -1044,6 +1086,7 @@ class PlayingState(BaseState):
             )
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for event in events:
 
             if event.type == GameEvent.RESET_POSITIONS:
@@ -1075,6 +1118,7 @@ class PlayingState(BaseState):
                     GameEvent.post(GameEvent.MODE_TO_PAUSE)
 
     def _reset_entity_pos(self) -> None:
+        """Perform the _reset_entity_pos operation."""
         self.__mode_controller.reset(self._get_difficulty().scatter_chase)
         self._update_ghost_mode(self.__ghosts,
                                 self.__mode_controller.getMode())
@@ -1086,6 +1130,7 @@ class PlayingState(BaseState):
         self.__ready_timer = 5.0
 
     def _render_maze(self) -> None:
+        """Perform the _render_maze operation."""
         columns, rows = self.__actual_maze.getSize()
 
         self.__cell_size = min(
@@ -1106,6 +1151,7 @@ class PlayingState(BaseState):
         self.__maze_renderer.render(self.__surface)
 
     def _detect_collision(self) -> None:
+        """Perform the _detect_collision operation."""
         pacman_pos = self.__pacman.getVisualPos()
 
         for entity in self.__entities:
@@ -1159,6 +1205,7 @@ class PlayingState(BaseState):
             logical_x: float,
             logical_y: float
             ) -> tuple[float, float]:
+        """Perform the _get_entity_screen_pos operation."""
         maze_columns, maze_rows = self.__actual_maze.getSize()
 
         v_maze_width = maze_columns * 2 + 1
@@ -1184,6 +1231,7 @@ class PlayingState(BaseState):
         return pixel_x, pixel_y
 
     def _get_42_coord(self) -> list[tuple[int, int]]:
+        """Perform the _get_42_coord operation."""
         ft_small = [[1, 0, 0, 0, 1, 1, 1],
                     [1, 0, 0, 0, 0, 0, 1],
                     [1, 1, 1, 0, 1, 1, 1],
@@ -1204,7 +1252,10 @@ class PlayingState(BaseState):
 
 
 class GameOverState(BaseState):
+    """Represent the GameOverState component."""
+
     def __init__(self, points: int, has_won: bool) -> None:
+        """Initialize the component."""
         self.__points = points
 
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
@@ -1265,6 +1316,7 @@ class GameOverState(BaseState):
                 )
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         if self.__name_text.isFinished():
             name = self.__name_text.get_text()
             self._update_leadboard(name, self.__points)
@@ -1275,6 +1327,7 @@ class GameOverState(BaseState):
 
     @staticmethod
     def _update_leadboard(new_player: str, new_score: int) -> None:
+        """Perform the _update_leadboard operation."""
         path = leaderboard_path()
         try:
             source_path = path if path.exists() else initial_leaderboard_path()
@@ -1292,6 +1345,7 @@ class GameOverState(BaseState):
         GameEvent.post(GameEvent.MODE_TO_MENU)
 
     def getSurface(self, dt: float) -> pygame.Surface:
+        """Perform the getSurface operation."""
         self.__surface.fill((0, 0, 0))
 
         for element in self.__elements:
@@ -1300,13 +1354,17 @@ class GameOverState(BaseState):
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         for element in self.__elements:
             if isinstance(element, LiveElement | Button):
                 element.handle_events(events)
 
 
 class SettingState(BaseState):
+    """Represent the SettingState component."""
+
     def __init__(self, settings: GameSettings) -> None:
+        """Initialize the component."""
         self.__buttons: list[Button] = []
         self.__texts: list[Text] = []
         self.__elements: list[Element] = []
@@ -1524,12 +1582,14 @@ class SettingState(BaseState):
         self.__surface = pygame.Surface((screen_width, screen_height))
 
     def getSurface(self, dt: float) -> pygame.Surface:
+        """Perform the getSurface operation."""
         self.__surface.fill((0, 0, 0))
         for element in self.__elements + self.__buttons + self.__texts:
             element.render(self.__surface)
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         sound_set_events = {
             GameEvent.NEXT_SOUND_SET,
             GameEvent.PREV_SOUND_SET,
@@ -1544,11 +1604,15 @@ class SettingState(BaseState):
             button.handle_events(events)
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         pass
 
 
 class PauseState(BaseState):
+    """Represent the PauseState component."""
+
     def __init__(self) -> None:
+        """Initialize the component."""
         screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
         screen_width = Settings.VIRTUAL_WINDOW_WIDTH
 
@@ -1607,15 +1671,18 @@ class PauseState(BaseState):
         ]
 
     def getSurface(self, dt: float) -> pygame.Surface:
+        """Perform the getSurface operation."""
         self.__surface.fill((0, 0, 0))
         for element in self.__elements + self.__buttons + self.__texts:
             element.render(self.__surface)
         return self.__surface
 
     def handle_events(self, events: list[pygame.event.Event]) -> None:
+        """Perform the handle_events operation."""
         self._navigate(self.__buttons, events)
         for button in self.__buttons:
             button.handle_events(events)
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         pass

@@ -1,8 +1,12 @@
+"""Define the ui utils module."""
+
 from enum import Enum, auto
 
 
 class SpriteType(Enum):
     # WALL SPRITES
+    """Represent the SpriteType component."""
+
     EMPTY_WALL = auto()
     UP_WALL = auto()
     RIGHT_WALL = auto()

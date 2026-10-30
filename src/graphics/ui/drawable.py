@@ -1,3 +1,5 @@
+"""Define the drawable module."""
+
 import pygame
 
 from abc import ABC
@@ -7,6 +9,8 @@ from src.graphics.graphical_utils.ui_utils import CHAR_MAPPING
 
 
 class Drawable(ABC):
+    """Represent the Drawable component."""
+
     _VALID_ANCHORS = {
         "center",
         "topleft",
@@ -25,6 +29,7 @@ class Drawable(ABC):
             sprite_sheet: SpriteSheet,
             anchor: str = "center",
             ) -> None:
+        """Initialize the component."""
         self._position = position
         self._sheet = sprite_sheet
 
@@ -33,6 +38,7 @@ class Drawable(ABC):
 
     @classmethod
     def _normalize_anchor(cls, anchor: str | None) -> str:
+        """Perform the _normalize_anchor operation."""
         if anchor is None:
             return "center"
 
@@ -43,6 +49,7 @@ class Drawable(ABC):
         return ""
 
     def _get_rect(self) -> pygame.Rect:
+        """Perform the _get_rect operation."""
         rect = self._surface.get_rect()
 
         if self._anchor == "center":
@@ -69,9 +76,11 @@ class Drawable(ABC):
         return rect
 
     def render(self, screen: pygame.Surface) -> None:
+        """Perform the render operation."""
         screen.blit(self._surface, self._get_rect())
 
     def moveTo(self, new_position: tuple[float, float]) -> None:
+        """Perform the moveTo operation."""
         self._position = new_position
 
     @staticmethod
@@ -82,7 +91,7 @@ class Drawable(ABC):
         offset: float = 0,
         include_padding: bool = False,
     ) -> tuple[float, float]:
-
+        """Perform the _calculate_text_size operation."""
         if not text:
             if include_padding:
                 return (sprite_size * 2, sprite_size * 2)

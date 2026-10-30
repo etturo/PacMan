@@ -1,3 +1,5 @@
+"""Define the   init   module."""
+
 from .game import Game
 from .game_state import (
     BaseState,

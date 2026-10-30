@@ -1,3 +1,5 @@
+"""Define the maze render module."""
+
 import pygame
 
 from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
@@ -9,7 +11,10 @@ from src.utils.settings import Settings
 
 
 class MazeRender:
+    """Represent the MazeRender component."""
+
     def __init__(self) -> None:
+        """Initialize the component."""
         self.WALL_MAPPING: dict[int, SpriteType] = {
             0: SpriteType.EMPTY_WALL,
             1: SpriteType.UP_WALL,
@@ -35,6 +40,7 @@ class MazeRender:
                   cell_size: float,
                   sprite_sheet: SpriteSheet
                   ) -> None:
+        """Perform the init_maze operation."""
         self.__sheet = sprite_sheet
         self.__screen_width = Settings.VIRTUAL_WINDOW_WIDTH
         self.__screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
@@ -44,11 +50,13 @@ class MazeRender:
         self.__cell_size = cell_size
 
     def _check_wall(self, x: int, y: int) -> bool:
+        """Perform the _check_wall operation."""
         h = len(self.__walls)
         w = len(self.__walls[0]) if h > 0 else 0
         return 0 <= x < w and 0 <= y < h and self.__walls[y][x]
 
     def _get_neighbour(self, x: int, y: int) -> int:
+        """Perform the _get_neighbour operation."""
         result: int = 0
         if not self.__walls[y][x]:
             return 0
@@ -59,6 +67,7 @@ class MazeRender:
         return result
 
     def is_initialized(self) -> bool:
+        """Perform the is_initialized operation."""
         try:
             return (isinstance(self.__maze, Maze)
                     and self._cached_surface is not None)
@@ -66,6 +75,7 @@ class MazeRender:
             return False
 
     def _create_expanded_maze(self) -> None:
+        """Perform the _create_expanded_maze operation."""
         self.__v_maze_height = self.__maze_rows * 2 + 1
         self.__v_maze_width = self.__maze_columns * 2 + 1
         self.__walls = \
@@ -90,6 +100,7 @@ class MazeRender:
                 self.__walls[ry + 1][rx + 1] |= s or e
 
     def build_maze_surface(self) -> None:
+        """Perform the build_maze_surface operation."""
         surface_w = self.__cell_size * self.__v_maze_width
         surface_h = self.__cell_size * self.__v_maze_height
         self._cached_surface = pygame.Surface(
@@ -117,6 +128,7 @@ class MazeRender:
                     self._cached_surface.blit(scaled_sprite, rect)
 
     def render(self, screen: pygame.Surface) -> None:
+        """Perform the render operation."""
         if self._cached_surface:
             screen_height = screen.get_height()
             screen_width = screen.get_width()

@@ -1,14 +1,18 @@
+"""Define the cell module."""
+
 from enum import IntEnum
 from typing import Tuple
 
 
 class InvalidCellOperation(Exception):
     """Exception raised when an invalid operation is attempted on a cell."""
+
     pass
 
 
 class Direction(IntEnum):
     """Represent the 4 cardinal directions and their encoded binary flags."""
+
     NORTH = 1
     EAST = 2
     SOUTH = 4
@@ -65,7 +69,9 @@ class Cell:
         return ((self.walls | self.invincible_walls) & dir) != 0
 
     def __str__(self) -> str:
+        """Implement the __str__ operation."""
         return f"{self.walls:X}"
 
     def setCell(self, walls: int) -> None:
+        """Perform the setCell operation."""
         self.walls = walls

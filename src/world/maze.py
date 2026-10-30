@@ -1,3 +1,5 @@
+"""Define the maze module."""
+
 from mazegenerator.mazegenerator import Iterator
 
 from src.world.cell import Direction, Cell
@@ -7,6 +9,7 @@ class Maze:
     """Represent the logical structure, dimensions, and grid of a maze."""
 
     def __getBorder(self, x: int, y: int) -> int:
+        """Perform the __getBorder operation."""
         return ((Direction.WEST if x == 0 else 0) |
                 (Direction.NORTH if y == 0 else 0) |
                 (Direction.EAST if x == self.__width - 1 else 0) |
@@ -26,10 +29,11 @@ class Maze:
             self.__map.append(row)
 
     def getSize(self) -> tuple[int, int]:
-        """Returns a tuple containing the width and the height of the maze"""
+        """Return a tuple containing the width and height of the maze."""
         return (self.__width, self.__height)
 
     def __str__(self) -> str:
+        """Implement the __str__ operation."""
         output: str = '\n'
 
         for row in self.__map:
@@ -42,6 +46,7 @@ class Maze:
     def setSpecificCell(self, x: int,
                         y: int,
                         walls: int) -> None:
+        """Perform the setSpecificCell operation."""
         self.__map[y][x].setCell(walls)
 
     def __getitem__(self, pos: tuple[int, int]) -> Cell:
@@ -49,6 +54,7 @@ class Maze:
         return self.__map[pos[1]][pos[0]]
 
     def __iter__(self) -> Iterator:
+        """Implement the __iter__ operation."""
         return iter(self.__map)
 
     def getNeighbour(self, x: int, y: int) -> dict[Direction, Cell]:

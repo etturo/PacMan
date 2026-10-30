@@ -1,16 +1,18 @@
+"""Define the features module."""
+
 from src.ai.context import PacmanContext
 from src.entities.ghost_movement import bfs_distances, GhostMode
 from src.world.cell import Direction
 
 
 def next_cell(ctx: PacmanContext, action: Direction) -> tuple[int, int]:
-    """Returns the cell that results from taking action."""
+    """Return the cell that results from taking action."""
     d_x, d_y = action.vector()
     return ctx.pacman_pos[0] + d_x, ctx.pacman_pos[1] + d_y
 
 
 def is_dangerous(ctx: PacmanContext, mode: GhostMode, steps: int) -> bool:
-    """True if a ghost n_steps away from the next cell can kill Pacman."""
+    """Determine whether a ghost n_steps away can kill Pacman."""
     return (mode in (GhostMode.CHASE, GhostMode.SCATTER)
             or (mode == GhostMode.FRIGHTENED
                 and not is_reachable(ctx, steps)))
@@ -48,7 +50,7 @@ def ghosts_1_step(ctx: PacmanContext,
 
 def closest_food(ctx: PacmanContext,
                  dist: dict[tuple[int, int], int]) -> float:
-    """Calculates the distance to the closest food using the BFS algorithm."""
+    """Calculate the distance to the closest food using BFS."""
     steps = [dist[cell] for cell in ctx.food if cell in dist]
     if not steps:
         return 0.0
@@ -57,14 +59,17 @@ def closest_food(ctx: PacmanContext,
 
 
 def is_reachable(ctx: PacmanContext, steps: int) -> bool:
-    """True if Pacman, going to the next cell and then steps more,
-    gets there before the frightened mode is over."""
+    """Determine whether Pacman can reach the target before frightened mode ends.
+
+    Pacman goes to the next cell and then takes the given number of steps.
+    gets there before the frightened mode is over.
+    """
     return (steps + 1) / ctx.pacman_speed < ctx.fright_left
 
 
 def scared_steps(ctx: PacmanContext,
                  dist: dict[tuple[int, int], int]) -> list[int]:
-    """Steps from the next cell to every blue ghost still in reach."""
+    """Count steps from the next cell to every reachable blue ghost."""
     return [dist[pos] for pos, mode in ctx.ghosts
             if mode == GhostMode.FRIGHTENED and pos in dist
             and is_reachable(ctx, dist[pos])]
@@ -77,8 +82,11 @@ def eat_ghost(ctx: PacmanContext, dist: dict[tuple[int, int], int]) -> float:
 
 def closest_scared(ctx: PacmanContext,
                    dist: dict[tuple[int, int], int]) -> float:
-    """How close the nearest blue ghost in reach is: near 1 next to it,
-    near 0 when it is barely in reach, 0 when there is none."""
+    """Calculate how close the nearest reachable blue ghost is.
+
+    The value is near 1 next to it,
+    near 0 when it is barely in reach, 0 when there is none.
+    """
     steps = scared_steps(ctx, dist)
     if not steps:
         return 0.0
@@ -98,7 +106,8 @@ def extract(ctx: PacmanContext, action: Direction) -> dict[str, float]:
     area, so the feature is always between 0 and 1.
     The fifth is the number of blue ghosts in reach one step away.
     The sixth is how close the nearest blue ghost in reach is: near 1
-    next to it, 0 when there is none."""
+    next to it, 0 when there is none.
+    """
     nxt = next_cell(ctx, action)
     dist = bfs_distances(ctx.maze, nxt)
 

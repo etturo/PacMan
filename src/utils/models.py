@@ -1,16 +1,24 @@
+"""Define the models module."""
+
 from pydantic import BaseModel, Field, model_validator
 
 
 class ParsingError(ValueError):
+    """Represent the ParsingError component."""
+
     ...
 
 
 class LevelConfig(BaseModel):
+    """Represent the LevelConfig component."""
+
     width: int
     height: int
 
 
 class LevelDifficulty(BaseModel):
+    """Represent the LevelDifficulty component."""
+
     pacman_speed: int
     pacman_fright_speed: int
     ghost_speed: int
@@ -20,6 +28,8 @@ class LevelDifficulty(BaseModel):
 
 
 class GameSettings(BaseModel):
+    """Represent the GameSettings component."""
+
     highscore_filename: str = Field(default="scores.json")
     levels: list[LevelConfig] = Field(
         default=[
@@ -61,6 +71,7 @@ class GameSettings(BaseModel):
 
     @model_validator(mode="after")
     def validate_scores(self) -> 'GameSettings':
+        """Perform the validate_scores operation."""
         if self.points_per_super_pacgum <= self.points_per_pacgum:
             raise ValueError(
                 "points_per_super_pacgums "

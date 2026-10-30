@@ -1,3 +1,5 @@
+"""Define the sound library module."""
+
 import random
 import pygame
 
@@ -6,6 +8,8 @@ from src.sounds.sound_set import SoundSet
 
 
 class SoundLibrary:
+    """Represent the SoundLibrary component."""
+
     sounds: dict[str, SoundSet] = {}
     current: dict[str, SoundEffect] = {}
     current_set_name: str = "classic"
@@ -18,6 +22,7 @@ class SoundLibrary:
 
     @classmethod
     def load(cls) -> None:
+        """Perform the load operation."""
         cls.sounds = {
             "classic": SoundSet("classic"),
             "lmongili": SoundSet("lmongili"),
@@ -46,14 +51,17 @@ class SoundLibrary:
 
     @classmethod
     def getCurrentSetName(cls) -> str:
+        """Perform the getCurrentSetName operation."""
         return cls.current_set_name
 
     @classmethod
     def isRandomMode(cls) -> bool:
+        """Perform the isRandomMode operation."""
         return cls.random_mode
 
     @classmethod
     def _use_set(cls, set_name: str) -> None:
+        """Perform the _use_set operation."""
         cls.current_set_name = set_name
         sound_set = cls.sounds[set_name]
         cls.current = {
@@ -63,6 +71,7 @@ class SoundLibrary:
 
     @classmethod
     def nextSet(cls, set_name: str | None = None) -> None:
+        """Perform the nextSet operation."""
         if cls.random_mode:
             return
         set_names = list(cls.sounds)
@@ -72,6 +81,7 @@ class SoundLibrary:
 
     @classmethod
     def prevSet(cls, set_name: str | None = None) -> None:
+        """Perform the prevSet operation."""
         if cls.random_mode:
             return
         set_names = list(cls.sounds)

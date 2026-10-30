@@ -1,3 +1,5 @@
+"""Define the agent module."""
+
 import json
 import random
 
@@ -8,8 +10,11 @@ from src.world.cell import Direction
 
 
 class QAgent:
+    """Represent the QAgent component."""
+
     def __init__(self, weights: dict[str, float] | None = None,
                  training: bool = False) -> None:
+        """Initialize the component."""
         self.__weights = weights or {}
         self.__training = training
         self.__epsilon = 0.05
@@ -20,6 +25,7 @@ class QAgent:
         self.__episodes = 1
 
     def _is_legal(self, ctx: PacmanContext) -> list[Direction]:
+        """Perform the _is_legal operation."""
         return [d for d in DIRECTIONS
                 if not ctx.maze[ctx.pacman_pos].hasWall(d)]
 
@@ -52,6 +58,7 @@ class QAgent:
         return action
 
     def _update(self, reward: float, ctx: PacmanContext | None) -> None:
+        """Perform the _update operation."""
         if self.__last is None:
             return
         last_ctx, last_action = self.__last
@@ -66,7 +73,9 @@ class QAgent:
 
     def final(self, ctx: PacmanContext, died: bool) -> None:
         """Update the weights for the last state.
-        Alpha is decayed over time so that Q-learning converges."""
+
+        Alpha is decayed over time so that Q-learning converges.
+        """
         self._update(ctx.points - self.__last_points - (500 if died else 0),
                      None)
         self.__last = None

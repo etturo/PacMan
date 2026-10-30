@@ -1,3 +1,5 @@
+"""Define the   init   module."""
+
 from .models import GameSettings, LevelConfig, ParsingError
 from .settings import Settings, GameEvent
 from .parser import SettingParser

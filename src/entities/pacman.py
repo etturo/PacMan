@@ -1,3 +1,5 @@
+"""Define the pacman module."""
+
 import pygame
 
 from src.entities.entity import Entity
@@ -12,6 +14,8 @@ from src.utils.settings import GameEvent
 
 
 class Pacman(Entity):
+    """Represent the Pacman component."""
+
     def __init__(
         self,
         initial_position: tuple[int, int],
@@ -19,6 +23,7 @@ class Pacman(Entity):
         speed: float,
         initial_lives: int = 3
     ) -> None:
+        """Initialize the component."""
         super().__init__(initial_position, size, speed)
 
         scale = SpriteSheet.scaleSprite
@@ -76,6 +81,7 @@ class Pacman(Entity):
         self.__death_index = 0
 
     def update(self, dt: float) -> None:
+        """Perform the update operation."""
         super().update(dt)
 
         self.__animation_timer += dt
@@ -92,11 +98,13 @@ class Pacman(Entity):
                 self.takeDamage()
 
     def takeDamage(self) -> None:
+        """Perform the takeDamage operation."""
         self.__lives -= 1
         if self.__lives <= 0:
             self._is_alive = False
 
     def getLives(self) -> int:
+        """Perform the getLives operation."""
         return self.__lives
 
     def render(self,
@@ -104,7 +112,7 @@ class Pacman(Entity):
                screen_pos: tuple[float, float],
                dt: float,
                ) -> None:
-
+        """Perform the render operation."""
         if not self._is_alive:
             self._surface = self.__death_animation[self.__death_index]
 
@@ -138,6 +146,7 @@ class Pacman(Entity):
         self.__animation_delay = duration / len(self.__death_animation)
 
     def respawn(self) -> None:
+        """Perform the respawn operation."""
         self._is_alive = True
         self.__death_index = 0
         self.__animation_delay = 0.1

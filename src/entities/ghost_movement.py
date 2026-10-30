@@ -1,3 +1,5 @@
+"""Define the ghost movement module."""
+
 import random
 from collections import deque
 
@@ -15,6 +17,8 @@ DIRECTIONS = (Direction.NORTH, Direction.WEST, Direction.SOUTH, Direction.EAST)
 
 
 class GhostMode(Enum):
+    """Represent the GhostMode component."""
+
     CHASE = auto()
     SCATTER = auto()
     FRIGHTENED = auto()
@@ -22,6 +26,8 @@ class GhostMode(Enum):
 
 
 class SchedulePhase(NamedTuple):
+    """Represent the SchedulePhase component."""
+
     mode: GhostMode
     duration: float
 
@@ -30,6 +36,7 @@ class GhostModeController:
     """Global timer for scatter/chase for all ghosts."""
 
     def __init__(self) -> None:
+        """Initialize the component."""
         self.__schedule: tuple[SchedulePhase, ...] = ()
         self.__phase: int = 0
         self.__elapsed: float = 0.0
@@ -47,7 +54,8 @@ class GhostModeController:
     def update(self, dt: float) -> bool:
         """Update the ghost's timer.
 
-        Returns: True if the mode changes, False otherwise."""
+        Returns: True if the mode changes, False otherwise.
+        """
         if self.__paused or self.__phase >= len(self.__schedule) - 1:
             return False
 
@@ -59,10 +67,11 @@ class GhostModeController:
         return True
 
     def reset(self, durations: list[float]) -> None:
-        """Resets ghosts' states on PacMan's death or on a new level.
+        """Reset ghosts' states on PacMan's death or on a new level.
 
         The durations alternate scatter and chase, starting from scatter.
-        After the last one the ghosts chase forever."""
+        After the last one the ghosts chase forever.
+        """
         self.__schedule = tuple(
             SchedulePhase(
                 GhostMode.CHASE if index % 2 else GhostMode.SCATTER,
@@ -80,6 +89,7 @@ class GhostContext:
 
     Rebuilt from scratch on every decision, hence frozen.
     """
+
     maze: Maze
     ghost_pos: tuple[int, int]
     ghost_dir: Direction
@@ -196,7 +206,7 @@ def _ahead_of_pacman(ctx: GhostContext, tiles: int) -> tuple[int, int]:
 
 
 def blinky_strategy(ctx: GhostContext) -> tuple[int, int]:
-    """Blinky's strategy: always follows PacMan"""
+    """Follow PacMan directly."""
     return ctx.pacman_pos
 
 
@@ -206,16 +216,21 @@ def pinky_strategy(ctx: GhostContext) -> tuple[int, int]:
 
 
 def inky_strategy(ctx: GhostContext) -> tuple[int, int]:
-    """Inky's strategy: the vector from Blinky to 2 cells ahead of
-    PacMan, doubled."""
+    """Calculate Inky's target using Blinky and PacMan positions.
+
+    The target is the vector from Blinky to 2 cells ahead of PacMan, doubled.
+    """
     p_x, p_y = _ahead_of_pacman(ctx, 2)
     b_x, b_y = ctx.blinky_pos
     return (2 * p_x - b_x, 2 * p_y - b_y)
 
 
 def clyde_strategy(ctx: GhostContext) -> tuple[int, int]:
-    """Clyde's strategy: follows PacMan from afar, runs back to his
-    corner once closer than 8 cells."""
+    """Calculate Clyde's target based on distance from PacMan.
+
+    Clyde follows PacMan from afar and runs back to his corner once closer
+    than 8 cells.
+    """
     g_x, g_y = ctx.ghost_pos
     p_x, p_y = ctx.pacman_pos
     if (g_x - p_x) ** 2 + (g_y - p_y) ** 2 > 8 ** 2:

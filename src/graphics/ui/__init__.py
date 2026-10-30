@@ -1,3 +1,5 @@
+"""Define the   init   module."""
+
 from .button import Button, SlideStrButton, ToggleButton
 from .drawable import Drawable
 from .element import (
