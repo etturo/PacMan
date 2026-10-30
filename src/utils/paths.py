@@ -17,6 +17,7 @@ def resource_path(relative_path: str) -> Path:
 
 
 def config_path() -> Path:
+    """Find the config file next to the executable."""
     if getattr(sys, "frozen", False):
         external = Path(sys.executable).parent / "config.json"
         if external.exists():
