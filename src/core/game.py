@@ -13,6 +13,7 @@ from src.core.game_state import (
     MenuState,
     PlayingState,
     GameOverState,
+    IntermissionState,
     SettingState,
     PauseState,
     )
@@ -111,6 +112,15 @@ class Game:
                 pygame.mixer.pause()
                 self.__freeze_state = self.__active_state
                 self.__active_state = PauseState()
+
+            elif event.type == GameEvent.MODE_TO_INTERMISSION:
+                self.__freeze_state = self.__active_state
+                self.__active_state = IntermissionState()
+
+            elif event.type == GameEvent.MODE_TO_NEXT_LEVEL:
+                if isinstance(self.__freeze_state, PlayingState):
+                    self.__freeze_state.build_next_level()
+                self.__active_state = self.__freeze_state
 
             elif event.type == GameEvent.BACK_TO_GAME:
                 pygame.mixer.unpause()

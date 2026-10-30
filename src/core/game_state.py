@@ -29,6 +29,7 @@ from src.graphics.ui.button import (
     SlideIntButton,
     SlideStrButton,
     )
+from src.graphics.graphical_utils.sprite_sheet import SpriteSheet
 from src.graphics.ui.text import Text
 from src.graphics.ui.element import (
     LiveElement,
@@ -412,6 +413,108 @@ class StartingState(BaseState):
                 pygame.event.post(pygame.event.Event(GameEvent.MODE_TO_MENU))
 
 
+class IntermissionState(BaseState):
+    """Temporary state shown between completed levels.
+
+    The presentation is intentionally small so the state can be extended with
+    a cutscene, animation, or additional level-specific content later.
+    """
+
+    def __init__(self, duration: float = 5.0) -> None:
+        screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
+
+        self.__surface = pygame.Surface((screen_width, screen_height))
+        sprite_size = screen_height / 3
+        scale_sprite = SpriteSheet.scaleSprite
+        self.__pacman_frames = [
+            scale_sprite(SpriteLibrary['yellow'][SpriteType.PACMAN_RIGHT_1],
+                         sprite_size),
+            scale_sprite(SpriteLibrary['yellow'][SpriteType.PACMAN_RIGHT_2],
+                         sprite_size),
+            scale_sprite(SpriteLibrary['yellow'][SpriteType.PACMAN_FULL],
+                         sprite_size),
+        ]
+        self.__ghost_frames = [
+            scale_sprite(SpriteLibrary['red'][SpriteType.GHOST_EYE_RIGHT_1],
+                         sprite_size),
+            scale_sprite(SpriteLibrary['red'][SpriteType.GHOST_EYE_RIGHT_2],
+                         sprite_size),
+        ]
+        self.__prompt = Text(
+            "GET READY!",
+            (screen_width / 2, screen_height / 6),
+            SpriteLibrary['yellow'],
+            screen_height / 8,
+            anchor='center',
+        )
+        self.__elapsed_time = 0.0
+        self.__duration = max(0.0, duration)
+        self.__finished = False
+        self.__animation_timer = 0.0
+        self.__animation_frame = 0
+        self.__sound = SoundLibrary.get("pacman_intermission")
+        SoundLibrary.loop_channel.stop()
+        self.__sound.play()
+
+    def getSurface(self, dt: float) -> pygame.Surface:
+        self.__surface.fill((0, 0, 0))
+        self.__prompt.render(self.__surface)
+
+        screen_width = Settings.VIRTUAL_WINDOW_WIDTH
+        screen_height = Settings.VIRTUAL_WINDOW_HEIGHT
+        travel_width = screen_width + self.__pacman_frames[0].get_width() * 2
+        progress = min(1.0, self.__elapsed_time / self.__duration) \
+            if self.__duration > 0 else 1.0
+        ghost_x = -self.__ghost_frames[0].get_width() + \
+            travel_width * progress
+        pacman_x = ghost_x - screen_width / 5
+        chase_y = screen_height * 0.7
+
+        ghost = self.__ghost_frames[
+            self.__animation_frame % len(self.__ghost_frames)
+        ]
+        pacman = self.__pacman_frames[
+            self.__animation_frame % len(self.__pacman_frames)
+        ]
+        self.__surface.blit(
+            ghost,
+            ghost.get_rect(center=(int(ghost_x), int(chase_y))),
+        )
+        self.__surface.blit(
+            pacman,
+            pacman.get_rect(center=(int(pacman_x), int(chase_y))),
+        )
+        return self.__surface
+
+    def handle_events(self, events: list[pygame.event.Event]) -> None:
+        for event in events:
+            if (
+                event.type == pygame.KEYDOWN
+                and event.key in (pygame.K_RETURN, pygame.K_SPACE)
+            ):
+                self._finish()
+
+    def update(self, dt: float) -> None:
+        if self.__finished:
+            return
+
+        self.__elapsed_time += dt
+        self.__animation_timer += dt
+        if self.__animation_timer >= 0.1:
+            self.__animation_timer = 0.0
+            self.__animation_frame += 1
+        if self.__elapsed_time >= self.__duration:
+            self._finish()
+
+    def _finish(self) -> None:
+        if self.__finished:
+            return
+        self.__finished = True
+        self.__sound.stop()
+        GameEvent.post(GameEvent.MODE_TO_NEXT_LEVEL)
+
+
 class PlayingState(BaseState):
     def __init__(self, settings: GameSettings,
                  agent: QAgent | None = None) -> None:
@@ -654,13 +757,12 @@ class PlayingState(BaseState):
             GameEvent.post(GameEvent.MODE_TO_WIN)
             return
 
-        self.build_next_level()
+        GameEvent.post(GameEvent.MODE_TO_INTERMISSION)
 
     def build_next_level(self) -> None:
         """Rebuild the maze, entities and timer for the next level."""
         if SoundLibrary.isRandomMode():
             SoundLibrary.pick()
-        SoundLibrary.get("pacman_intermission").play()
         self.__actual_level += 1
         self.__ghost_combo = 0
         self.__is_frightened = False

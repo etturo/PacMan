@@ -2,6 +2,7 @@ from .game import Game
 from .game_state import (
     BaseState,
     GameOverState,
+    IntermissionState,
     MenuState,
     PauseState,
     PlayingState,
@@ -13,6 +14,7 @@ __all__ = [
     "Game",
     "BaseState",
     "GameOverState",
+    "IntermissionState",
     "MenuState",
     "PauseState",
     "StartingState",
