@@ -98,9 +98,7 @@ def extract(ctx: PacmanContext, action: Direction) -> dict[str, float]:
     area, so the feature is always between 0 and 1.
     The fifth is the number of blue ghosts in reach one step away.
     The sixth is how close the nearest blue ghost in reach is: near 1
-    next to it, 0 when there is none.
-    The seventh is the danger from the dangerous ghosts within
-    a radius: each adds from 1, next to it, down to 0."""
+    next to it, 0 when there is none."""
     nxt = next_cell(ctx, action)
     dist = bfs_distances(ctx.maze, nxt)
 
