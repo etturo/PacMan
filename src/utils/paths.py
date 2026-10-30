@@ -17,7 +17,10 @@ def resource_path(relative_path: str) -> Path:
 
 
 def config_path() -> Path:
-    """Perform the config_path operation."""
+    if getattr(sys, "frozen", False):
+        external = Path(sys.executable).parent / "config.json"
+        if external.exists():
+            return external
     return resource_path("config.json")
 
 

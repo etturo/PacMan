@@ -12,15 +12,33 @@ $$
 
 the remaining time is in silence, but sticazzi
 
+# Timeline
+
+| Milestone                                   | Date       |
+|---------------------------------------------|------------|
+| Repository created                          | 2026-07-03 |
+| Maze package integrated (`maze_wrapper.py`) | 2026-07-28 |
+| Game states (`game_state.py`)               | 2026-08-25 |
+| Ghosts on the map                           | 2026-08-28 |
+| Linux and Windows builds (`build.yml`)      | 2026-09-15 |
+| Ghost AI (`ghost_movement.py`)              | 2026-10-05 |
+| Sound sets (`sound_library.py`)             | 2026-10-06 |
+| Packaging spec (`Pacman.spec`)              | 2026-10-23 |
+| AI player (`src/ai/agent.py`)               | 2026-10-29 |
+| Subject review and fixes                    | 2026-10-30 |
+| Published on itch.io                        | 2026-10-30 |
+
 
 # REFACTORING NEEDED
  - [x] Create a sprite library (SpriteLibrary) an interface to store all the sprite sheets into one place and let the other parts of the programs to access that variable without creating multiple instances of the same sheet.
- - [x] Create a element ABC class to inherite all the UI elements.
- - [X] Change the Maze renderer to a instanced object to use self and store the maze surface so isnt recalculated every frame.
+ - [x] Create an element ABC class to inherit all the UI elements.
+ - [X] Change the Maze renderer to an instanced object to use self and 
+   store the maze surface so isn't recalculated every frame.
 
 
 # REMEMBER
- - [X] In the menu there are two blank space at the edges, in the left i would like to print the character/nickname menu, and in the right the scores
+ - [X] In the menu there are two blank space at the edges, in the left I 
+   would like to print the character/nickname menu, and in the right the scores
 
  - [X] Next to do is to make the movement from a cell to another and lerping the animation between
 

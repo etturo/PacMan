@@ -1,8 +1,8 @@
-- [ ] Aggiungere 256 livelli con un JSON e specificare anche le varie fasi 
+- [x] Aggiungere 256 livelli con un JSON e specificare anche le varie fasi 
   di scatter, chase e fright a seconda del livello: ricrearlo come 
   l'originale, che dopo il livello 21 è tutto uguale con difficoltà al 
   massimo (no scatter, velocità al max, ecc.)
-- [ ] mettere audio di transizione come nel pacman originale tra un livello 
+- [x] mettere audio di transizione come nel pacman originale tra un livello 
   e l'altro, con animazione di pacman che segue il fantasma
 - [X] fantasmini grigi o bianchi quando ancora non sono attivi nella mappa
 
@@ -11,8 +11,11 @@
  - [X] **Implement Game State Manager (State Pattern):** Decouple `GameMode` logic from rendering and loop functions. Use a context manager/state machine with independent state classes (e.g., `MenuState`, `PlayingState`).
  - [X] **Add Virtual Resolution and Aspect Ratio Scaling (Letterboxing):** Render the game to a fixed-size retro canvas (e.g., 448x496) and scale it dynamically to fit the window with letterboxing and make the window resizable.
  - [X] **Fix Config Field Name Mismatch (Pydantic <-> JSON):** Rename `pacgum` to `pacgums` and `points_per_pacgum` to `points_per_pacgums` in `config.json` (or use validation aliases in `src/utils/models.py`) so configuration changes are not silently ignored.
- - [ ] **Relocate Sound Assets:** Move `pac-man-startup.mp3` from `temp/` to a permanent assets subdirectory (e.g., `data/assets/sounds/`) and reference it cleanly.
- - [ ] **Implement Movement, Collision, and AI Systems:** Complete the empty `Entity`, `Pacman`, and `Ghost` stubs using grid-to-screen coordinate mapping and standard Pac-man ghost behaviors.
+ - [x] **Relocate Sound Assets:** Move `pac-man-startup.mp3` from `temp/` 
+   to a permanent assets subdirectory (e.g., `data/assets/sounds/`) and reference it cleanly.
+ - [x] **Implement Movement, Collision, and AI Systems:** Complete the 
+   empty `Entity`, `Pacman`, and `Ghost` stubs using grid-to-screen 
+   coordinate mapping and standard Pac-man ghost behaviours.
 
 
 
