@@ -17,6 +17,7 @@ class QAgent:
         self.__gamma = 0.8
         self.__last: tuple[PacmanContext, Direction] | None = None
         self.__last_points = 0
+        self.__episodes = 1
 
     def _is_legal(self, ctx: PacmanContext) -> list[Direction]:
         return [d for d in DIRECTIONS
@@ -64,16 +65,19 @@ class QAgent:
                                     + self.__alpha * delta * value)
 
     def final(self, ctx: PacmanContext, died: bool) -> None:
-        """Update the weights for the last state."""
+        """Update the weights for the last state.
+        Alpha is decayed over time so that Q-learning converges."""
         self._update(ctx.points - self.__last_points - (500 if died else 0),
                      None)
         self.__last = None
         self.__last_points = 0
+        self.__episodes += 1
+        self.__alpha = 0.2 / (1 + self.__episodes / 20)
 
     @staticmethod
     def load(path: str) -> 'QAgent':
         """Build an agent from a JSON weights file."""
-        with open(path) as file:
+        with open(path, 'r') as file:
             return QAgent(json.load(file))
 
     def save(self, path: str) -> None:

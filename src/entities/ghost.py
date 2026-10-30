@@ -277,6 +277,12 @@ class Ghost(Entity):
         return (self.__mode == GhostMode.FRIGHTENED
                 and self.__frightened_timer >= self.__time_frightened)
 
+    def getFrightenedLeft(self) -> float:
+        """Seconds of blue left, 0 when the ghost is not frightened."""
+        if self.__mode != GhostMode.FRIGHTENED:
+            return 0.0
+        return max(0.0, self.__time_frightened - self.__frightened_timer)
+
     def render(self,
                screen: pygame.Surface,
                screen_pos: tuple[float, float],

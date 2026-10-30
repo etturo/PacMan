@@ -9,11 +9,16 @@ class PacmanContext:
     """Everything the AI player is allowed to look at.
 
     Rebuilt from scratch on every decision, hence frozen.
-    ghosts holds only the released ones, food the cells of every
+    ghosts hold only the released ones, food the cells of every
     pacgum and super pacgum still alive.
+    fright_left is the seconds of blue left, shared by every
+    frightened ghost; 0 when none is.
+    pacman_speed in cells per second
     """
     maze: Maze
     pacman_pos: tuple[int, int]
     ghosts: list[tuple[tuple[int, int], GhostMode]]
+    fright_left: float
+    pacman_speed: float
     food: set[tuple[int, int]]
     points: int

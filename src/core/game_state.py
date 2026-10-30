@@ -598,10 +598,13 @@ class PlayingState(BaseState):
             pacman_pos=self.__pacman.getCurrentCell(),
             ghosts=[(ghost.getVisualCell(), ghost.getMode())
                     for ghost in self.__ghosts if ghost.isReleased()],
+            fright_left=max(ghost.getFrightenedLeft()
+                            for ghost in self.__ghosts),
             food={entity.getCurrentCell() for entity in self.__entities
                   if isinstance(entity, Pacgum | SuperPacgum)
                   and entity.isAlive()},
             points=self.__points,
+            pacman_speed=self.__pacman.getSpeed()
             )
 
     def _update_ghost_mode(
