@@ -22,7 +22,7 @@ debug:
 	$(PYTHON) -m pdb $(PACMAN) $(CONFIG_FILE)
 
 train:
-	$(PYTHON) -m $(PACMAN).ai.train $(CONFIG_FILE)
+	$(PYTHON) -m src.ai.train $(CONFIG_FILE)
 
 build:
 	$(PYTHON) -m PyInstaller --clean Pacman.spec

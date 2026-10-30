@@ -59,7 +59,7 @@ def closest_food(ctx: PacmanContext,
 
 
 def is_reachable(ctx: PacmanContext, steps: int) -> bool:
-    """Determine whether Pacman can reach the target before frightened mode ends.
+    """Determine whether Pacman reaches the target before frightened ends.
 
     Pacman goes to the next cell and then takes the given number of steps.
     gets there before the frightened mode is over.

@@ -1,6 +1,8 @@
 """Define the sound effects module."""
 
 import wave
+from pathlib import Path
+
 import pygame
 
 
@@ -9,6 +11,9 @@ class SoundEffect:
 
     def __init__(self, file_path: str) -> None:
         """Initialize the component."""
+        path = Path(file_path)
+        if not path.exists():
+            file_path = str(path.parents[1] / "classic" / path.name)
         if self._is_empty(file_path):
             self.sound = pygame.mixer.Sound(buffer=bytes(4))
         else:
