@@ -3,6 +3,12 @@
 from pydantic import BaseModel, Field, model_validator
 
 
+class ParsingError(ValueError):
+    """Represent the ParsingError component."""
+
+    ...
+
+
 class LevelConfig(BaseModel):
     """Represent the LevelConfig component."""
 
