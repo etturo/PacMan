@@ -3,17 +3,11 @@
 from pydantic import BaseModel, Field, model_validator
 
 
-class ParsingError(ValueError):
-    """Represent the ParsingError component."""
-
-    ...
-
-
 class LevelConfig(BaseModel):
     """Represent the LevelConfig component."""
 
-    width: int
-    height: int
+    width: int = Field(ge=3, le=100)
+    height: int = Field(ge=3, le=100)
 
 
 class LevelDifficulty(BaseModel):
@@ -42,7 +36,7 @@ class GameSettings(BaseModel):
     pacgums: int = Field(default=42, ge=0)
     points_per_pacgum: int = Field(default=10, gt=0)
     points_per_super_pacgum: int = Field(default=50, gt=0)
-    points_per_ghost: int = 200
+    points_per_ghost: int = Field(default=200, gt=0)
     seed: int = Field(default=42, ge=0)
     level_max_time: int = Field(default=300, gt=0)
     max_level: int = Field(default=256, gt=0)
