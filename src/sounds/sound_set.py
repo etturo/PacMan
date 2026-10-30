@@ -64,7 +64,7 @@ class SoundSet:
             "intro": SoundEffect(
                 str(
                     resource_path(
-                        "data/assets/sounds/classic/intro.mp3"
+                        "data/assets/sounds/classic/intro.wav"
                     )
                 )
             ),

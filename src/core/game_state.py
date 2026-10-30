@@ -307,8 +307,8 @@ class StartingState(BaseState):
         self.__start_col = \
             max(0, int((self.__columns - len(self.__target_word)) / 2 + 0.5))
 
-        self.__reveal_start = 1.5
-        self.__reveal_duration = 1.5
+        self.__reveal_start = 3.9
+        self.__reveal_duration = 4.5
         self.__elapsed_time = 0.0
         self.__grid_timer = 0.0
         self.__grid_interval = 0.15

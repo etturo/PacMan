@@ -33,6 +33,7 @@ class SoundLibrary:
             "pipriolo": SoundSet("pipriolo"),
             "fbertozz": SoundSet("fbertozz"),
             "eturini": SoundSet("eturini"),
+            "aflorea": SoundSet("aflorea"),
         }
         cls.current_set_name = "classic"
         cls._use_set("classic")
