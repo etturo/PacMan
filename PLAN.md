@@ -5,7 +5,7 @@ the real duration of the audio is 4.3336 seconds
 knowing that the game is running at 60fps
 every frame last $1/60 = 0,016666667 \approx 0.0167$
 
-so the total number of frame of the initial screen to fit into the audio track lenght is:
+so the total number of frame of the initial screen to fit into the audio track length is:
 $$
 4.3336 / 0.0167 = 259,497005988 \approx 260 \space frames
 $$
@@ -28,7 +28,6 @@ the remaining time is in silence, but sticazzi
 | Subject review and fixes                    | 2026-10-30 |
 | Published on itch.io                        | 2026-10-30 |
 
-
 # REFACTORING NEEDED
  - [x] Create a sprite library (SpriteLibrary) an interface to store all the sprite sheets into one place and let the other parts of the programs to access that variable without creating multiple instances of the same sheet.
  - [x] Create an element ABC class to inherit all the UI elements.
@@ -44,13 +43,14 @@ the remaining time is in silence, but sticazzi
 
 
 # pipi
- - [X] Frightened ghost animation added but it wont activate. TODO -> make the super pac gusm post the GhostModeToFrightened and make the ghost edible.
+ - [X] Frightened ghost animation added but it wont activate. TODO -> make 
+   the super pac gums post the GhostModeToFrightened and make the ghost edible.
  - [X] Make the Game go to the next level if the time goes to 0 or the gums are finished
  - [X] Make the game cross platform
  - [X] Make when the time runs out to lose a life.
  - [X] Make the multiple sounds channel, because the audio that is longer  
-      than it should interrupts other, even when it is not needed, 
-      ex: the Super Pacgums or the ed0, i think that ed0 and ed1 should be 
+      than it should interrupt other, even when it is not needed, 
+      ex: the Super Pacgums or the ed0, I think that ed0 and ed1 should be 
       in two separate channels, so they can follow each other.
  - [X] Mettere un contatore o una scritta "ready" prima che inizi il turno, 
    in modo che il giocatore abbia tempo di rimettersi in sesto
@@ -65,10 +65,10 @@ the remaining time is in silence, but sticazzi
 
 # popo
  - [SOLVED] BUG FOUND: in map size: even width mazes, the pacman spawn in the 42 logo, TODO: hardcode the positions to not spawn.
- - [SOLVED] BUG FOUND: in big maps the pacgums are very big
- - [SOLVED] BUG FOUND: the screen when one dies for the time it says that you won but you loose
- - [SOLVED] BUG FOUND: when the seconds are negative they dont appear good EX: 1:-12 s
- - [SOLVED] BUG FOUND: the state of the vfx in the buttons, doesnt take the actual state of the features.
+ - [SOLVED] BUG FOUND: in big maps the pacgums are huge
+ - [SOLVED] BUG FOUND: the screen when one dies for the time it says that you won, but you lose
+ - [SOLVED] BUG FOUND: when the seconds are negative, they don't appear good EX: 1:-12 s
+ - [SOLVED] BUG FOUND: the state of the vfx in the buttons doesn't take the actual state of the features.
 - [SOLVED] BUG FOUND: pacman animation should stop if not moving
 
 
@@ -78,5 +78,5 @@ the remaining time is in silence, but sticazzi
  - Eyes sound.	[lenght: 0.265s].
  - Fright firstloop.	[lenght: 0.115s].
  - Pacman eat Super Pacgum.	[lenght: 1s].
- - Pacman eat Ghost.	[lenght: 0.575s]~
- - Ghost moves.		[lenght: 0.4s]
+ - Pacman eat Ghost.	[lenght: 0.575s].
+ - Ghost moves.		[lenght: 0.4s].
