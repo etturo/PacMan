@@ -10,11 +10,7 @@ def next_cell(ctx: PacmanContext, action: Direction) -> tuple[int, int]:
 
 
 def is_dangerous(ctx: PacmanContext, mode: GhostMode, steps: int) -> bool:
-    """True if a ghost steps away from the next cell can kill Pacman.
-
-    It can in CHASE or SCATTER mode, and when blue but too far to be
-    eaten before the blue is over.
-    """
+    """True if a ghost n_steps away from the next cell can kill Pacman."""
     return (mode in (GhostMode.CHASE, GhostMode.SCATTER)
             or (mode == GhostMode.FRIGHTENED
                 and not is_reachable(ctx, steps)))

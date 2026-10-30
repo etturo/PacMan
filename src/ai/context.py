@@ -14,11 +14,13 @@ class PacmanContext:
     fright_left is the seconds of blue left, shared by every
     frightened ghost; 0 when none is.
     pacman_speed in cells per second
+    ghost_speed is the speed of the dangerous ghosts, cells per second.
     """
     maze: Maze
     pacman_pos: tuple[int, int]
     ghosts: list[tuple[tuple[int, int], GhostMode]]
     fright_left: float
     pacman_speed: float
+    ghost_speed: float
     food: set[tuple[int, int]]
     points: int

@@ -277,6 +277,10 @@ class Ghost(Entity):
         return (self.__mode == GhostMode.FRIGHTENED
                 and self.__frightened_timer >= self.__time_frightened)
 
+    def getNormalSpeed(self) -> float:
+        """Speed in CHASE and SCATTER, in cells per second."""
+        return self.__initial_speed
+
     def getFrightenedLeft(self) -> float:
         """Seconds of blue left, 0 when the ghost is not frightened."""
         if self.__mode != GhostMode.FRIGHTENED:

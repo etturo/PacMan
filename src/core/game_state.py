@@ -604,7 +604,8 @@ class PlayingState(BaseState):
                   if isinstance(entity, Pacgum | SuperPacgum)
                   and entity.isAlive()},
             points=self.__points,
-            pacman_speed=self.__pacman.getSpeed()
+            pacman_speed=self.__pacman.getSpeed(),
+            ghost_speed=self.__ghosts[0].getNormalSpeed(),
             )
 
     def _update_ghost_mode(
