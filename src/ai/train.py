@@ -50,6 +50,7 @@ def main() -> None:
     _init_headless()
     config_file = sys.argv[1] if len(sys.argv) > 1 else 'config.json'
     settings = SettingParser().parse(config_file)
+    settings.seed = 0
     agent = QAgent(training=True)
 
     scores: list[int] = []

@@ -54,7 +54,7 @@ from src.world.maze_wrapper import MazeWrapper
 from src.world.cell import Direction
 
 from src.utils.settings import Settings, GameEvent
-from src.utils.models import GameSettings
+from src.utils.models import GameSettings, LevelDifficulty
 from src.utils.paths import initial_leaderboard_path, leaderboard_path
 
 
@@ -531,12 +531,9 @@ class PlayingState(BaseState):
         self.__time_remaining = 0.0
 
         self.__actual_level = 0
-        size = (
-            settings.levels[self.__actual_level].width,
-            settings.levels[self.__actual_level].height
-        )
         self.__maze_wrapper = MazeWrapper()
-        self.__maze_wrapper.generate(size=size, seed=settings.seed)
+        self.__maze_wrapper.generate(size=self._get_size(),
+                                     seed=settings.seed)
         self.__actual_maze = self.__maze_wrapper.maze
 
         self.__surface = pygame.Surface(
@@ -568,7 +565,7 @@ class PlayingState(BaseState):
         self.__pacman: Pacman = Pacman(
             self.__pacman_initial_pos,
             self.__scaled_size * 1.6,
-            4.0,
+            self._speed_from_percent(self._get_difficulty().pacman_speed),
             settings.lives
             )
         self.__current_direction = self.__pacman.getDir()
@@ -711,6 +708,19 @@ class PlayingState(BaseState):
             ghost_speed=self.__ghosts[0].getNormalSpeed(),
             )
 
+    def _get_difficulty(self) -> LevelDifficulty:
+        table = self.__settings.difficulty
+        return table[min(self.__actual_level, len(table) - 1)]
+
+    def _get_size(self) -> tuple[int, int]:
+        table = self.__settings.levels
+        level = table[min(self.__actual_level, len(table) - 1)]
+        return level.width, level.height
+
+    @staticmethod
+    def _speed_from_percent(percent: int) -> float:
+        return Settings.MAX_SPEED * percent / 100
+
     def _update_ghost_mode(
         self,
         ghosts: list[Ghost],
@@ -719,6 +729,11 @@ class PlayingState(BaseState):
         self.__is_frightened = new_mode == GhostMode.FRIGHTENED
         if self.__is_frightened:
             self.__ghost_combo = 200
+
+        difficulty = self._get_difficulty()
+        self.__pacman.setSpeed(self._speed_from_percent(
+            difficulty.pacman_fright_speed if self.__is_frightened
+            else difficulty.pacman_speed))
 
         # The scatter/chase schedule freezes while the ghosts are blue
         # and picks up where it left off once they are not.
@@ -732,27 +747,36 @@ class PlayingState(BaseState):
         """One ghost per corner, released one after the other."""
         maze_w, maze_h = self.__actual_maze.getSize()
         size = self.__scaled_size * 1.6
-        speed = (3 + 0.4 * min(self.__actual_level, 2)
-                 if not self.__settings.ghost_freezed else 0)
+        difficulty = self._get_difficulty()
+        frozen = self.__settings.ghost_freezed
+        speed = (0.0 if frozen
+                 else self._speed_from_percent(difficulty.ghost_speed))
+        fright_speed = (0.0 if frozen else self._speed_from_percent(
+            difficulty.ghost_fright_speed))
+        fright_time = difficulty.fright_time
 
         # Blinky goes first: Inky reads him as self.__ghosts[0]
         self.__ghosts = [
             Ghost((maze_w - 1, 0), size, speed,
-                  SpriteLibrary.get('red'), blinky_strategy),
+                  SpriteLibrary.get('red'), blinky_strategy,
+                  0.0, fright_speed, fright_time),
             Ghost((0, 0), size, speed,
-                  SpriteLibrary.get('pink'), pinky_strategy, 3.0),
+                  SpriteLibrary.get('pink'), pinky_strategy,
+                  3.0, fright_speed, fright_time),
             Ghost((maze_w - 1, maze_h - 1), size, speed,
-                  SpriteLibrary.get('azure'), inky_strategy, 6.0),
+                  SpriteLibrary.get('azure'), inky_strategy,
+                  6.0, fright_speed, fright_time),
             Ghost((0, maze_h - 1), size, speed,
-                  SpriteLibrary.get('orange'), clyde_strategy, 9.0),
+                  SpriteLibrary.get('orange'), clyde_strategy,
+                  9.0, fright_speed, fright_time),
         ]
-        self.__mode_controller.reset(self.__actual_level)
+        self.__mode_controller.reset(difficulty.scatter_chase)
         self._update_ghost_mode(self.__ghosts,
                                 self.__mode_controller.getMode())
 
     def _handle_level_clear(self) -> None:
         """Advance to the next level, or finish the game if it was the last."""
-        if self.__actual_level + 1 >= len(self.__settings.levels):
+        if self.__actual_level + 1 >= self.__settings.max_level:
             self.__final_points = self.__points
             GameEvent.post(GameEvent.MODE_TO_WIN)
             return
@@ -769,12 +793,8 @@ class PlayingState(BaseState):
         self.__is_started = False
         self.__time_remaining = 0.0
 
-        size = (
-            self.__settings.levels[self.__actual_level].width,
-            self.__settings.levels[self.__actual_level].height,
-        )
         self.__maze_wrapper = MazeWrapper()
-        self.__maze_wrapper.generate(size=size, seed=self.__settings.seed)
+        self.__maze_wrapper.generate(size=self._get_size(), seed=0)
         self.__actual_maze = self.__maze_wrapper.maze
         self.__maze_renderer = MazeRender()
         self._render_maze()
@@ -791,7 +811,7 @@ class PlayingState(BaseState):
         self.__pacman = Pacman(
             self.__pacman_initial_pos,
             self.__scaled_size * 1.6,
-            4.0,
+            self._speed_from_percent(self._get_difficulty().pacman_speed),
             self.__pacman.getLives(),
         )
         self.__current_direction = self.__pacman.getDir()
@@ -1055,7 +1075,7 @@ class PlayingState(BaseState):
                     GameEvent.post(GameEvent.MODE_TO_PAUSE)
 
     def _reset_entity_pos(self) -> None:
-        self.__mode_controller.reset(self.__actual_level)
+        self.__mode_controller.reset(self._get_difficulty().scatter_chase)
         self._update_ghost_mode(self.__ghosts,
                                 self.__mode_controller.getMode())
         for entity in self.__entities:
@@ -1115,8 +1135,9 @@ class PlayingState(BaseState):
                     SoundLibrary.get("super_pacgum").playOn(
                         SoundLibrary.special_channel)
                     self.__chomp_timer = 0.5 / self.__pacman.getSpeed()
-                    self._update_ghost_mode(
-                        self.__ghosts, GhostMode.FRIGHTENED)
+                    if self._get_difficulty().fright_time > 0:
+                        self._update_ghost_mode(
+                            self.__ghosts, GhostMode.FRIGHTENED)
                     for ghost in self.__ghosts:
                         ghost.reverseDirection()
                     self.__points += self.__settings.points_per_super_pacgum

@@ -10,6 +10,15 @@ class LevelConfig(BaseModel):
     height: int
 
 
+class LevelDifficulty(BaseModel):
+    pacman_speed: int
+    pacman_fright_speed: int
+    ghost_speed: int
+    ghost_fright_speed: int
+    fright_time: float
+    scatter_chase: list[float]
+
+
 class GameSettings(BaseModel):
     highscore_filename: str = Field(default="scores.json")
     levels: list[LevelConfig] = Field(
@@ -25,7 +34,21 @@ class GameSettings(BaseModel):
     points_per_super_pacgum: int = Field(default=50, gt=0)
     points_per_ghost: int = 200
     seed: int = Field(default=42, ge=0)
-    level_max_time: int = Field(default=90, gt=0)
+    level_max_time: int = Field(default=300, gt=0)
+    max_level: int = Field(default=256, gt=0)
+    difficulty: list[LevelDifficulty] = Field(
+        default=[
+            LevelDifficulty(
+                pacman_speed=80,
+                pacman_fright_speed=90,
+                ghost_speed=75,
+                ghost_fright_speed=50,
+                fright_time=6,
+                scatter_chase=[7, 20, 7, 20, 5, 20, 5]
+            )
+        ],
+        min_length=1
+    )
     # CUSTOM
     ghost_freezed: bool = False
     double_speeded: bool = False

@@ -2,16 +2,8 @@
 	"highscore_filename": "highscore.txt",
 	"levels": [
 		{
-			"width": 5,
-			"height": 5
-		},
-		{
-			"width": 5,
-			"height": 5
-		},
-		{
-			"width": 7,
-			"height": 7
+			"width": 15,
+			"height": 15
 		}
 	],
 	"lives": 3,
@@ -20,5 +12,29 @@
 	"points_per_super_pacgum": 50,
 	"points_per_ghost": 200,
 	"seed": 42,
-	"level_max_time": 120
+	"level_max_time": 300,
+	"max_level": 256,
+	"difficulty": [
+		{"pacman_speed": 80, "pacman_fright_speed": 90, "ghost_speed": 75, "ghost_fright_speed": 50, "fright_time": 6, "scatter_chase": [7, 20, 7, 20, 5, 20, 5]},
+		{"pacman_speed": 90, "pacman_fright_speed": 95, "ghost_speed": 85, "ghost_fright_speed": 55, "fright_time": 5, "scatter_chase": [7, 20, 7, 20, 5, 1033, 0.0167]},
+		{"pacman_speed": 90, "pacman_fright_speed": 95, "ghost_speed": 85, "ghost_fright_speed": 55, "fright_time": 4, "scatter_chase": [7, 20, 7, 20, 5, 1033, 0.0167]},
+		{"pacman_speed": 90, "pacman_fright_speed": 95, "ghost_speed": 85, "ghost_fright_speed": 55, "fright_time": 3, "scatter_chase": [7, 20, 7, 20, 5, 1033, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 2, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 5, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 2, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 2, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 1, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 5, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 2, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 1, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 1, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 3, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 1, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 1, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 0, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 1, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 0, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 100, "pacman_fright_speed": 100, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 0, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]},
+		{"pacman_speed": 90, "pacman_fright_speed": 90, "ghost_speed": 95, "ghost_fright_speed": 60, "fright_time": 0, "scatter_chase": [5, 20, 5, 20, 5, 1037, 0.0167]}
+	]
 }

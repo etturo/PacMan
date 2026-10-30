@@ -18,6 +18,8 @@ class Settings:
     SPRITE_LENGHT = 16
     SPRITE_WIDTH = 16
 
+    MAX_SPEED = 5.0
+
 
 class GameEvent(IntEnum):
     MODE_TO_STARTING = pygame.USEREVENT + 1

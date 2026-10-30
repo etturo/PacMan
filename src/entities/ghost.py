@@ -39,10 +39,13 @@ class Ghost(Entity):
             ],
             tuple[int, int]],
         release_delay: float = 0.0,
+        fright_speed: float = 2.0,
+        fright_time: float = 6.0,
     ) -> None:
 
         super().__init__(init_pos, size, speed)
         self.__initial_speed = speed
+        self.__fright_speed = fright_speed
         self.__release_delay = release_delay
         self.__release_timer = 0.0
 
@@ -151,7 +154,7 @@ class Ghost(Entity):
         self.__animation_delay = 0.1
         self.__frame_index = 0
         self.__frightened_timer = 0.0
-        self.__time_frightened = 6.0
+        self.__time_frightened = fright_time
         self.__current_points = 0
         self.__death_animation_length = 0
         self._surface = self.__frightened_animation[0]
@@ -179,8 +182,7 @@ class Ghost(Entity):
         self.__frightened_timer = 0.0
 
         if new_mode == GhostMode.FRIGHTENED:
-            # Being frightened slows the ghosts down
-            self._speed = self.__initial_speed / 1.5
+            self._speed = self.__fright_speed
         else:
             self._speed = self.__initial_speed
 

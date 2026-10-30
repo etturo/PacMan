@@ -29,22 +29,12 @@ class SchedulePhase(NamedTuple):
 class GhostModeController:
     """Global timer for scatter/chase for all ghosts."""
 
-    SCHEDULE: tuple[SchedulePhase, ...] = (
-        SchedulePhase(GhostMode.SCATTER,  7.0),
-        SchedulePhase(GhostMode.CHASE,   20.0),
-        SchedulePhase(GhostMode.SCATTER,  7.0),
-        SchedulePhase(GhostMode.CHASE,   20.0),
-        SchedulePhase(GhostMode.SCATTER,  5.0),
-        SchedulePhase(GhostMode.CHASE,   20.0),
-        SchedulePhase(GhostMode.SCATTER,  5.0),
-        SchedulePhase(GhostMode.CHASE,   float('inf')),
-    )
-
     def __init__(self) -> None:
-        self.__schedule = self.SCHEDULE
+        self.__schedule: tuple[SchedulePhase, ...] = ()
         self.__phase: int = 0
         self.__elapsed: float = 0.0
         self.__paused: bool = False
+        self.reset([])
 
     def getMode(self) -> GhostMode:
         """Get the current ghost mode."""
@@ -68,14 +58,17 @@ class GhostModeController:
         self.__phase += 1
         return True
 
-    def reset(self, level: int = 0) -> None:
+    def reset(self, durations: list[float]) -> None:
         """Resets ghosts' states on PacMan's death or on a new level.
 
-        Every level makes the scatter phases 3 seconds shorter."""
+        The durations alternate scatter and chase, starting from scatter.
+        After the last one the ghosts chase forever."""
         self.__schedule = tuple(
-            phase._replace(duration=max(0.0, phase.duration - 3 * level))
-            if phase.mode == GhostMode.SCATTER else phase
-            for phase in self.SCHEDULE)
+            SchedulePhase(
+                GhostMode.CHASE if index % 2 else GhostMode.SCATTER,
+                duration)
+            for index, duration in enumerate(durations)
+        ) + (SchedulePhase(GhostMode.CHASE, float('inf')),)
         self.__elapsed = 0.0
         self.__phase = 0
         self.__paused = False

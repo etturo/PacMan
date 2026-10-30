@@ -64,7 +64,7 @@ class MazeWrapper:
                 seed=seed
             )
 
-            self.__generator.generate()
+            self.__generator.generate(seed)
 
             self.__maze_list = self.__generator.maze
 
