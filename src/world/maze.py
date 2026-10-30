@@ -1,4 +1,4 @@
-from mazegenerator.mazegenerator import Iterator  # type: ignore
+from mazegenerator.mazegenerator import Iterator
 
 from src.world.cell import Direction, Cell
 

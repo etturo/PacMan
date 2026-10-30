@@ -13,5 +13,12 @@ dependencies = [
     "pyinstaller>=6.22.2",
 ]
 
+[tool.mypy]
+exclude = ["^tests_local/", "^build/", "^dist/"]
+
+[[tool.mypy.overrides]]
+module = ["mazegenerator", "mazegenerator.*"]
+ignore_missing_imports = true
+
 [tool.uv.sources]
 mazegenerator = { path = "data/external_libraries/mazegenerator-2.1.0-py3-none-any.whl" }

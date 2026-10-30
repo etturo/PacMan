@@ -1,10 +1,12 @@
 import sys
 import os
 
+import pygame
+
 from functools import wraps
 from typing import Callable, Any
 
-from mazegenerator import MazeGenerator  # type: ignore
+from mazegenerator import MazeGenerator
 
 from src.world.maze import Maze
 
@@ -69,7 +71,8 @@ class MazeWrapper:
             self.__load_maze()
 
         except Exception:
-            ...
+            print("Maze Generator failed.")
+            pygame.quit()
 
     def __str__(self) -> str:
         output: str = '\n'

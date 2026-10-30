@@ -757,10 +757,6 @@ class PlayingState(BaseState):
         ]
 
     def update(self, dt: float) -> None:
-        # if double speed is set every game tick is halfed
-        if self.__settings.double_speeded:
-            dt *= 2
-
         for element in self.__ui_elements:
             if isinstance(element, Lives):
                 element.update(self.__pacman.getLives())
@@ -816,7 +812,7 @@ class PlayingState(BaseState):
             if self.__chomp_timer <= 0:
                 SoundLibrary.get("ed1").playOn(SoundLibrary.chomp_channel_1)
 
-        self.__pacman.update(dt)
+        self.__pacman.update(dt * 2 if self.__settings.double_speeded else dt)
         if self.__pacman.getLives() <= 0:
             GameEvent.post(GameEvent.MODE_TO_GAME_OVER)
         self._detect_collision()

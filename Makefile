@@ -5,7 +5,7 @@ PYTHON = $(VENV)/Scripts/python.exe
 else
 PYTHON = $(BIN)/python3
 endif
-SRC = src
+PACMAN = pac-man.py
 VENV = .venv
 BIN = $(VENV)/bin
 CONFIG_FILE = config.json
@@ -16,29 +16,30 @@ install:
 	uv sync
 
 run:
-	$(PYTHON) -m $(SRC) $(CONFIG_FILE)
+	$(PYTHON) $(PACMAN) $(CONFIG_FILE)
 
 debug:
-	$(PYTHON) -m pdb -m $(SRC) $(CONFIG_FILE)
+	$(PYTHON) -m pdb $(PACMAN) $(CONFIG_FILE)
 
 train:
-	$(PYTHON) -m $(SRC).ai.train $(CONFIG_FILE)
+	$(PYTHON) -m $(PACMAN).ai.train $(CONFIG_FILE)
 
 build:
 	$(PYTHON) -m PyInstaller --clean Pacman.spec
 
 clean:
-	$(PYTHON) -c "import shutil; from pathlib import Path; [shutil.rmtree(path, ignore_errors=True) for path in ('.venv', '.mypy_cache', 'src/.mypy_cache', 'build', 'dist')] + [shutil.rmtree(path, ignore_errors=True) for path in Path('.').rglob('__pycache__') if path.is_dir()]"
+	$(PYTHON) -c "import shutil; from pathlib import Path;
+	[shutil.rmtree(path, ignore_errors=True) for path in ('.venv', '.mypy_cache', 'PACMAN/.mypy_cache', 'build', 'dist')] + [shutil.rmtree(path, ignore_errors=True) for path in Path('.').rglob('__pycache__') if path.is_dir()]"
 
 lint:
-	$(BIN)/flake8 $(SRC)
-	$(BIN)/mypy $(SRC) --warn-return-any --warn-unused-ignores \
+	$(BIN)/flake8 .
+	$(BIN)/mypy . --warn-return-any --warn-unused-ignores \
 			--ignore-missing-imports --disallow-untyped-defs \
 			--check-untyped-defs
 
 lint-strict:
-	$(BIN)/flake8 $(SRC) --color=always
-	$(BIN)/mypy $(SRC) --strict --color-output
+	$(BIN)/flake8 . --color=always
+	$(BIN)/mypy . --strict --color-output
 
 c:
 	@clear
