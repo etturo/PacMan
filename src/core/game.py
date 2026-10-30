@@ -1,4 +1,5 @@
 import sys
+import os
 
 from argparse import ArgumentParser
 
@@ -32,7 +33,7 @@ from src.utils import paths
 class Game:
     def __init__(self, config_file: str | None = None) -> None:
         # INIT
-        pygame.mixer.init()
+        self._init_audio()
         SoundLibrary.load()
         self.__screen_manager: ScreenManager = ScreenManager()
 
@@ -73,10 +74,9 @@ class Game:
                 self.__active_state.update(self.__dt)
                 self._render(self.__dt)
         except KeyboardInterrupt:
-            sys.exit("\nProgram ended by the user")
+            print("\nProgram ended by the user")
+        finally:
             pygame.quit()
-        sys.exit()
-        pygame.quit()
 
     def _render(self, dt: float) -> None:
         self.__screen_manager.render(
@@ -217,3 +217,12 @@ class Game:
             paths.highscore_filename = self.__game_settings.highscore_filename
         except ParsingError as exc:
             raise SystemExit(str(exc)) from exc
+
+    @staticmethod
+    def _init_audio() -> None:
+        try:
+            pygame.mixer.init()
+        except pygame.error:
+            print("No audio device: playing without sound.", file=sys.stderr)
+            os.environ["SDL_AUDIODRIVER"] = "dummy"
+            pygame.mixer.init()
